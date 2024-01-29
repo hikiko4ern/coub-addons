@@ -1,0 +1,61 @@
+{
+	"version": "0.2",
+	"$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/master/cspell.schema.json",
+	"import": [
+		"@cspell/dict-en-gb/cspell-ext.json",
+		"@cspell/dict-ru_ru/cspell-ext.json"
+	],
+	"language": "en",
+	"dictionaries": [
+		"css",
+		"fonts",
+		"node",
+		"npm",
+		"softwareTerms",
+		"typescript",
+		"en-gb"
+	],
+	"minWordLength": 3,
+	"flagWords": [],
+	"cache": {
+		"useCache": true
+	},
+	"enableGlobDot": true,
+	"validateDirectives": true,
+	"useGitignore": true,
+	"words": [
+		"biomejs",
+		"bunx",
+		"clsx",
+		"Coub",
+		"coubs",
+		"dprint",
+		"heroicons",
+		"itertools",
+		"julr",
+		"nextui",
+		"plasmo",
+		"preact",
+		"prefresh",
+		"tailwindcss",
+		"tamagui",
+		"tanstack",
+		"webext",
+		"Wouter",
+		"wxt",
+		"XMLHttpRequest"
+	],
+	"ignoreWords": [
+		"hikiko4ern",
+		"ianvs",
+		"BCP47"
+	],
+	"ignoreRegExpList": [
+		// imports
+		"/^import( .*? from)? '[^']*?';$/m",
+		// Markdown ToC elements
+		"/^- \\[[^\\]]*\\]\\((#[^)]*)\\)$/m",
+		// deps
+		"/@fluent/\\w+/"
+	]
+}

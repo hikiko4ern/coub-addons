@@ -1,0 +1,12 @@
+.filtered-out-coubs {
+  th {
+    text-transform: uppercase;
+  }
+
+  th,
+  td {
+    &::before {
+      pointer-events: none;
+    }
+  }
+}
