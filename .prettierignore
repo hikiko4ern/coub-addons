@@ -1,0 +1,36 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+.output
+stats.html
+.wxt
+web-ext.config.ts
+
+# caches
+.cspellcache
+*.tsbuildinfo
+
+# patches
+/packages/@nextui-org
+
+# dprint
+**/*.ts
+**/*.tsx
+**/*.cts
+**/*.mts
+**/*.js
+**/*.jsx
+**/*.cjs
+**/*.mjs
+**/*.json
+**/*.jsonc
+**/*.json5
+**/*.md
+**/*.toml

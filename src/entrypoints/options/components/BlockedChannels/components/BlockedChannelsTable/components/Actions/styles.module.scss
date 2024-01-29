@@ -1,0 +1,12 @@
+@use './vars.scss' as vars;
+
+.actions__remove {
+  cursor: pointer;
+  vertical-align: text-bottom;
+}
+
+.actions__remove,
+.actions__remove-icon {
+  width: vars.$remove-icon-size;
+  height: vars.$remove-icon-size;
+}
