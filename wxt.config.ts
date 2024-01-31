@@ -39,7 +39,7 @@ export default defineConfig({
 			ValidateEnv(),
 			preact(),
 			sassDts(),
-			// biome-ignore lint/complexity/useSimplifiedLogicExpression: it exits even dev build
+			// it exits even dev build
 			false && {
 				...checker({
 					overlay: false,

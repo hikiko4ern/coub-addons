@@ -1,0 +1,9 @@
+.channel.channel--box-card .channel-follow-button {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .follow-button__container > button {
+    width: 100%;
+  }
+}

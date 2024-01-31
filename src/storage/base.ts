@@ -3,7 +3,7 @@ import type { Unwatch, WxtStorageItem } from 'wxt/storage';
 import { EventDispatcher, EventListener } from '@/events';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
-import type { StorageEvent } from './types';
+import { type StorageEvent, StorageEventTrigger } from './types';
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
 	state: ToReadonly<State>,
@@ -44,7 +44,6 @@ export abstract class StorageBase<
 			.finally(() => (this.#statePromise = undefined));
 
 		this.#unwatch = this.#storage.watch((_state, oldState) => {
-			this.logger.debug('watch', _state, oldState);
 			const state = this.parseRawValue(
 				// biome-ignore lint/style/noNonNullAssertion: state is defaulted in case of `null`
 				_state!,
@@ -56,8 +55,8 @@ export abstract class StorageBase<
 		this.#eventListener = new EventListener(logger, msg => {
 			if (
 				msg.type === 'StorageUpdatedEvent' &&
-				msg.data.source !== this.#source &&
-				msg.data.key === this.key
+				msg.data.key === this.key &&
+				(msg.data.source !== this.#source || msg.data.trigger === StorageEventTrigger.SetValue)
 			) {
 				this.#notifyWatchers(msg.data.state as State, msg.data.oldState as RawState | null, false);
 			}
@@ -81,11 +80,20 @@ export abstract class StorageBase<
 		return this.setValue(structuredClone(this.defaultValue));
 	}
 
-	#notifyWatchers(state: State, oldState: RawState | null, isDispatchEvent: boolean) {
+	#notifyWatchers(
+		state: State,
+		oldState: RawState | null,
+		isDispatchEvent: boolean,
+		eventTrigger?: StorageEventTrigger,
+	) {
 		this.logger.debug('notifying watchers', { state, oldState, watchers: this.#watchers });
 
-		for (const cb of this.#watchers) {
-			this.notifyWatcher(cb, state, oldState);
+		if (this.#watchers.size) {
+			for (const cb of this.#watchers) {
+				this.notifyWatcher(cb, state, oldState);
+			}
+		} else {
+			this.notifyWatcher(undefined, state, oldState);
 		}
 
 		isDispatchEvent &&
@@ -94,19 +102,19 @@ export abstract class StorageBase<
 				key: this.key,
 				state,
 				oldState,
+				trigger: eventTrigger,
 			} as StorageEvent);
 	}
 
 	protected async setValue(value: RawState) {
 		this.logger.debug('new value:', value);
 
-		const isNotify = this.#watchers.size > 0;
-		const oldState = isNotify ? ((await this.#storage.getValue()) as RawState | null) : null;
+		const oldState = (await this.#storage.getValue()) as RawState | null;
 
 		await this.#storage.setValue(value);
 		const state = (this.#state = this.parseRawValue(value));
 
-		this.#notifyWatchers(state, oldState, true);
+		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
 	}
 
 	protected parseRawValue(raw: RawState): State {
@@ -114,11 +122,11 @@ export abstract class StorageBase<
 	}
 
 	protected notifyWatcher(
-		cb: StorageWatchCallback<State, ListenerArgs>,
+		cb: StorageWatchCallback<State, ListenerArgs> | undefined,
 		state: State,
 		_oldState: RawState | null,
 	): void {
-		(cb as unknown as StorageWatchCallback<State, []>)(state as ToReadonly<State>);
+		(cb as unknown as StorageWatchCallback<State, []> | undefined)?.(state as ToReadonly<State>);
 	}
 
 	[Symbol.dispose]() {

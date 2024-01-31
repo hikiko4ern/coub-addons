@@ -22,6 +22,7 @@ const defaultValue: RawBlockedChannels = {
 
 const blockedChannelsItem = storage.defineItem<RawBlockedChannels>(`local:${key}`, {
 	version: 1,
+	// TODO: `defaultValue` is not returned when calling `storage.getValue()` with empty storage?
 	defaultValue,
 });
 
@@ -67,8 +68,8 @@ export class BlockedChannelsStorage extends StorageBase<
 		const id = typeof idOrChannel === 'number' ? idOrChannel : idOrChannel.id;
 		this.logger.debug(isBlocked ? 'blocking' : 'unblocking', 'channel', idOrChannel);
 
-		const state = await this.getValue();
-		const oldIsBlocked = state.has(id);
+		const oldState = await this.getValue();
+		const oldIsBlocked = oldState.has(id);
 
 		if (isBlocked === oldIsBlocked) {
 			return;
@@ -77,22 +78,22 @@ export class BlockedChannelsStorage extends StorageBase<
 		await this.setValue(
 			blockedChannelsToRaw(
 				isBlocked
-					? chain(state.values(), [idOrChannel as BlockedChannelData])
-					: filter(state.values(), item => item.id !== id),
-				state.size + (isBlocked ? 1 : -1),
+					? chain(oldState.values(), [idOrChannel as BlockedChannelData])
+					: filter(oldState.values(), item => item.id !== id),
+				oldState.size + (isBlocked ? 1 : -1),
 			),
 		);
 	}
 
 	protected async notifyWatcher(
-		cb: StorageWatchCallback<BlockedChannels, ListenerArgs>,
+		cb: StorageWatchCallback<BlockedChannels, ListenerArgs> | undefined,
 		state: BlockedChannels,
 		oldState: RawBlockedChannels | null,
 	): Promise<void> {
 		const oldChannelIds = oldState ? oldState.id : (await this.getValue()).keys();
 		const diff = symmetricDifference(oldChannelIds, state.keys());
 
-		cb(state, diff);
+		cb?.(state, diff);
 
 		for (const channelId of diff) {
 			const channelListeners = this.#isBlockedListeners[channelId];

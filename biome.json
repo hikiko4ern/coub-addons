@@ -70,8 +70,7 @@
 				"useArrowFunction": "warn",
 				"useFlatMap": "warn",
 				"useLiteralKeys": "warn",
-				"useOptionalChain": "warn",
-				"useSimplifiedLogicExpression": "warn"
+				"useOptionalChain": "warn"
 			},
 			"correctness": {
 				"noChildrenProp": "warn",
