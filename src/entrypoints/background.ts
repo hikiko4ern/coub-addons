@@ -1,3 +1,5 @@
+import { chain, imap, uniqueEverseen } from 'itertools';
+
 import '@/register';
 import type {} from '@/types/tsPatch';
 
@@ -19,12 +21,20 @@ export default defineBackground(() => {
 	browser.runtime.onMessage.addListener(async (msg, sender) => {
 		if (browser.runtime.id === sender.id) {
 			try {
-				const senderTabId = sender.tab?.id;
+				const allCoubTabIds = imap(
+					await browser.tabs.query({
+						// TODO: manually exclude patterns from content scripts' `excludeMatches`
+						url: `${import.meta.env?.VITE_COUB_ORIGIN}/*`,
+					}),
+					tab => tab.id,
+				);
 
-				if (typeof senderTabId === 'number') {
-					EventDispatcher.dispatch(`tab ${senderTabId}`, msg, event =>
-						browser.tabs.sendMessage(senderTabId, event),
-					);
+				for (const tabId of uniqueEverseen(chain([sender.tab?.id], allCoubTabIds))) {
+					if (typeof tabId === 'number') {
+						EventDispatcher.dispatch(`tab ${tabId}`, msg, event =>
+							browser.tabs.sendMessage(tabId, event),
+						);
+					}
 				}
 			} catch (err) {
 				logger.error('failed to query tabs:', err);
