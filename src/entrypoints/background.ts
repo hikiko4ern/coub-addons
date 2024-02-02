@@ -1,4 +1,5 @@
-import { chain, imap, uniqueEverseen } from 'itertools';
+import { chain, ifilter, imap, uniqueEverseen } from 'itertools';
+import { createRouter } from 'radix3';
 
 import '@/register';
 import type {} from '@/types/tsPatch';
@@ -14,6 +15,22 @@ export default defineBackground(() => {
 	const ctx = new Context(logger);
 	registerTimelineHandlers(ctx);
 
+	const origin = import.meta.env.VITE_COUB_ORIGIN;
+
+	const prohibitedRouter = createRouter({
+		routes: {
+			[`${origin}/chat`]: void 0,
+			[`${origin}/chat/*`]: void 0,
+			[`${origin}/account/*`]: void 0,
+			[`${origin}/official/*`]: void 0,
+			[`${origin}/brand-assets`]: void 0,
+			[`${origin}/tos`]: void 0,
+			[`${origin}/privacy`]: void 0,
+			[`${origin}/rules`]: void 0,
+			[`${origin}/dmca`]: void 0,
+		},
+	});
+
 	browser.runtime.onSuspend.addListener(() => {
 		ctx[Symbol.dispose]();
 	});
@@ -22,10 +39,10 @@ export default defineBackground(() => {
 		if (browser.runtime.id === sender.id) {
 			try {
 				const allCoubTabIds = imap(
-					await browser.tabs.query({
-						// TODO: manually exclude patterns from content scripts' `excludeMatches`
-						url: `${import.meta.env?.VITE_COUB_ORIGIN}/*`,
-					}),
+					ifilter(
+						await browser.tabs.query({ url: `${origin}/*` }),
+						tab => tab.discarded !== true && (!tab.url || !prohibitedRouter.lookup(tab.url)),
+					),
 					tab => tab.id,
 				);
 
@@ -37,7 +54,7 @@ export default defineBackground(() => {
 					}
 				}
 			} catch (err) {
-				logger.error('failed to query tabs:', err);
+				logger.error('failed to broadcast message:', err);
 			}
 		}
 	});
