@@ -1,0 +1,13 @@
+diff --git a/node_modules/wxt/dist/cli.js b/node_modules/wxt/dist/cli.js
+index 5b2290f..aeec0df 100644
+--- a/node_modules/wxt/dist/cli.js
++++ b/node_modules/wxt/dist/cli.js
+@@ -2097,7 +2097,7 @@ function hashContentScriptOptions(options, config) {
+   return JSON.stringify(
+     Object.entries(withDefaults).map(([key, value]) => {
+       if (Array.isArray(value))
+-        return [key, value.sort()];
++        return [key, value.toSorted()];
+       else
+         return [key, value];
+     }).sort((l, r) => l[0].localeCompare(r[0]))
