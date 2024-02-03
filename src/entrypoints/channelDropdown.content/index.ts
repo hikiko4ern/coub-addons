@@ -40,6 +40,7 @@ export default defineContentScript({
 			logger,
 			buttonId: ID,
 			buttonIdPrefix: PREFIX,
+			// cspell:ignore btn
 			followButtonSelector: '.follow-btn',
 			followButtonActualButtonSelector: '.follow-button__container > button',
 			followButtonContainerSelector: '.follow-button__container',

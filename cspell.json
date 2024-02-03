@@ -5,7 +5,10 @@
 		"@cspell/dict-en-gb/cspell-ext.json",
 		"@cspell/dict-ru_ru/cspell-ext.json"
 	],
-	"language": "en",
+	"language": "en,ru",
+	"enableFiletypes": [
+		"fluent"
+	],
 	"dictionaries": [
 		"css",
 		"fonts",
@@ -20,34 +23,50 @@
 	"cache": {
 		"useCache": true
 	},
-	"enableGlobDot": true,
 	"validateDirectives": true,
 	"useGitignore": true,
 	"words": [
-		"biomejs",
-		"bunx",
-		"clsx",
-		"Coub",
+		"Corepack",
+		"coub",
 		"coubs",
+		"runtimes",
+		"дизлайкнутых",
+		"коуб",
+		"коубов",
+		"коубу",
+		"коубы",
+		"лейблы",
+		"пропатчить",
+		"стора",
+		"сторах",
+		"фейковых",
+		"форки"
+	],
+	"ignoreWords": [
+		"flexsearch",
+		"uniqueEverseen",
+		"cssnano",
 		"dprint",
 		"heroicons",
+		"ifilter",
 		"itertools",
-		"julr",
 		"nextui",
 		"plasmo",
 		"preact",
 		"prefresh",
+		"superstruct",
 		"tailwindcss",
-		"tamagui",
-		"tanstack",
-		"webext",
+		"biomejs",
+		"bunx",
+		"clsx",
+		"elems",
+		"fmt",
+		"julr",
+		"hikiko4ern",
 		"Wouter",
 		"wxt",
-		"XMLHttpRequest"
-	],
-	"ignoreWords": [
-		"hikiko4ern",
-		"ianvs",
+		"XMLHttpRequest",
+		"xpinstall",
 		"BCP47"
 	],
 	"ignoreRegExpList": [
@@ -57,5 +76,11 @@
 		"/^- \\[[^\\]]*\\]\\((#[^)]*)\\)$/m",
 		// deps
 		"/@fluent/\\w+/"
+	],
+	"ignorePaths": [
+		"biome.json",
+		"bun.lockb",
+		"./cspell.json",
+		"packages/@nextui-org"
 	]
 }
