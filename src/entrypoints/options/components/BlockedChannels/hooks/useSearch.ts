@@ -1,64 +1,76 @@
-import Fuse from 'fuse.js';
-import { ifilter } from 'itertools';
-import { useCallback, useRef, useState } from 'preact/hooks';
+import { useSignal } from '@preact/signals';
+import { FlexSearch } from 'flexsearch/dist/flexsearch.compact.min';
+import { useCallback, useRef } from 'preact/hooks';
 
 import type { BlockedChannelData, ReadonlyBlockedChannels } from '@/storage/blockedChannels';
 
-export const useSearch = () => {
-	const instance = useRef<Fuse<BlockedChannelData>>();
-	const [searchResult, setSearchResult] = useState<BlockedChannelData[]>();
+const stringify = (channel: Readonly<BlockedChannelData>) =>
+	channel.permalink ? `${channel.title} ${channel.permalink}` : channel.title;
 
-	const initialize = useCallback((state: ReadonlyBlockedChannels) => {
-		instance.current = new Fuse(Array.from(state.values()), {
-			keys: [
-				'permalink',
-				{
-					name: 'title',
-					getFn: data => data.title.normalize('NFKC'),
-				},
-			],
-		});
+export const useSearch = () => {
+	const instance = useRef<FlexSearch.Index>();
+	const searchResult = useSignal<BlockedChannelData[] | undefined>(undefined);
+
+	const initializeIndex = useCallback((state: ReadonlyBlockedChannels) => {
+		const index = (instance.current = new FlexSearch.Index({
+			tokenize: 'full',
+			encode: str =>
+				str
+					.normalize('NFKC')
+					.toLowerCase()
+					.split(/[\p{Z}\p{S}\p{P}\p{C}]+/u),
+		}));
+
+		for (const channel of state.values()) {
+			index.add(channel.id, stringify(channel));
+		}
 	}, []);
 
-	const update = useCallback((state: ReadonlyBlockedChannels, diff: ReadonlySet<number>) => {
-		if (!instance.current) {
-			throw new Error('Fuse was not initialized');
+	const updateIndex = useCallback((state: ReadonlyBlockedChannels, diff: ReadonlySet<number>) => {
+		const index = instance.current;
+
+		if (!index) {
+			throw new Error('Index was not initialized');
 		}
 
-		const removed = new Set(
-			ifilter(diff, id => {
-				const item = state.get(id);
-				return item
-					? // biome-ignore lint/style/noNonNullAssertion: instance cannot be de-initialized
-					  (instance.current!.add(item), false)
-					: true;
-			}),
-		);
-		instance.current.remove(doc => removed.has(doc.id));
+		for (const id of diff) {
+			const item = state.get(id);
+
+			if (item) {
+				index.add(item.id, stringify(item));
+			} else {
+				index.remove(id);
+			}
+		}
 	}, []);
 
-	const search = useCallback((query: string) => {
-		if (!instance.current) {
-			throw new Error('Fuse was not initialized');
+	const search = useCallback((state: ReadonlyBlockedChannels, query: string) => {
+		const index = instance.current;
+
+		if (!index) {
+			throw new Error('Index was not initialized');
 		}
 
 		if (!query) {
-			setSearchResult(undefined);
+			searchResult.value = undefined;
 			return;
 		}
 
-		const res = instance.current.search(query);
-		setSearchResult(res.map(s => s.item));
+		index.searchAsync(query, Number.POSITIVE_INFINITY).then(res => {
+			searchResult.value = res.reduce<BlockedChannelData[]>((arr, id) => {
+				const channel = state.get(id as number);
+				channel && arr.push(channel);
+				return arr;
+			}, []);
+		});
 	}, []);
 
-	const clearSearch = useCallback(() => {
-		search('');
-	}, [search]);
+	const clearSearch = useCallback(() => (searchResult.value = undefined), []);
 
 	return {
 		searchResult,
-		initialize,
-		update,
+		initializeIndex,
+		updateIndex,
 		search,
 		clearSearch,
 	};

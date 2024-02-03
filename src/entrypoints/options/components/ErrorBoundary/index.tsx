@@ -1,6 +1,6 @@
 import { Localized } from '@fluent/react';
 import { Button } from '@nextui-org/button';
-import { useSignal } from '@preact/signals';
+import { type Signal, useSignal } from '@preact/signals';
 import cx from 'clsx';
 import type { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useErrorBoundary } from 'preact/hooks';
@@ -20,10 +20,6 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 		resetError();
 		attempt.value += 1;
 	}, [resetError]);
-
-	const handleSuccessfulRender = useCallback(() => {
-		attempt.value = 0;
-	}, []);
 
 	if (error) {
 		return (
@@ -59,23 +55,16 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 		);
 	}
 
-	return (
-		<ErrorBoundaryContent onSuccessfulRender={handleSuccessfulRender}>
-			{children}
-		</ErrorBoundaryContent>
-	);
+	return <ErrorBoundaryContent attempt={attempt}>{children}</ErrorBoundaryContent>;
 };
 
 interface ContentProps {
-	onSuccessfulRender: () => void;
+	attempt: Signal<number>;
 }
 
-const ErrorBoundaryContent: FunctionComponent<ContentProps> = ({
-	children,
-	onSuccessfulRender,
-}) => {
+const ErrorBoundaryContent: FunctionComponent<ContentProps> = ({ attempt, children }) => {
 	useEffect(() => {
-		onSuccessfulRender();
+		attempt.value = 0;
 	}, []);
 
 	return <>{children}</>;

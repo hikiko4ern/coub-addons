@@ -2,7 +2,8 @@ import { faker } from '@faker-js/faker';
 
 import type { RawBlockedChannels } from '@/storage/blockedChannels/types';
 
-const size = 1000;
+const DEST = 'blockedChannels.json';
+const size = Number.parseInt(process.argv[2], 10) || 1000;
 
 const data: RawBlockedChannels = {
 	id: new Array(size),
@@ -20,4 +21,7 @@ for (let i = 0; i < size; i++) {
 	data.permalink[i] = faker.internet.userName({ firstName, lastName });
 }
 
-await Bun.write('blockedChannels.json', JSON.stringify(data));
+await Bun.write(DEST, JSON.stringify(data));
+
+const formattedSize = new Intl.NumberFormat('en').format(size);
+console.log(`Wrote ${formattedSize} channels to ${DEST}`);

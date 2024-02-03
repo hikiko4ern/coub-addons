@@ -10,5 +10,6 @@
 		"noUnusedParameters": true,
 		"isolatedModules": true,
 		"verbatimModuleSyntax": true
-	}
+	},
+	"exclude": ["./packages/@nextui-org/react-rsc-utils"]
 }

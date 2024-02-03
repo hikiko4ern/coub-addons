@@ -37,7 +37,10 @@ export default defineConfig({
 	vite: () => ({
 		plugins: [
 			ValidateEnv(),
-			preact(),
+			preact({
+				// they are not working anyway
+				devToolsEnabled: false,
+			}),
 			sassDts(),
 			// it exits even dev build
 			false && {

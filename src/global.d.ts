@@ -9,3 +9,7 @@ interface ImportMetaEnv extends ImportMetaEnvAugmented {}
 namespace NodeJS {
 	interface ProcessEnv extends ImportMetaEnvAugmented {}
 }
+
+declare module 'flexsearch/dist/flexsearch.compact.min' {
+	export { default as FlexSearch } from 'flexsearch';
+}

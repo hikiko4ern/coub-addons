@@ -153,14 +153,26 @@
 			}
 		}
 	},
-	"overrides": [{
-		"include": ["**/components/*/index.tsx"],
-		"linter": {
-			"rules": {
-				"style": {
-					"noDefaultExport": "warn"
+	"overrides": [
+		{
+			"include": ["**/components/*/index.tsx"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noDefaultExport": "warn"
+					}
+				}
+			}
+		},
+		{
+			"include": ["utils/**"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"noConsoleLog": "off"
+					}
 				}
 			}
 		}
-	}]
+	]
 }

@@ -8,8 +8,9 @@ import {
 	ModalHeader,
 	useDisclosure,
 } from '@nextui-org/modal';
+import { useSignal } from '@preact/signals';
 import type { FunctionComponent } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback } from 'preact/hooks';
 
 interface Props {
 	className?: string;
@@ -17,14 +18,14 @@ interface Props {
 }
 
 export const ClearBlockedChannels: FunctionComponent<Props> = ({ className, clear }) => {
-	const [isLoading, setIsLoading] = useState(false);
+	const isLoading = useSignal(false);
 	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
 	const handleClear = useCallback(() => {
-		setIsLoading(true);
+		isLoading.value = true;
 		clear()
 			.then(onClose)
-			.finally(() => setIsLoading(false));
+			.finally(() => (isLoading.value = false));
 	}, []);
 
 	return (
@@ -50,7 +51,12 @@ export const ClearBlockedChannels: FunctionComponent<Props> = ({ className, clea
 									<Localized id="no" />
 								</Button>
 
-								<Button color="danger" variant="light" isLoading={isLoading} onPress={handleClear}>
+								<Button
+									color="danger"
+									variant="light"
+									isLoading={isLoading.value}
+									onPress={handleClear}
+								>
 									<Localized id="clear" />
 								</Button>
 							</ModalFooter>

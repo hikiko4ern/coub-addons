@@ -1,8 +1,9 @@
 import { Localized } from '@fluent/react';
 import MagnifyingGlassIcon from '@heroicons/react/24/outline/MagnifyingGlassIcon';
 import { Input } from '@nextui-org/input';
+import { useSignal } from '@preact/signals';
 import type { FunctionComponent, VNode } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback } from 'preact/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { ErrorCode } from '@/options/components/ErrorCode';
@@ -17,13 +18,19 @@ import { useSearch } from './hooks/useSearch';
 let blockedChannelsStorage: BlockedChannelsStorage;
 
 export const BlockedChannels: FunctionComponent = () => {
-	const { searchResult, initialize, update, search, clearSearch } = useSearch();
+	const {
+		searchResult,
+		initializeIndex: initialize,
+		updateIndex: update,
+		search,
+		clearSearch,
+	} = useSearch();
 	const blockedChannels = useStorageState({
 		storage: (blockedChannelsStorage ||= new BlockedChannelsStorage('options', logger)),
 		onInit: initialize,
 		onUpdate: update,
 	});
-	const [query, setQuery] = useState('');
+	const query = useSignal('');
 
 	const clearBlocklist = useCallback(() => blockedChannelsStorage.clear(), []);
 
@@ -32,19 +39,23 @@ export const BlockedChannels: FunctionComponent = () => {
 		[],
 	);
 
-	const debouncedSearch = useDebouncedCallback(search, 200);
+	const blockedChannelsDataRef = useWatchingRef(
+		blockedChannels.status === StorageHookState.Loaded ? blockedChannels.data : undefined,
+	);
+	const debouncedSearch = useDebouncedCallback(search, 20);
 
 	const handleSearchInput = useCallback(
-		(query: string) => {
-			setQuery(query);
-			debouncedSearch(query);
+		(newQuery: string) => {
+			query.value = newQuery;
+			// TODO: delay query until initialized?
+			blockedChannelsDataRef.current && debouncedSearch(blockedChannelsDataRef.current, newQuery);
 		},
-		[debouncedSearch],
+		[blockedChannelsDataRef, debouncedSearch],
 	);
 
 	const handleSearchClear = useCallback(() => {
 		debouncedSearch.cancel();
-		setQuery('');
+		query.value = '';
 		clearSearch();
 	}, [clearSearch, debouncedSearch]);
 
@@ -54,7 +65,7 @@ export const BlockedChannels: FunctionComponent = () => {
 		case StorageHookState.Loaded: {
 			content = (
 				<BlockedChannelsTable
-					data={searchResult || blockedChannels.data}
+					data={searchResult.value || blockedChannels.data}
 					globalTotal={blockedChannels.data.size}
 					isSearchApplied={!!searchResult}
 					onRemove={removeFromBlocklist}
@@ -85,7 +96,7 @@ export const BlockedChannels: FunctionComponent = () => {
 						name="search"
 						type="search"
 						isClearable
-						value={query}
+						value={query.value}
 						labelPlacement="outside-left"
 						startContent={<MagnifyingGlassIcon className="h-4" />}
 						onValueChange={handleSearchInput}
