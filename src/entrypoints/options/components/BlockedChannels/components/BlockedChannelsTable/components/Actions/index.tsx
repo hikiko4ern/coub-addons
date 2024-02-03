@@ -2,8 +2,9 @@ import { Localized } from '@fluent/react';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
 import { Button } from '@nextui-org/button';
 import { Tooltip } from '@nextui-org/tooltip';
+import { useSignal } from '@preact/signals';
 import type { FunctionComponent } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback } from 'preact/hooks';
 
 interface Props {
 	id: number;
@@ -11,11 +12,11 @@ interface Props {
 }
 
 export const Actions: FunctionComponent<Props> = ({ id, onRemove }) => {
-	const [isRemoving, setIsRemoving] = useState(false);
+	const isRemoving = useSignal(false);
 
 	const remove = useCallback(() => {
-		setIsRemoving(true);
-		onRemove(id).finally(() => setIsRemoving(false));
+		isRemoving.value = true;
+		onRemove(id).finally(() => (isRemoving.value = false));
 	}, [id, onRemove]);
 
 	return (
@@ -27,8 +28,8 @@ export const Actions: FunctionComponent<Props> = ({ id, onRemove }) => {
 						color="danger"
 						size="sm"
 						variant="light"
-						isLoading={isRemoving}
-						isDisabled={isRemoving}
+						isLoading={isRemoving.value}
+						isDisabled={isRemoving.value}
 						onPress={remove}
 					>
 						<TrashIcon className="w-5 h-5" />

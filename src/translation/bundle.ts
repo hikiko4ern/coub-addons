@@ -9,7 +9,8 @@ import ruRu from './data/ru-RU.ftl?raw';
 const RESOURCES = {
 	'en-US': new FluentResource(enUs),
 	'ru-RU': new FluentResource(ruRu),
-} satisfies Record<Intl.BCP47LanguageTag, FluentResource>;
+} satisfies Record<Intl.UnicodeBCP47LocaleIdentifier, FluentResource>;
+
 type Resources = typeof RESOURCES;
 export type AvailableLocale = keyof Resources;
 
