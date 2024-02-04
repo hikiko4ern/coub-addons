@@ -5,10 +5,12 @@ import type { FunctionComponent } from 'preact';
 import { Link as WLink, useLocation } from 'wouter-preact';
 
 import { ErrorBoundary } from '@/options/components/ErrorBoundary';
+import { useTabId } from '@/options/hooks/useTabId';
 import { routes } from '@/options/routes';
 
 export const Shell: FunctionComponent = ({ children }) => {
 	const [location] = useLocation();
+	const { isTabIdLoaded } = useTabId();
 
 	return (
 		<div className="w-full min-h-screen flex">
@@ -49,7 +51,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 			</Navbar>
 
 			<div className="w-full p-4 flex flex-col">
-				<ErrorBoundary>{children}</ErrorBoundary>
+				<ErrorBoundary>{isTabIdLoaded.value ? children : null}</ErrorBoundary>
 			</div>
 		</div>
 	);

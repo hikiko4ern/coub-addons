@@ -52,9 +52,8 @@ export const useStorageState = <
 
 	useEffect(() => {
 		state.status === StorageHookState.Loading &&
-			(initialValue as Exclude<typeof initialValue, State>)
-				.then(_data => {
-					const data = _data as ToReadonly<State>;
+			(initialValue as Exclude<typeof initialValue, ToReadonly<State>>)
+				.then(data => {
 					setState({ status: StorageHookState.Loaded, data });
 					onInitRef?.current(data);
 				})

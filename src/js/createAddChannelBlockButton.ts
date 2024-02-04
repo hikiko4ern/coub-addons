@@ -1,5 +1,6 @@
 import type { Unwatch } from 'wxt/storage';
 
+import { EventDispatcher } from '@/events';
 import { type BlockedChannelData, BlockedChannelsStorage } from '@/storage/blockedChannels';
 import { l10n } from '@/translation/dom';
 import type { Logger } from '@/utils/logger';
@@ -34,7 +35,9 @@ export const createAddChannelBlockButton = ({
 	followButtonTextDummySelector,
 }: CreateOptions) => {
 	const logger = parentLogger.getChildLogger('addChannelBlockButton');
-	const blockedChannels = new BlockedChannelsStorage(source, logger);
+	const blockedChannelsPromise = EventDispatcher.getTabId().then(
+		tabId => new BlockedChannelsStorage(tabId, source, logger),
+	);
 
 	return async ({ target, channel, onAdded }: AddOptions) => {
 		logger.debug('adding "Block" button for channel', channel, 'to node', target);
@@ -76,6 +79,7 @@ export const createAddChannelBlockButton = ({
 				return;
 			}
 
+			const blockedChannels = await blockedChannelsPromise;
 			let isBlocked = await blockedChannels.isBlocked(channel.id),
 				isHovered = false;
 

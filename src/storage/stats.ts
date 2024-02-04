@@ -32,14 +32,14 @@ export class StatsStorage extends StorageBase<typeof key, Stats> {
 	protected readonly logger: Logger;
 	protected readonly defaultValue = defaultValue;
 
-	constructor(source: string, logger: Logger) {
+	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(source, childLogger, statsItem);
+		super(tabId, source, childLogger, statsItem);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}
 
-	async countFilteredOutCoubs(filtered: FilteredOutCoub[]) {
+	async countFilteredOutCoubs(filtered: readonly Readonly<FilteredOutCoub>[]) {
 		if (!filtered.length) {
 			return;
 		}

@@ -45,9 +45,9 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	readonly #isBlockedListeners: Record</** channelId */ number, Set<IsBlockedListener>> = {};
 
-	constructor(source: string, logger: Logger) {
+	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(source, childLogger, blockedChannelsItem);
+		super(tabId, source, childLogger, blockedChannelsItem);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}
@@ -63,8 +63,8 @@ export class BlockedChannelsStorage extends StorageBase<
 	};
 
 	setIsBlocked(id: number, isBlocked: false): Promise<void>;
-	setIsBlocked(channel: BlockedChannelData, isBlocked: boolean): Promise<void>;
-	async setIsBlocked(idOrChannel: number | BlockedChannelData, isBlocked: boolean) {
+	setIsBlocked(channel: Readonly<BlockedChannelData>, isBlocked: boolean): Promise<void>;
+	async setIsBlocked(idOrChannel: number | Readonly<BlockedChannelData>, isBlocked: boolean) {
 		const id = typeof idOrChannel === 'number' ? idOrChannel : idOrChannel.id;
 		this.logger.debug(isBlocked ? 'blocking' : 'unblocking', 'channel', idOrChannel);
 
@@ -87,7 +87,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	protected async notifyWatcher(
 		cb: StorageWatchCallback<BlockedChannels, ListenerArgs> | undefined,
-		state: BlockedChannels,
+		state: ToReadonly<BlockedChannels>,
 		oldState: RawBlockedChannels | null,
 	): Promise<void> {
 		const oldChannelIds = oldState ? oldState.id : (await this.getValue()).keys();
