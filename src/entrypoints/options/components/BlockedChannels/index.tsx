@@ -9,6 +9,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { logger } from '@/options/constants';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
+import { useTabId } from '@/options/hooks/useTabId';
 import { BlockedChannelsStorage } from '@/storage/blockedChannels';
 
 import { BlockedChannelsTable } from './components/BlockedChannelsTable';
@@ -18,6 +19,7 @@ import { useSearch } from './hooks/useSearch';
 let blockedChannelsStorage: BlockedChannelsStorage;
 
 export const BlockedChannels: FunctionComponent = () => {
+	const { tabId } = useTabId();
 	const {
 		searchResult,
 		initializeIndex: initialize,
@@ -26,7 +28,7 @@ export const BlockedChannels: FunctionComponent = () => {
 		clearSearch,
 	} = useSearch();
 	const blockedChannels = useStorageState({
-		storage: (blockedChannelsStorage ||= new BlockedChannelsStorage('options', logger)),
+		storage: (blockedChannelsStorage ||= new BlockedChannelsStorage(tabId, 'options', logger)),
 		onInit: initialize,
 		onUpdate: update,
 	});

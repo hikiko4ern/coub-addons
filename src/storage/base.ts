@@ -24,15 +24,22 @@ export abstract class StorageBase<
 
 	readonly #storage;
 	readonly #source;
+	readonly #tabId;
 	readonly #watchers = new Set<StorageWatchCallback<State, ListenerArgs>>();
 	readonly #unwatch: Unwatch;
 	readonly #eventListener: EventListener;
-	#statePromise: Promise<State> | undefined;
-	#state!: State;
+	#statePromise: Promise<ToReadonly<State>> | undefined;
+	#state!: ToReadonly<State>;
 
-	constructor(source: string, logger: Logger, storage: WxtStorageItem<RawState, TMetadata>) {
+	constructor(
+		tabId: number | undefined,
+		source: string,
+		logger: Logger,
+		storage: WxtStorageItem<RawState, TMetadata>,
+	) {
 		this.#storage = storage;
 		this.#source = source;
+		this.#tabId = tabId;
 
 		this.#statePromise = storage
 			.getValue()
@@ -53,12 +60,20 @@ export abstract class StorageBase<
 		});
 
 		this.#eventListener = new EventListener(logger, msg => {
-			if (
-				msg.type === 'StorageUpdatedEvent' &&
-				msg.data.key === this.key &&
-				(msg.data.source !== this.#source || msg.data.trigger === StorageEventTrigger.SetValue)
-			) {
-				this.#notifyWatchers(msg.data.state as State, msg.data.oldState as RawState | null, false);
+			if (msg.type !== 'StorageUpdatedEvent' || msg.data.key !== this.key) {
+				return;
+			}
+
+			const isOutsideUpdate = msg.data.source !== this.#source || msg.data.tabId !== this.#tabId;
+
+			if (isOutsideUpdate || msg.data.trigger === StorageEventTrigger.SetValue) {
+				if (isOutsideUpdate) {
+					// we don't have to clone `state` as it's already `structuredClone` (and also it's immutable)
+					// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Chrome_incompatibilities#data_cloning_algorithm
+					this.#state = msg.data.state as ToReadonly<State>;
+				}
+
+				this.#notifyWatchers(this.#state, msg.data.oldState as RawState | null, false);
 			}
 		});
 	}
@@ -81,7 +96,7 @@ export abstract class StorageBase<
 	}
 
 	#notifyWatchers(
-		state: State,
+		state: ToReadonly<State>,
 		oldState: RawState | null,
 		isDispatchEvent: boolean,
 		eventTrigger?: StorageEventTrigger,
@@ -98,6 +113,7 @@ export abstract class StorageBase<
 
 		isDispatchEvent &&
 			EventDispatcher.dispatchStorageUpdate({
+				tabId: this.#tabId,
 				source: this.#source,
 				key: this.key,
 				state,
@@ -117,13 +133,13 @@ export abstract class StorageBase<
 		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
 	}
 
-	protected parseRawValue(raw: RawState): State {
-		return raw as unknown as State;
+	protected parseRawValue(raw: RawState): ToReadonly<State> {
+		return raw as unknown as ToReadonly<State>;
 	}
 
 	protected notifyWatcher(
 		cb: StorageWatchCallback<State, ListenerArgs> | undefined,
-		state: State,
+		state: ToReadonly<State>,
 		_oldState: RawState | null,
 	): void {
 		(cb as unknown as StorageWatchCallback<State, []> | undefined)?.(state as ToReadonly<State>);

@@ -16,8 +16,8 @@ export class Context implements Disposable {
 		this.origin = import.meta.env.VITE_COUB_ORIGIN;
 		this.webRequest = new WebRequestExt(this);
 		this.coubHelpers = new CoubHelpers(this);
-		this.blockedChannels = new BlockedChannelsStorage('bg', logger);
-		this.stats = new StatsStorage('bg', logger);
+		this.blockedChannels = new BlockedChannelsStorage(undefined, 'bg', logger);
+		this.stats = new StatsStorage(undefined, 'bg', logger);
 	}
 
 	[Symbol.dispose]() {

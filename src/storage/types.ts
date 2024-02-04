@@ -9,6 +9,7 @@ export enum StorageEventTrigger {
 export type StorageEvent = ToStorageEvent<BlockedChannelsStorage> | ToStorageEvent<StatsStorage>;
 
 interface StorageEventBase<Key extends string, State, RawState> {
+	tabId: number | undefined;
 	source: string;
 	key: Key;
 	state: State;

@@ -9,7 +9,8 @@ import './styles.scss';
 
 const PREFIX = `${browser.runtime.id}__block__`;
 // `:not(.channel-menu-dropdown)` excludes dropdown of the current user's profile
-const DROPDOWN_SELECTOR = '.dropdown:not(.channel-menu-dropdown)' as const;
+const DROPDOWN_SELECTOR =
+	'.dropdown:not(.channel-menu-dropdown):not(.header__create-dropdown)' as const;
 const CHANNEL_DROPDOWN_CONTENT_SELECTOR = '.channel--box-card' as const;
 const CHANNEL_FOLLOW_BUTTON_SELECTOR = 'div.channel-follow-button' as const;
 const CHANNEL_ID_ATTR = 'data-channel-id' as const;

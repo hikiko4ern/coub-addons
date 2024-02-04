@@ -13,26 +13,36 @@ interface StorageUpdatedEvent {
 	data: StorageEvent;
 }
 
-type Event = I18nLocaleEvent | StorageUpdatedEvent;
+interface GetTabIdEvent {
+	type: 'GetTabId';
+}
+
+type Event = I18nLocaleEvent | StorageUpdatedEvent | GetTabIdEvent;
 
 type EventHandler = OnMessageHandlerWithMessageType<Event>;
 
-const EVENT_IDS: ReadonlySet<Event['type']> = new Set(['I18nLocaleEvent', 'StorageUpdatedEvent']);
+const EVENT_IDS: ReadonlySet<Event['type']> = new Set([
+	'I18nLocaleEvent',
+	'StorageUpdatedEvent',
+	'GetTabId',
+]);
 const logger = Logger.create('events');
 
 export class EventDispatcher {
-	private static async dispatchEvent(event: Event) {
-		await EventDispatcher.dispatch('runtime', event, event => browser.runtime.sendMessage(event));
+	private static async dispatchEvent<Response = void>(event: Event) {
+		return EventDispatcher.dispatch<Response>('runtime', event, event =>
+			browser.runtime.sendMessage(event),
+		);
 	}
 
-	static async dispatch(
+	static async dispatch<Response>(
 		target: string,
 		event: Event,
-		sendMessage: (event: Event) => Promise<unknown>,
+		sendMessage: (event: Event) => Promise<Response>,
 	) {
 		try {
 			logger.debug('dispatching event', event, 'to', target);
-			await sendMessage(event);
+			return await sendMessage(event);
 		} catch (err) {
 			logger.error('dispatching error:', err);
 		}
@@ -43,6 +53,8 @@ export class EventDispatcher {
 
 	static dispatchStorageUpdate = (data: StorageUpdatedEvent['data']) =>
 		EventDispatcher.dispatchEvent({ type: 'StorageUpdatedEvent', data });
+
+	static getTabId = () => EventDispatcher.dispatchEvent<number>({ type: 'GetTabId' });
 }
 
 export class EventListener implements Disposable {
@@ -56,11 +68,9 @@ export class EventListener implements Disposable {
 
 		const handleEvent: OnMessageHandler = (e: unknown, ...args) => {
 			try {
-				this.#logger.debug('received event', e);
-
 				if (isEvent(e)) {
-					const event = e as Event;
-					return handler(event, ...args);
+					this.#logger.debug('received event', e);
+					return handler(e as Event, ...args);
 				}
 			} catch (err) {
 				this.#logger.error('failed to handle event', e, err);

@@ -4,6 +4,7 @@ import type { FunctionComponent } from 'preact';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { logger } from '@/options/constants';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
+import { useTabId } from '@/options/hooks/useTabId';
 import { StatsStorage } from '@/storage/stats';
 
 import { FilteredOutCoubs } from './components/FilteredOutCoubs';
@@ -11,8 +12,9 @@ import { FilteredOutCoubs } from './components/FilteredOutCoubs';
 let statsStorage: StatsStorage;
 
 export const Stats: FunctionComponent = () => {
+	const { tabId } = useTabId();
 	const stats = useStorageState({
-		storage: (statsStorage ||= new StatsStorage('options', logger)),
+		storage: (statsStorage ||= new StatsStorage(tabId, 'options', logger)),
 	});
 
 	switch (stats.status) {
