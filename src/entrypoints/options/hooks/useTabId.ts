@@ -3,7 +3,7 @@ import { useEffect } from 'preact/hooks';
 
 import { logger } from '../constants';
 
-let tabId: number | undefined = undefined;
+export let tabId: number | undefined = undefined;
 let isTabIdLoading = false;
 const isTabIdLoaded = signal(false);
 

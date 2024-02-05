@@ -6,11 +6,14 @@ import type { ToReadonly } from '@/types/util';
 import { Logger } from '@/utils/logger';
 
 import { StorageBase, type StorageWatchCallback } from '../base';
+import type { StorageMeta } from '../types';
 import { blockedChannelsToRaw } from './helpers/blockedChannelsToRaw';
 import { iterRawBlockedChannels } from './helpers/iterRawBlockedChannels';
 import type { BlockedChannelData, RawBlockedChannels } from './types';
 
-export type { BlockedChannelData } from './types';
+export type { BlockedChannelData, RawBlockedChannels } from './types';
+
+export interface BlockedChannelsMeta extends StorageMeta {}
 
 const key = 'blockedChannels' as const;
 
@@ -20,11 +23,14 @@ const defaultValue: RawBlockedChannels = {
 	permalink: [],
 };
 
-const blockedChannelsItem = storage.defineItem<RawBlockedChannels>(`local:${key}`, {
-	version: 1,
-	// TODO: `defaultValue` is not returned when calling `storage.getValue()` with empty storage?
-	defaultValue,
-});
+const blockedChannelsItem = storage.defineItem<RawBlockedChannels, BlockedChannelsMeta>(
+	`local:${key}`,
+	{
+		version: 1,
+		// TODO: `defaultValue` is not returned when calling `storage.getValue()` with empty storage?
+		defaultValue,
+	},
+);
 
 type BlockedChannels = Map</** channelId */ number, BlockedChannelData>;
 export type ReadonlyBlockedChannels = ToReadonly<BlockedChannels>;
@@ -35,11 +41,12 @@ type ListenerArgs = [diff: ReadonlySet<number>];
 export class BlockedChannelsStorage extends StorageBase<
 	typeof key,
 	BlockedChannels,
-	Record<string, never>,
+	BlockedChannelsMeta,
 	RawBlockedChannels,
 	ListenerArgs
 > {
-	protected readonly key = key;
+	static readonly KEY = key;
+	static readonly META_KEY = `${key}$` as const;
 	protected readonly logger: Logger;
 	protected readonly defaultValue = defaultValue;
 
@@ -47,7 +54,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, blockedChannelsItem);
+		super(tabId, source, childLogger, new.target.KEY, blockedChannelsItem);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}
@@ -108,5 +115,9 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	protected parseRawValue(raw: RawBlockedChannels): BlockedChannels {
 		return new Map(iterRawBlockedChannels(raw));
+	}
+
+	protected toRawValue(parsed: ReadonlyBlockedChannels): RawBlockedChannels {
+		return blockedChannelsToRaw(parsed.values(), parsed.size);
 	}
 }

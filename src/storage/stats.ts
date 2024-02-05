@@ -3,10 +3,13 @@ import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
 import { StorageBase } from './base';
+import type { StorageMeta } from './types';
 
 interface Stats {
 	filtered: Record<CoubExclusionReason, number>;
 }
+
+export interface StatsMeta extends StorageMeta {}
 
 interface FilteredOutCoub {
 	_reason: CoubExclusionReason;
@@ -22,19 +25,19 @@ const defaultValue: Stats = {
 	) as Stats['filtered'],
 };
 
-const statsItem = storage.defineItem<Stats>(`local:${key}`, {
+const statsItem = storage.defineItem<Stats, StorageMeta>(`local:${key}`, {
 	version: 1,
 	defaultValue,
 });
 
 export class StatsStorage extends StorageBase<typeof key, Stats> {
-	protected readonly key = key;
+	static readonly KEY = key;
 	protected readonly logger: Logger;
 	protected readonly defaultValue = defaultValue;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, statsItem);
+		super(tabId, source, childLogger, new.target.KEY, statsItem);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

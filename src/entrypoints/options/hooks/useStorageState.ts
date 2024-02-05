@@ -4,6 +4,7 @@ import { isPromise } from '@/helpers/isPromise';
 import { usePrevious } from '@/hooks/usePrevious';
 import { useWatchingRef } from '@/hooks/useWatchingRef';
 import type { StorageBase } from '@/storage/base';
+import type { StorageMeta } from '@/storage/types';
 import type { ToReadonly } from '@/types/util';
 
 export enum StorageHookState {
@@ -20,7 +21,7 @@ type InnerState<State> =
 interface Options<
 	Key extends string,
 	State,
-	TMetadata extends Record<string, unknown>,
+	TMetadata extends StorageMeta,
 	RawState,
 	ListenerArgs extends unknown[],
 > {
@@ -32,7 +33,7 @@ interface Options<
 export const useStorageState = <
 	Key extends string,
 	State,
-	TMetadata extends Record<string, unknown>,
+	TMetadata extends StorageMeta,
 	RawState,
 	ListenerArgs extends unknown[],
 >({

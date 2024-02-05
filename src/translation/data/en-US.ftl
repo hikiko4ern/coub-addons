@@ -6,6 +6,8 @@ an-error-occurred-while-loading = An error occurred while loading
 clear = Clear
 clearing = Clearing...
 no = No
+confirm = Confirm
+cancel = Cancel
 
 ## follow button
 
@@ -57,3 +59,16 @@ reason = Reason
 count = Count
 coub-is-disliked = coub is disliked
 channel-is-blocked = channel is blocked
+
+## options / settings
+settings = Settings
+backups = Backups
+import-backup = Import backup
+export-backup = Export backup
+backup-creation-error = Failed to create backup:<br/>{$error}
+backup-restoration-error = Failed to import backup:<br/>{$error}
+backup-imported-successfully = Backup imported successfully
+backup-imported-successfully-but-reinitialization-failed = The backup was successfully imported, but the state could not be updated. The extension will be automatically reloaded.
+import-backup-confirmation-header = Are you sure?
+import-backup-confirmation-message = All your existing data will be overwritten by the backup. Continue?
+file-content-is-not-a-valid-backup = The contents of the file are not a valid backup

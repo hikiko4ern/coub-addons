@@ -7,19 +7,15 @@ import { useCallback } from 'preact/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { ErrorCode } from '@/options/components/ErrorCode';
-import { logger } from '@/options/constants';
+import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import { useTabId } from '@/options/hooks/useTabId';
-import { BlockedChannelsStorage } from '@/storage/blockedChannels';
 
 import { BlockedChannelsTable } from './components/BlockedChannelsTable';
 import { ClearBlockedChannels } from './components/ClearBlockedChannels';
 import { useSearch } from './hooks/useSearch';
 
-let blockedChannelsStorage: BlockedChannelsStorage;
-
 export const BlockedChannels: FunctionComponent = () => {
-	const { tabId } = useTabId();
+	const { blockedChannelsStorage } = useLazyStorages();
 	const {
 		searchResult,
 		initializeIndex: initialize,
@@ -28,7 +24,7 @@ export const BlockedChannels: FunctionComponent = () => {
 		clearSearch,
 	} = useSearch();
 	const blockedChannels = useStorageState({
-		storage: (blockedChannelsStorage ||= new BlockedChannelsStorage(tabId, 'options', logger)),
+		storage: blockedChannelsStorage,
 		onInit: initialize,
 		onUpdate: update,
 	});
