@@ -1,5 +1,5 @@
 import { useSignal } from '@preact/signals';
-import { FlexSearch } from 'flexsearch/dist/flexsearch.compact.min';
+import { default as FlexSearch } from 'flexsearch';
 import { useCallback, useRef } from 'preact/hooks';
 
 import type { BlockedChannelData, ReadonlyBlockedChannels } from '@/storage/blockedChannels';
