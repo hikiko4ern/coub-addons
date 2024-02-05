@@ -3,7 +3,7 @@ import type { Unwatch, WxtStorageItem } from 'wxt/storage';
 import { EventDispatcher, EventListener } from '@/events';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
-import { type StorageEvent, StorageEventTrigger } from './types';
+import { type StorageEvent, StorageEventTrigger, type StorageMeta } from './types';
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
 	state: ToReadonly<State>,
@@ -13,15 +13,15 @@ export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
 export abstract class StorageBase<
 	Key extends string,
 	State,
-	TMetadata extends Record<string, unknown> = Record<string, never>,
+	TMetadata extends StorageMeta = StorageMeta,
 	RawState = State,
 	ListenerArgs extends unknown[] = [],
 > implements Disposable
 {
-	protected abstract readonly key: Key;
 	protected abstract readonly logger: Logger;
 	protected abstract readonly defaultValue: RawState;
 
+	readonly #key;
 	readonly #storage;
 	readonly #source;
 	readonly #tabId;
@@ -35,20 +35,15 @@ export abstract class StorageBase<
 		tabId: number | undefined,
 		source: string,
 		logger: Logger,
+		key: Key,
 		storage: WxtStorageItem<RawState, TMetadata>,
 	) {
-		this.#storage = storage;
-		this.#source = source;
 		this.#tabId = tabId;
+		this.#source = source;
+		this.#key = key;
+		this.#storage = storage;
 
-		this.#statePromise = storage
-			.getValue()
-			.then(res => {
-				const state = (this.#state = this.parseRawValue(res));
-				this.logger.debug('initialized with state', state, 'from raw', res);
-				return state;
-			})
-			.finally(() => (this.#statePromise = undefined));
+		this.initialize();
 
 		this.#unwatch = this.#storage.watch((_state, oldState) => {
 			const state = this.parseRawValue(
@@ -60,7 +55,7 @@ export abstract class StorageBase<
 		});
 
 		this.#eventListener = new EventListener(logger, msg => {
-			if (msg.type !== 'StorageUpdatedEvent' || msg.data.key !== this.key) {
+			if (msg.type !== 'StorageUpdatedEvent' || msg.data.key !== this.#key) {
 				return;
 			}
 
@@ -76,6 +71,23 @@ export abstract class StorageBase<
 				this.#notifyWatchers(this.#state, msg.data.oldState as RawState | null, false);
 			}
 		});
+	}
+
+	initialize() {
+		return (this.#statePromise = this.#storage
+			.getValue()
+			.then(res => {
+				const state = (this.#state = this.parseRawValue(res));
+				this.logger.debug('initialized with state', state, 'from raw', res);
+				return state;
+			})
+			.finally(() => (this.#statePromise = undefined)));
+	}
+
+	async reinitialize() {
+		const oldState = this.toRawValue(await this.getValue());
+		const state = await this.initialize();
+		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
 	}
 
 	getValue() {
@@ -115,7 +127,7 @@ export abstract class StorageBase<
 			EventDispatcher.dispatchStorageUpdate({
 				tabId: this.#tabId,
 				source: this.#source,
-				key: this.key,
+				key: this.#key,
 				state,
 				oldState,
 				trigger: eventTrigger,
@@ -135,6 +147,10 @@ export abstract class StorageBase<
 
 	protected parseRawValue(raw: RawState): ToReadonly<State> {
 		return raw as unknown as ToReadonly<State>;
+	}
+
+	protected toRawValue(parsed: ToReadonly<State>): RawState {
+		return parsed as unknown as RawState;
 	}
 
 	protected notifyWatcher(

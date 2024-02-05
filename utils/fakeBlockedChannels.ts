@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 
+import type { Backup } from '@/storage/backup';
 import type { RawBlockedChannels } from '@/storage/blockedChannels/types';
 
 const DEST = 'blockedChannels.json';
@@ -9,6 +10,11 @@ const data: RawBlockedChannels = {
 	id: new Array(size),
 	title: new Array(size),
 	permalink: new Array(size),
+};
+
+const backup: Backup = {
+	blockedChannels: data,
+	blockedChannels$: { v: 1 },
 };
 
 for (let i = 0; i < size; i++) {
@@ -21,7 +27,7 @@ for (let i = 0; i < size; i++) {
 	data.permalink[i] = faker.internet.userName({ firstName, lastName });
 }
 
-await Bun.write(DEST, JSON.stringify(data));
+await Bun.write(DEST, JSON.stringify(backup));
 
 const formattedSize = new Intl.NumberFormat('en').format(size);
 console.log(`Wrote ${formattedSize} channels to ${DEST}`);

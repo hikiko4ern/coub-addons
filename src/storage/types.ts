@@ -2,6 +2,11 @@ import type { StorageBase } from './base';
 import type { BlockedChannelsStorage } from './blockedChannels';
 import type { StatsStorage } from './stats';
 
+export interface StorageMeta {
+	v: number;
+	[index: string]: unknown;
+}
+
 export enum StorageEventTrigger {
 	SetValue = 'setValue',
 }

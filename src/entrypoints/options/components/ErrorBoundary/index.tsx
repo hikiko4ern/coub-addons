@@ -23,7 +23,7 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 
 	if (error) {
 		return (
-			<div className="flex flex-1 flex-col gap-y-4 items-center justify-center">
+			<div className="w-full flex flex-1 flex-col gap-y-4 items-center justify-center">
 				<ErrorCode data={error} collapsible>
 					<p>
 						<Localized

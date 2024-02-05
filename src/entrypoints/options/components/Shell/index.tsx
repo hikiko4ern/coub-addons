@@ -2,6 +2,8 @@ import { Localized } from '@fluent/react';
 import { Link } from '@nextui-org/link';
 import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/navbar';
 import type { FunctionComponent } from 'preact';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { Link as WLink, useLocation } from 'wouter-preact';
 
 import { ErrorBoundary } from '@/options/components/ErrorBoundary';
@@ -14,6 +16,14 @@ export const Shell: FunctionComponent = ({ children }) => {
 
 	return (
 		<div className="w-full min-h-screen flex">
+			<ToastContainer
+				className="w-auto min-w-[var(--toastify-toast-width)] max-w-xl"
+				position="top-center"
+				theme="dark"
+				newestOnTop
+				closeOnClick
+			/>
+
 			<Navbar
 				// TODO: switch to vertical layout on <sm
 				className="w-auto flex-col justify-normal border-r border-divider p-4"
@@ -50,7 +60,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 				</NavbarContent>
 			</Navbar>
 
-			<div className="w-full p-4 flex flex-col">
+			<div className="w-full p-4 flex flex-col items-start">
 				<ErrorBoundary>{isTabIdLoaded.value ? children : null}</ErrorBoundary>
 			</div>
 		</div>
