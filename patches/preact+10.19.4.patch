@@ -1,0 +1,14 @@
+diff --git a/node_modules/preact/compat/src/index.d.ts b/node_modules/preact/compat/src/index.d.ts
+index 80a930d..96fd72d 100644
+--- a/node_modules/preact/compat/src/index.d.ts
++++ b/node_modules/preact/compat/src/index.d.ts
+@@ -215,4 +215,9 @@ declare namespace React {
+ 		callback: () => void
+ 	): void;
+ 	export const unstable_now: () => number;
++
++  // Custom
++  export type ComponentPropsWithoutRef<
++  	C extends React.ComponentType<any> | keyof JSXInternal.IntrinsicElements,
++  > = React.PropsWithoutRef<ComponentProps<C>>;
+ }
