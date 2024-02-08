@@ -1,0 +1,16 @@
+{
+	"name": "@coub-addons/vite-plugin-arraybuffer",
+	"description": "Vite plugin for import file as ArrayBuffer",
+	"type": "module",
+	"main": "src/index.js",
+	"dependencies": {
+		"base64-arraybuffer": "^1.0.2"
+	},
+	"peerDependencies": {
+		"vite": "^5"
+	},
+	"repository": "https://github.com/hikiko4ern/coub-addons.git",
+	"author": "hikiko4ern",
+	"license": "Unlicense",
+	"private": true
+}

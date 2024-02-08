@@ -4,7 +4,8 @@
 		"ignore": [
 			"**/*.json",
 			"**/*.scss.d.ts",
-			"**/packages/@nextui-org/**"
+			"**/packages/@nextui-org/react-rsc-utils/**",
+			"**/packages/*/lib/**"
 		]
 	},
 	"vcs": {

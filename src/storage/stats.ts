@@ -5,32 +5,45 @@ import type { Logger } from '@/utils/logger';
 import { StorageBase } from './base';
 import type { StorageMeta } from './types';
 
-interface Stats {
+interface StatsV1 {
+	filtered: Record<CoubExclusionReason.COUB_DISLIKED | CoubExclusionReason.CHANNEL_BLOCKED, number>;
+}
+
+interface StatsV2 {
 	filtered: Record<CoubExclusionReason, number>;
 }
 
 export interface StatsMeta extends StorageMeta {}
 
 interface FilteredOutCoub {
-	_reason: CoubExclusionReason;
+	reason: CoubExclusionReason;
 }
 
-export type ReadonlyStats = ToReadonly<Stats>;
+export type ReadonlyStats = ToReadonly<StatsV2>;
 
 const key = 'stats' as const;
 
-const defaultValue: Stats = {
+const defaultValue: StatsV2 = {
 	filtered: Object.fromEntries(
 		Object.values(CoubExclusionReason).map(reason => [reason, 0]),
-	) as Stats['filtered'],
+	) as StatsV2['filtered'],
 };
 
-const statsItem = storage.defineItem<Stats, StorageMeta>(`local:${key}`, {
-	version: 1,
+const statsItem = storage.defineItem<StatsV2, StatsMeta>(`local:${key}`, {
+	version: 2,
 	defaultValue,
+	migrations: {
+		2: (stats: StatsV1): StatsV2 => ({
+			...stats,
+			filtered: {
+				...stats.filtered,
+				[CoubExclusionReason.TAG_BLOCKED]: 0,
+			},
+		}),
+	},
 });
 
-export class StatsStorage extends StorageBase<typeof key, Stats> {
+export class StatsStorage extends StorageBase<typeof key, StatsV2, StatsMeta> {
 	static readonly KEY = key;
 	protected readonly logger: Logger;
 	protected readonly defaultValue = defaultValue;
@@ -48,9 +61,9 @@ export class StatsStorage extends StorageBase<typeof key, Stats> {
 		}
 
 		const stats = await this.getValue();
-		const newStats: Stats = { ...stats, filtered: { ...stats.filtered } };
+		const newStats: StatsV2 = { ...stats, filtered: { ...stats.filtered } };
 
-		for (const { _reason } of filtered) {
+		for (const { reason: _reason } of filtered) {
 			newStats.filtered[_reason] = (newStats.filtered[_reason] || 0) + 1;
 		}
 

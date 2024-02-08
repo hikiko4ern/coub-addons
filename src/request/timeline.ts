@@ -19,17 +19,29 @@ export interface TimelineResponseCoub {
 	dislike: boolean;
 	/** coub's author */
 	channel: Channel;
+	/** coub's tags */
+	tags: TimelineResponseCoubTag[];
+}
+
+interface TimelineResponseCoubTag {
+	id: number;
+	/** displayed tag name */
+	title: string;
+	/** {@link title} encoded as a URI component */
+	value: string;
 }
 
 interface FilteredOutCoub extends CoubTitleData {
+	reason: CoubExclusionReason;
+	tReason: string;
+	pattern: string | undefined;
 	link: string;
-	reason: string;
-	_reason: CoubExclusionReason;
 }
 
 const EXCLUSION_REASON_TEXT: Record<CoubExclusionReason, string> = {
 	[CoubExclusionReason.COUB_DISLIKED]: 'coub is disliked',
 	[CoubExclusionReason.CHANNEL_BLOCKED]: 'author is blocked manually',
+	[CoubExclusionReason.TAG_BLOCKED]: 'tag is blocked',
 };
 
 export const registerTimelineHandlers = (ctx: Context) => {
@@ -48,15 +60,18 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				const filteredCoubs: (typeof data)['coubs'] = [];
 				const filteredOutCoubs: FilteredOutCoub[] = [];
 
+				const checker = await ctx.coubHelpers.createChecker();
+
 				for (const coub of data.coubs) {
-					const [isExclude, reason] = await ctx.coubHelpers.isExcludeFromTimeline(coub);
+					const [isExclude, reason, blockedByPattern] = checker.isExcludeFromTimeline(coub);
 
 					if (isExclude) {
 						filteredOutCoubs.push({
 							...ctx.coubHelpers.getCoubTitleData(coub),
-							reason: EXCLUSION_REASON_TEXT[reason],
+							reason: reason,
+							tReason: EXCLUSION_REASON_TEXT[reason],
+							pattern: blockedByPattern,
 							link: ctx.coubHelpers.getCoubPermalink(coub.permalink).toString(),
-							_reason: reason,
 						});
 						continue;
 					}
@@ -69,7 +84,7 @@ export const registerTimelineHandlers = (ctx: Context) => {
 
 				if (filteredOutCoubs.length) {
 					logger.groupCollapsed('filtered out', filteredOutCoubs.length, 'coubs');
-					logger.tableRaw(filteredOutCoubs, ['title', 'author', 'link', 'reason']);
+					logger.tableRaw(filteredOutCoubs, ['title', 'author', 'tReason', 'pattern', 'link']);
 					logger.groupEnd();
 
 					ctx.coubHelpers.isCountTimelineRequestInStats(details) &&

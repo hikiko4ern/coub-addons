@@ -1,4 +1,5 @@
 import { BlockedChannelsStorage } from '@/storage/blockedChannels';
+import { BlockedTagsStorage } from '@/storage/blockedTags';
 import { StatsStorage } from '@/storage/stats';
 import type { Logger } from '@/utils/logger';
 
@@ -10,6 +11,7 @@ export class Context implements Disposable {
 	readonly webRequest: WebRequestExt;
 	readonly coubHelpers: CoubHelpers;
 	readonly blockedChannels: BlockedChannelsStorage;
+	readonly blockedTags: BlockedTagsStorage;
 	readonly stats: StatsStorage;
 
 	constructor(logger: Logger) {
@@ -17,6 +19,7 @@ export class Context implements Disposable {
 		this.webRequest = new WebRequestExt(this);
 		this.coubHelpers = new CoubHelpers(this);
 		this.blockedChannels = new BlockedChannelsStorage(undefined, 'bg', logger);
+		this.blockedTags = new BlockedTagsStorage(undefined, 'bg', logger);
 		this.stats = new StatsStorage(undefined, 'bg', logger);
 	}
 

@@ -129,7 +129,7 @@ export const ImportExport: FunctionComponent = () => {
 					color="primary"
 					isLoading={isLoading.value && !isRestoring.value}
 					isDisabled={isLoading.value}
-					onClick={createAndDownloadBackup}
+					onPress={createAndDownloadBackup}
 				>
 					<Localized id="export-backup" />
 				</Button>

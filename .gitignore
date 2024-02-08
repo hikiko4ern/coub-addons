@@ -31,3 +31,8 @@ blockedChannels.json
 # caches
 .cspellcache
 *.tsbuildinfo
+
+# packages
+/target
+/packages/*/lib
+/packages/*/target

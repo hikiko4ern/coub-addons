@@ -1,3 +1,4 @@
+import type { ToReadonly } from '@/types/util';
 import type { StorageBase } from './base';
 import type { BlockedChannelsStorage } from './blockedChannels';
 import type { StatsStorage } from './stats';
@@ -12,6 +13,12 @@ export enum StorageEventTrigger {
 }
 
 export type StorageEvent = ToStorageEvent<BlockedChannelsStorage> | ToStorageEvent<StatsStorage>;
+
+// biome-ignore lint/suspicious/noExplicitAny:
+export type FnWithState<State, Fn extends (...args: any[]) => any> = (
+	state: ToReadonly<State>,
+	...args: Parameters<Fn>
+) => ReturnType<Fn>;
 
 interface StorageEventBase<Key extends string, State, RawState> {
 	tabId: number | undefined;
