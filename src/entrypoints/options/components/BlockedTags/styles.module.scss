@@ -1,0 +1,13 @@
+.blocked-tags__editor {
+  :global {
+    .cm-editor {
+      height: 100%;
+
+      > .cm-scroller {
+        flex-grow: 1;
+        font-family: source-code-pro, 'Source Code Pro', Menlo, Monaco, Consolas, 'Courier New',
+          monospace;
+      }
+    }
+  }
+}

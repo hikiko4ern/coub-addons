@@ -1,3 +1,7 @@
+import { imap } from 'itertools';
+
+import type { IsChannelBlockedFn } from '@/storage/blockedChannels';
+import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
 import { Logger } from '@/utils/logger';
 
 import type { Context } from './ctx';
@@ -23,6 +27,7 @@ export interface CoubTitleData {
 export enum CoubExclusionReason {
 	COUB_DISLIKED = 'coub-is-disliked',
 	CHANNEL_BLOCKED = 'channel-is-blocked',
+	TAG_BLOCKED = 'tag-is-blocked',
 }
 
 const logger = Logger.create('CoubHelpers');
@@ -41,30 +46,7 @@ export class CoubHelpers {
 
 	getCoubPermalink = (permalink: string) => new URL(`/view/${permalink}`, this.#ctx.origin);
 
-	isExcludeFromTimeline = async (
-		coub: TimelineResponseCoub,
-	): Promise<[isExclude: true, reason: CoubExclusionReason] | [isExclude: false]> => {
-		if (typeof coub === 'object' && coub !== null) {
-			if (coub.like === true || coub.favourite === true) {
-				return [false];
-			}
-
-			if (coub.dislike === true) {
-				return [true, CoubExclusionReason.COUB_DISLIKED];
-			}
-
-			if (
-				typeof coub.channel === 'object' &&
-				coub.channel !== null &&
-				typeof coub.channel.id === 'number' &&
-				(await this.#ctx.blockedChannels.isBlocked(coub.channel.id))
-			) {
-				return [true, CoubExclusionReason.CHANNEL_BLOCKED];
-			}
-		}
-
-		return [false];
-	};
+	createChecker = async () => CoubBlocklistChecker.create(this.#ctx);
 
 	isCountTimelineRequestInStats = (details: RequestDetails) => {
 		try {
@@ -78,5 +60,73 @@ export class CoubHelpers {
 		}
 
 		return true;
+	};
+}
+
+class CoubBlocklistChecker {
+	readonly #isChannelBlocked: IsChannelBlockedFn;
+	readonly #isHaveBlockedTags: IsHaveBlockedTagsFn;
+
+	private constructor(
+		isChannelBlocked: IsChannelBlockedFn,
+		isHaveBlockedTags: IsHaveBlockedTagsFn,
+	) {
+		this.#isChannelBlocked = isChannelBlocked;
+		this.#isHaveBlockedTags = isHaveBlockedTags;
+	}
+
+	static async create(ctx: Context) {
+		return new CoubBlocklistChecker(
+			...(await Promise.all([
+				ctx.blockedChannels.createBoundedIsBlocked(),
+				ctx.blockedTags.createBoundedIsBlocked(),
+			])),
+		);
+	}
+
+	isExcludeFromTimeline = (
+		coub: TimelineResponseCoub,
+	):
+		| [isExclude: true, reason: Exclude<CoubExclusionReason, CoubExclusionReason.TAG_BLOCKED>]
+		| [isExclude: true, reason: CoubExclusionReason.TAG_BLOCKED, blockedByPattern: string]
+		| [isExclude: false] => {
+		if (
+			coub == null ||
+			typeof coub !== 'object' ||
+			Array.isArray(coub) ||
+			coub.like === true ||
+			coub.favourite === true
+		) {
+			return [false];
+		}
+
+		if (coub.dislike === true) {
+			return [true, CoubExclusionReason.COUB_DISLIKED];
+		}
+
+		if (
+			coub.channel != null &&
+			typeof coub.channel === 'object' &&
+			typeof coub.channel.id === 'number' &&
+			this.#isChannelBlocked(coub.channel.id)
+		) {
+			return [true, CoubExclusionReason.CHANNEL_BLOCKED];
+		}
+
+		let blockedByPattern: string | undefined;
+
+		if (
+			Array.isArray(coub.tags) &&
+			coub.tags[0] != null &&
+			typeof coub.tags[0] === 'object' &&
+			!Array.isArray(coub.tags[0]) &&
+			'title' in coub.tags[0] &&
+			typeof coub.tags[0].title === 'string' &&
+			(blockedByPattern = this.#isHaveBlockedTags(imap(coub.tags, tag => tag.title)))
+		) {
+			return [true, CoubExclusionReason.TAG_BLOCKED, blockedByPattern];
+		}
+
+		return [false];
 	};
 }

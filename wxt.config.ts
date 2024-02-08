@@ -1,5 +1,6 @@
 import 'dotenv-flow/config';
 
+import arrayBuffer from '@coub-addons/vite-plugin-arraybuffer';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import preact from '@preact/preset-vite';
 import { checker } from 'vite-plugin-checker';
@@ -29,6 +30,10 @@ export default defineConfig({
 				id: process.env.VITE_GECKO_ID,
 			},
 		},
+		content_security_policy: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+	},
+	zip: {
+		excludeSources: ['target'],
 	},
 	transformManifest(manifest) {
 		// biome-ignore lint/style/noNonNullAssertion: `options_ui` is always represented since we have an `options` entrypoint
@@ -37,6 +42,7 @@ export default defineConfig({
 	vite: () => ({
 		plugins: [
 			ValidateEnv(),
+			arrayBuffer(),
 			preact({ devtoolsInProd: true }),
 			sassDts(),
 			// it exits even dev build

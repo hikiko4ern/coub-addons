@@ -1,10 +1,12 @@
 import ChartPieIcon from '@heroicons/react/24/solid/ChartPieIcon';
 import Cog6ToothIcon from '@heroicons/react/24/solid/Cog6ToothIcon';
+import HashtagIcon from '@heroicons/react/24/solid/HashtagIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import type { ComponentProps, ComponentType } from 'preact';
 import type { RouteComponentProps } from 'wouter-preact';
 
 import { BlockedChannels } from './components/BlockedChannels';
+import { BlockedTags } from './components/BlockedTags';
 import { Settings } from './components/Settings';
 import { Stats } from './components/Stats';
 
@@ -21,6 +23,12 @@ export const routes: Route[] = [
 		title: 'blocked-channels',
 		component: BlockedChannels,
 		icon: UsersIcon,
+	},
+	{
+		path: '/blocked-tags',
+		title: 'blocked-tags',
+		component: BlockedTags,
+		icon: HashtagIcon,
 	},
 	{
 		path: '/stats',

@@ -1,0 +1,10 @@
+[workspace]
+members = ["packages/segmenter-utils"]
+resolver = "2"
+
+[profile.release]
+incremental = true
+codegen-units = 1
+lto = true
+strip = true
+opt-level = 3

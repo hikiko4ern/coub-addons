@@ -16,6 +16,7 @@
 		"npm",
 		"softwareTerms",
 		"typescript",
+		"rust",
 		"en-gb"
 	],
 	"minWordLength": 3,
@@ -26,11 +27,11 @@
 	"validateDirectives": true,
 	"useGitignore": true,
 	"words": [
-		"Corepack",
 		"coub",
 		"coubs",
+		"flatmap",
+		"keymap",
 		"runtimes",
-		"toastify",
 		"дизлайкнутых",
 		"коуб",
 		"коубов",
@@ -44,31 +45,45 @@
 		"форки"
 	],
 	"ignoreWords": [
-		"flexsearch",
-		"uniqueEverseen",
+		"Asyncify",
+		"BCP47",
+		"bindgen",
+		"biomejs",
+		"bunx",
+		"cdylib",
+		"clsx",
+		"codegen",
+		"codemirror",
+		"Corepack",
 		"cssnano",
+		"ddietr",
 		"dprint",
+		"elems",
+		"flexsearch",
+		"fmt",
 		"heroicons",
+		"hikiko4ern",
 		"ifilter",
 		"itertools",
+		"julr",
+		"justfile",
+		"MSRV",
 		"nextui",
 		"plasmo",
 		"preact",
 		"prefresh",
+		"rlib",
 		"superstruct",
 		"tailwindcss",
-		"biomejs",
-		"bunx",
-		"clsx",
-		"elems",
-		"fmt",
-		"julr",
-		"hikiko4ern",
+		"toastify",
+		"tsify",
+		"uniqueEverseen",
+		"Vec",
+		"wasm_bindgen",
 		"Wouter",
 		"wxt",
 		"XMLHttpRequest",
-		"xpinstall",
-		"BCP47"
+		"xpinstall"
 	],
 	"ignoreRegExpList": [
 		// imports
@@ -81,7 +96,7 @@
 	"ignorePaths": [
 		"biome.json",
 		"bun.lockb",
-		"./cspell.json",
-		"packages/@nextui-org"
+		"cspell.json",
+		"packages/@nextui-org/react-rsc-utils"
 	]
 }

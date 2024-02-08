@@ -11,5 +11,5 @@
 		"isolatedModules": true,
 		"verbatimModuleSyntax": true
 	},
-	"exclude": ["./packages/@nextui-org/react-rsc-utils"]
+	"exclude": ["./packages/@nextui-org/react-rsc-utils", "./packages/*/lib"]
 }

@@ -8,6 +8,8 @@ clearing = Очищаем...
 no = Нет
 confirm = Подтвердить
 cancel = Отменить
+save = Сохранить
+revert = Откатить
 
 ## Follow button
 
@@ -31,7 +33,7 @@ error-boundary-exception = Ну, что-то сломалось. Вы может
   [8] Хорошо, можешь продолжать жать эту кнопку
   [9] Я оставлю тебя наедине с этой кнопкой
   *[other] Попробовать восстановить
-}</recover>, если вам повезет.
+}</recover>, если Вам повезет.
 
 ## options / blocked channels
 blocked-channels = Заблокированные каналы
@@ -52,6 +54,12 @@ rows-per-page =
 clear-blocked-channels-confirmation-title = Очистка блок-листа
 clear-blocked-channels-confirmation-description = Вы уверены, что хотите удалить все каналы из блок-листа?
 
+## options / blocked tags
+blocked-tags = Заблокированные теги
+revert-changes = Откатить изменения
+revert-blocked-tags-changes-confirmation-title = Откат изменений списка тегов
+revert-blocked-tags-changes-confirmation-description = Вы уверены, что хотите откатить все изменения до момента последнего сохранения?
+
 ## options / stats
 stats = Статистика
 filtered-out-coubs = Скрытые коубы
@@ -60,6 +68,7 @@ reason = Причина
 count = Количество
 coub-is-disliked = коубу поставлен дизлайк
 channel-is-blocked = канал заблокирован
+tag-is-blocked = тег заблокирован
 
 ## options / settings
 settings = Настройки

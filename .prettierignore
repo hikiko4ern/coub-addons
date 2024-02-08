@@ -20,7 +20,7 @@ web-ext.config.ts
 # patches
 /packages/@nextui-org
 
-# dprint
+# biome + dprint
 **/*.ts
 **/*.tsx
 **/*.cts

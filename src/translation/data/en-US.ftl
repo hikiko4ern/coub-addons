@@ -8,6 +8,8 @@ clearing = Clearing...
 no = No
 confirm = Confirm
 cancel = Cancel
+save = Save
+revert = Revert
 
 ## follow button
 
@@ -51,6 +53,12 @@ rows-per-page =
 clear-blocked-channels-confirmation-title = Clearing the blocklist
 clear-blocked-channels-confirmation-description = Are you sure you want to remove all channels from the blocklist?
 
+## options / blocked tags
+blocked-tags = Blocked tags
+revert-changes = Revert changes
+revert-blocked-tags-changes-confirmation-title = Reverting tag list changes
+revert-blocked-tags-changes-confirmation-description = Are you sure you want to revert all changes back to when you last saved?
+
 ## options / stats
 stats = Stats
 filtered-out-coubs = Filtered out coubs
@@ -59,6 +67,7 @@ reason = Reason
 count = Count
 coub-is-disliked = coub is disliked
 channel-is-blocked = channel is blocked
+tag-is-blocked = tag is blocked
 
 ## options / settings
 settings = Settings

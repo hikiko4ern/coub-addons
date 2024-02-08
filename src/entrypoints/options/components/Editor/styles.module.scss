@@ -1,0 +1,7 @@
+.editor {
+  :global {
+    .cm-gutterElement {
+      filter: opacity(0.3);
+    }
+  }
+}

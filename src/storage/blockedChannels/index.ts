@@ -5,6 +5,7 @@ import { symmetricDifference } from '@/helpers/symmetricDifference';
 import type { ToReadonly } from '@/types/util';
 import { Logger } from '@/utils/logger';
 
+import type { Asyncify } from 'type-fest';
 import { StorageBase, type StorageWatchCallback } from '../base';
 import type { StorageMeta } from '../types';
 import { blockedChannelsToRaw } from './helpers/blockedChannelsToRaw';
@@ -38,6 +39,8 @@ export type ReadonlyBlockedChannels = ToReadonly<BlockedChannels>;
 type IsBlockedListener = (isBlocked: boolean) => void;
 type ListenerArgs = [diff: ReadonlySet<number>];
 
+export type IsChannelBlockedFn = (channelId: number) => boolean;
+
 export class BlockedChannelsStorage extends StorageBase<
 	typeof key,
 	BlockedChannels,
@@ -59,9 +62,14 @@ export class BlockedChannelsStorage extends StorageBase<
 		this.logger = childLogger;
 	}
 
-	isBlocked = async (channelId: number) => {
+	isBlocked: Asyncify<IsChannelBlockedFn> = async channelId => {
 		const state = await this.getValue();
 		return state.has(channelId);
+	};
+
+	createBoundedIsBlocked = async (): Promise<IsChannelBlockedFn> => {
+		const state = await this.getValue();
+		return channelId => state.has(channelId);
 	};
 
 	listenIsBlocked = (channelId: number, listener: IsBlockedListener): Unwatch => {

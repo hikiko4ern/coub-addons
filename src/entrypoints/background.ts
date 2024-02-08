@@ -9,10 +9,14 @@ import { Context } from '@/request/ctx';
 import { registerTimelineHandlers } from '@/request/timeline';
 import { Logger } from '@/utils/logger';
 
+declare global {
+	var ctx: InstanceType<typeof Context>;
+}
+
 export default defineBackground(() => {
 	const logger = Logger.create('bg');
 
-	const ctx = new Context(logger);
+	const ctx = (globalThis.ctx = new Context(logger));
 
 	const eventListener = new EventListener(logger, (event, sender, _sendResponse) => {
 		if (browser.runtime.id !== sender.id) {
