@@ -4,7 +4,7 @@
 	"version": "0.1.3",
 	"type": "module",
 	"scripts": {
-		"prepare": "husky",
+		"prepare": "husky || true",
 		"postinstall": "run-s postinstall:patch postinstall:wxt",
 		"postinstall:patch": "patch-package",
 		"postinstall:wxt": "wxt prepare",
