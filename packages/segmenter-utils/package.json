@@ -1,6 +1,7 @@
 {
 	"name": "@coub-addons/segmenter-utils",
 	"description": "Intl.Segmenter utils based on ICU4X",
+	"version": "0.1.0",
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
