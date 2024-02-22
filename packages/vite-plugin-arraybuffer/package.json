@@ -1,6 +1,7 @@
 {
 	"name": "@coub-addons/vite-plugin-arraybuffer",
 	"description": "Vite plugin for import file as ArrayBuffer",
+	"version": "0.1.0",
 	"type": "module",
 	"main": "src/index.js",
 	"dependencies": {

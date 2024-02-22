@@ -51,7 +51,6 @@ export class BlockedChannelsStorage extends StorageBase<
 	static readonly KEY = key;
 	static readonly META_KEY = `${key}$` as const;
 	protected readonly logger: Logger;
-	protected readonly defaultValue = defaultValue;
 
 	readonly #isBlockedListeners: Record</** channelId */ number, Set<IsBlockedListener>> = {};
 
