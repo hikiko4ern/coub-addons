@@ -7,11 +7,14 @@ import {
 	BlockedChannelsStorage,
 	type RawBlockedChannels,
 } from './blockedChannels';
+import { type BlockedTagsMeta, BlockedTagsStorage, type RawBlockedTags } from './blockedTags';
 import { StatsStorage } from './stats';
 
 export interface Backup {
 	[BlockedChannelsStorage.KEY]: RawBlockedChannels;
 	[BlockedChannelsStorage.META_KEY]?: OmitIndexSignature<BlockedChannelsMeta>;
+	[BlockedTagsStorage.KEY]: RawBlockedTags;
+	[BlockedTagsStorage.META_KEY]?: OmitIndexSignature<BlockedTagsMeta>;
 }
 
 export const createBackup = async () =>
@@ -26,6 +29,12 @@ const Backup: Describe<Backup> = object({
 		permalink: array(optional(string())),
 	}),
 	[BlockedChannelsStorage.META_KEY]: optional(
+		object({
+			v: number(),
+		}),
+	),
+	[BlockedTagsStorage.KEY]: string(),
+	[BlockedTagsStorage.META_KEY]: optional(
 		object({
 			v: number(),
 		}),

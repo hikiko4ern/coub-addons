@@ -15,6 +15,8 @@ const data: RawBlockedChannels = {
 const backup: Backup = {
 	blockedChannels: data,
 	blockedChannels$: { v: 1 },
+	blockedTags: '',
+	blockedTags$: { v: 1 },
 };
 
 for (let i = 0; i < size; i++) {
