@@ -33,6 +33,7 @@ export class BlockedTagsStorage extends StorageBase<
 	RawBlockedTags
 > {
 	static readonly KEY = key;
+	static readonly META_KEY = `${key}$` as const;
 	protected readonly logger: Logger;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
