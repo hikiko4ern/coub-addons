@@ -60,7 +60,7 @@
 		"@types/invariant": "^2.2.37",
 		"autoprefixer": "^10.4.17",
 		"clsx": "^2.1.0",
-		"cssnano": "^6.0.4",
+		"cssnano": "^6.0.5",
 		"dotenv-flow": "^4.1.0",
 		"flexsearch": "^0.7.43",
 		"framer-motion": "^11.0.6",
@@ -86,7 +86,7 @@
 		"vite-plugin-checker": "^0.6.4",
 		"vite-plugin-sass-dts": "^1.3.17",
 		"wouter-preact": "^3.0.0",
-		"wxt": "^0.16.11"
+		"wxt": "^0.17.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "nightly",
