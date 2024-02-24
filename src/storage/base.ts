@@ -19,6 +19,7 @@ export abstract class StorageBase<
 > implements Disposable
 {
 	protected abstract readonly logger: Logger;
+	protected abstract readonly defaultValue: RawState;
 
 	readonly #key;
 	readonly #storage;
@@ -45,7 +46,10 @@ export abstract class StorageBase<
 		this.initialize();
 
 		this.#unwatch = this.#storage.watch((_state, oldState) => {
-			const state = this.parseRawValue(_state);
+			const state = this.parseRawValue(
+				// biome-ignore lint/style/noNonNullAssertion: state is defaulted in case of `null`
+				_state!,
+			);
 			this.#state = state;
 			this.#notifyWatchers(state, oldState, false);
 		});
@@ -100,7 +104,7 @@ export abstract class StorageBase<
 	}
 
 	clear() {
-		return this.setValue(structuredClone(this.#storage.defaultValue));
+		return this.setValue(structuredClone(this.defaultValue));
 	}
 
 	#notifyWatchers(

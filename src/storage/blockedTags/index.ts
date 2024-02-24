@@ -35,6 +35,7 @@ export class BlockedTagsStorage extends StorageBase<
 	static readonly KEY = key;
 	static readonly META_KEY = `${key}$` as const;
 	protected readonly logger: Logger;
+	protected readonly defaultValue = defaultValue;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
