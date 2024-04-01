@@ -41,12 +41,13 @@ export default defineContentScript({
 			logger,
 			buttonId: ID,
 			buttonIdPrefix: PREFIX,
-			// cspell:ignore btn
 			followButtonSelector: '.follow-btn',
-			followButtonActualButtonSelector: '.follow-button__container > button',
-			followButtonContainerSelector: '.follow-button__container',
+			followButtonActualButtonSelector: ':where(.follow-button__container, .follow-btn) > button',
+			followButtonContainerSelector:
+				'.follow-button__container, .follow-btn:not(:has(> .follow-button__container))',
 			followButtonTextSelector: '.text',
 			followButtonTextDummySelector: '.text-dummy',
+			followButtonTextDummyClassName: 'text-dummy',
 		});
 
 		try {

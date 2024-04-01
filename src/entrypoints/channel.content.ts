@@ -53,10 +53,12 @@ export default defineContentScript({
 			buttonId: ID,
 			buttonIdPrefix: PREFIX,
 			followButtonSelector: '.channel__relationships__follow',
-			followButtonActualButtonSelector: '.follow-button__container > button',
-			followButtonContainerSelector: '.follow-button__container',
+			followButtonActualButtonSelector: ':where(.follow-button__container, .follow-btn) > button',
+			followButtonContainerSelector:
+				'.follow-button__container, .follow-btn:not(:has(> .follow-button__container))',
 			followButtonTextSelector: '.text',
 			followButtonTextDummySelector: '.text-dummy',
+			followButtonTextDummyClassName: 'text-dummy',
 		});
 
 		try {

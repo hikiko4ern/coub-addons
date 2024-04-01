@@ -15,6 +15,7 @@ interface CreateOptions {
 	followButtonContainerSelector: string;
 	followButtonTextSelector: string;
 	followButtonTextDummySelector: string;
+	followButtonTextDummyClassName: string;
 }
 
 interface AddOptions {
@@ -33,6 +34,7 @@ export const createAddChannelBlockButton = ({
 	followButtonContainerSelector,
 	followButtonTextSelector,
 	followButtonTextDummySelector,
+	followButtonTextDummyClassName,
 }: CreateOptions) => {
 	const logger = parentLogger.getChildLogger('addChannelBlockButton');
 	const blockedChannelsPromise = EventDispatcher.getTabId().then(
@@ -42,7 +44,7 @@ export const createAddChannelBlockButton = ({
 	return async ({ target, channel, onAdded }: AddOptions) => {
 		logger.debug('adding "Block" button for channel', channel, 'to node', target);
 
-		const followButton = target.querySelector(followButtonSelector);
+		let followButton = target.querySelector(followButtonSelector);
 
 		if (!followButton) {
 			logger.warn(
@@ -65,9 +67,9 @@ export const createAddChannelBlockButton = ({
 			const button = blockButton.querySelector(followButtonActualButtonSelector);
 			const followButtonContainer = blockButton.querySelector(followButtonContainerSelector);
 			const text = blockButton.querySelector(followButtonTextSelector);
-			const textDummy = blockButton.querySelector(followButtonTextDummySelector);
+			let textDummy = blockButton.querySelector(followButtonTextDummySelector);
 
-			if (!text || !textDummy) {
+			if (!text) {
 				logger.warn(
 					'there is no',
 					followButtonTextSelector,
@@ -79,11 +81,35 @@ export const createAddChannelBlockButton = ({
 				return;
 			}
 
+			if (!textDummy) {
+				textDummy = document.createElement('div');
+				textDummy.classList.add(followButtonTextDummyClassName);
+				logger.debug('adding missing', textDummy, 'node to', text.parentElement);
+				text.parentElement?.appendChild(textDummy);
+			}
+
 			const blockedChannels = await blockedChannelsPromise;
 			let isBlocked = await blockedChannels.isBlocked(channel.id),
 				isHovered = false;
 
-			followButtonContainer?.classList.toggle('following', isBlocked);
+			logger.debug('[followButtonContainer]', blockButton, followButtonContainer?.classList);
+			if (followButtonContainer) {
+				if (
+					followButtonContainer.parentElement &&
+					!followButtonContainer.classList.contains('follow-button__container')
+				) {
+					followButtonContainer.classList.replace('follow-btn', 'follow-button__container');
+
+					const wrapper = document.createElement('div');
+					wrapper.classList.add('follow-btn');
+					followButtonContainer.parentElement?.appendChild(wrapper);
+					wrapper.appendChild(followButtonContainer);
+
+					followButton === followButtonContainer && (followButton = wrapper);
+				}
+
+				followButtonContainer.classList.toggle('following', isBlocked);
+			}
 
 			if (button) {
 				button.classList.remove('-follow', '-on');
