@@ -33,7 +33,7 @@ export default defineConfig({
 		content_security_policy: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
 	},
 	zip: {
-		excludeSources: ['target', 'test', 'utils'],
+		excludeSources: ['target/**', 'test/**', 'utils/**'],
 	},
 	transformManifest(manifest) {
 		// biome-ignore lint/style/noNonNullAssertion: `options_ui` is always represented since we have an `options` entrypoint
