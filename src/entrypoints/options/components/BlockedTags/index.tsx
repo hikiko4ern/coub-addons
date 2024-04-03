@@ -76,10 +76,10 @@ export const BlockedTags: FunctionComponent = () => {
 	}
 
 	return (
-		<section className="w-full h-full flex flex-col items-start">
+		<section className="flex h-full w-full flex-col items-start">
 			{content}
 
-			<footer className="flex-shrink-0 mt-4 flex items-center gap-4">
+			<footer className="mt-4 flex flex-shrink-0 items-center gap-4">
 				<Button
 					className="min-w-24"
 					color={isModified.value ? 'success' : undefined}

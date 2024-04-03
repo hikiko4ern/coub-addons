@@ -84,8 +84,8 @@ export const BlockedChannels: FunctionComponent = () => {
 	}
 
 	return (
-		<div className="w-full flex flex-col items-start gap-4">
-			<div className="w-full flex justify-between gap-4">
+		<div className="flex w-full flex-col items-start gap-4">
+			<div className="flex w-full justify-between gap-4">
 				<Localized id="blocked-channels-search" attrs={{ placeholder: true }}>
 					<Input
 						classNames={{

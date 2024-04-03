@@ -11,8 +11,8 @@ const logger = Logger.create('l10n/dom');
 const languages = locale
 	? [locale]
 	: Array.isArray(navigator?.languages)
-	  ? [...navigator.languages]
-	  : [];
+		? [...navigator.languages]
+		: [];
 logger.debug('creating DOMLocalization instance with languages', languages);
 
 export const l10n = new DOMLocalization(languages, generateBundles);

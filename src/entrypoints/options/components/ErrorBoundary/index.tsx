@@ -23,7 +23,7 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 
 	if (error) {
 		return (
-			<div className="w-full flex flex-1 flex-col gap-y-4 items-center justify-center">
+			<div className="flex w-full flex-1 flex-col items-center justify-center gap-y-4">
 				<ErrorCode data={error} collapsible>
 					<p>
 						<Localized
@@ -33,10 +33,7 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 								recover: (
 									<Button
 										className={cx(
-											'text-base',
-											'h-auto',
-											'min-h-unit-8',
-											'whitespace-normal',
+											'h-auto min-h-unit-8 whitespace-normal text-base',
 											styles['error-boundary__recover'],
 										)}
 										color="success"

@@ -27,7 +27,7 @@ export const ErrorCode: FunctionComponent<Props> = ({ data, collapsible, childre
 	return (
 		<>
 			{children || (
-				<p className="text-large text-danger dark:text-danger-500">
+				<p className="text-danger text-large dark:text-danger-500">
 					<Localized id="an-error-occurred-while-loading" />
 				</p>
 			)}

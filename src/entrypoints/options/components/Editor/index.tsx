@@ -91,7 +91,7 @@ export const Editor: FunctionComponent<Props> = ({
 							? {
 									...km,
 									key: 'Ctrl-Shift-z',
-							  }
+								}
 							: km,
 					),
 				]),

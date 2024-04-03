@@ -124,7 +124,7 @@ export const ImportExport: FunctionComponent = () => {
 				<Localized id="backups" />
 			</CardHeader>
 
-			<CardBody className="w-auto min-w-60 flex flex-col gap-4">
+			<CardBody className="flex w-auto min-w-60 flex-col gap-4">
 				<Button
 					color="primary"
 					isLoading={isLoading.value && !isRestoring.value}
@@ -144,7 +144,7 @@ export const ImportExport: FunctionComponent = () => {
 
 					<input
 						ref={inputRef}
-						className="absolute w-0 h-0 opacity-0"
+						className="absolute h-0 w-0 opacity-0"
 						type="file"
 						accept="application/json"
 						onChange={handleChange}

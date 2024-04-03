@@ -20,7 +20,7 @@ export const Actions: FunctionComponent<Props> = ({ id, onRemove }) => {
 	}, [id, onRemove]);
 
 	return (
-		<div className="flex justify-center items-center gap-2">
+		<div className="flex items-center justify-center gap-2">
 			<Localized id="remove-from-blocklist" attrs={{ content: true }}>
 				<Tooltip color="danger">
 					<Button
@@ -32,7 +32,7 @@ export const Actions: FunctionComponent<Props> = ({ id, onRemove }) => {
 						isDisabled={isRemoving.value}
 						onPress={remove}
 					>
-						<TrashIcon className="w-5 h-5" />
+						<TrashIcon className="h-5 w-5" />
 					</Button>
 				</Tooltip>
 			</Localized>

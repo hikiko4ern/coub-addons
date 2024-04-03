@@ -115,7 +115,7 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 
 	return (
 		<>
-			<div className="w-full flex justify-between items-center">
+			<div className="flex w-full items-center justify-between">
 				<span className="text-default-400 text-small">
 					<Localized id="blocked-channels-total" vars={{ total }} />
 				</span>

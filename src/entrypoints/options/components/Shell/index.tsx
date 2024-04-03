@@ -15,7 +15,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 	const { isTabIdLoaded } = useTabId();
 
 	return (
-		<div className="w-full min-h-screen flex">
+		<div className="flex min-h-screen w-full">
 			<ToastContainer
 				className="w-auto min-w-[var(--toastify-toast-width)] max-w-xl"
 				position="top-center"
@@ -26,7 +26,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 
 			<Navbar
 				// TODO: switch to vertical layout on <sm
-				className="w-auto flex-col justify-normal border-r border-divider p-4"
+				className="w-auto flex-col justify-normal border-divider border-r p-4"
 				classNames={{
 					wrapper: 'w-auto h-auto flex-grow px-0 my-0 max-w-none',
 				}}
@@ -38,17 +38,17 @@ export const Shell: FunctionComponent = ({ children }) => {
 
 						return (
 							<NavbarItem key={path} isActive={isActive}>
-								<WLink href={`#${path}`} asChild>
+								<WLink href={path} asChild>
 									<Link
 										className="w-full font-medium"
 										isBlock
 										{...(isActive
 											? {
 													'aria-current': 'page',
-											  }
+												}
 											: {
 													color: 'foreground',
-											  })}
+												})}
 									>
 										<Icon className="mr-2" height="1em" />
 										<Localized id={title} />
@@ -60,7 +60,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 				</NavbarContent>
 			</Navbar>
 
-			<div className="w-full p-4 flex flex-col items-start">
+			<div className="flex w-full flex-col items-start p-4">
 				<ErrorBoundary>{isTabIdLoaded.value ? children : null}</ErrorBoundary>
 			</div>
 		</div>
