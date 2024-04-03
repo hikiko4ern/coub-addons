@@ -15,7 +15,7 @@ let blockedChannelsStorage: BlockedChannelsStorage,
 	blockedTagsStorage: BlockedTagsStorage,
 	statsStorage: StatsStorage;
 
-const lazyStorageLoader = Object.defineProperties<Storages>(Object.create(null), {
+const lazyStorages = Object.defineProperties<Storages>(Object.create(null), {
 	blockedChannelsStorage: {
 		configurable: false,
 		get: () => (blockedChannelsStorage ||= new BlockedChannelsStorage(tabId, 'options', logger)),
@@ -30,4 +30,4 @@ const lazyStorageLoader = Object.defineProperties<Storages>(Object.create(null),
 	},
 });
 
-export const useLazyStorages = () => lazyStorageLoader;
+export const useLazyStorages = () => lazyStorages;

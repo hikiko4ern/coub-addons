@@ -76,6 +76,7 @@ import-backup = Import backup
 export-backup = Export backup
 backup-creation-error = Failed to create backup:<br/>{$error}
 backup-restoration-error = Failed to import backup:<br/>{$error}
+backup-migrations-failed = Migrations for {$keys} failed: {$error}
 backup-imported-successfully = Backup imported successfully
 backup-imported-successfully-but-reinitialization-failed = The backup was successfully imported, but the state could not be updated. The extension will be automatically reloaded.
 import-backup-confirmation-header = Are you sure?

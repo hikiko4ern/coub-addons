@@ -19,7 +19,7 @@ const key = 'blockedTags' as const;
 
 const defaultValue: RawBlockedTags = '';
 
-const tagsItem = storage.defineItem<RawBlockedTags, BlockedTagsMeta>(`local:${key}`, {
+export const blockedTagsItem = storage.defineItem<RawBlockedTags, BlockedTagsMeta>(`local:${key}`, {
 	version: 1,
 	defaultValue,
 });
@@ -38,7 +38,7 @@ export class BlockedTagsStorage extends StorageBase<
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, new.target.KEY, tagsItem);
+		super(tabId, source, childLogger, new.target.KEY, blockedTagsItem);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

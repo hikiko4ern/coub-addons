@@ -5,12 +5,16 @@ import type { Logger } from '@/utils/logger';
 import { StorageBase } from './base';
 import type { StorageMeta } from './types';
 
+type CoubExclusionReasonV1 =
+	| CoubExclusionReason.COUB_DISLIKED
+	| CoubExclusionReason.CHANNEL_BLOCKED;
+
 interface StatsV1 {
-	filtered: Record<CoubExclusionReason.COUB_DISLIKED | CoubExclusionReason.CHANNEL_BLOCKED, number>;
+	filtered: Record<CoubExclusionReasonV1, number>;
 }
 
 interface StatsV2 {
-	filtered: Record<CoubExclusionReason, number>;
+	filtered: Record<CoubExclusionReasonV1 | CoubExclusionReason.TAG_BLOCKED, number>;
 }
 
 export interface StatsMeta extends StorageMeta {}
@@ -29,7 +33,7 @@ const defaultValue: StatsV2 = {
 	) as StatsV2['filtered'],
 };
 
-const statsItem = storage.defineItem<StatsV2, StatsMeta>(`local:${key}`, {
+export const statsItem = storage.defineItem<StatsV2, StatsMeta>(`local:${key}`, {
 	version: 2,
 	defaultValue,
 	migrations: {

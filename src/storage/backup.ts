@@ -1,14 +1,20 @@
-import { type Describe, array, is, number, object, optional, string } from 'superstruct';
 import type { OmitIndexSignature } from 'type-fest';
 import { storage } from 'wxt/storage';
 
+import { logger } from '@/options/constants';
 import {
 	type BlockedChannelsMeta,
 	BlockedChannelsStorage,
 	type RawBlockedChannels,
+	blockedChannelsItem,
 } from './blockedChannels';
-import { type BlockedTagsMeta, BlockedTagsStorage, type RawBlockedTags } from './blockedTags';
-import { StatsStorage } from './stats';
+import {
+	type BlockedTagsMeta,
+	BlockedTagsStorage,
+	type RawBlockedTags,
+	blockedTagsItem,
+} from './blockedTags';
+import { StatsStorage, statsItem } from './stats';
 
 export interface Backup {
 	[BlockedChannelsStorage.KEY]: RawBlockedChannels;
@@ -17,28 +23,64 @@ export interface Backup {
 	[BlockedTagsStorage.META_KEY]?: OmitIndexSignature<BlockedTagsMeta>;
 }
 
+const storageItems = [
+	['blockedChannels', blockedChannelsItem],
+	['blockedTags', blockedTagsItem],
+	['stats', statsItem],
+] as const;
+
 export const createBackup = async () =>
 	JSON.stringify(await storage.snapshot('local', { excludeKeys: [StatsStorage.KEY] }));
 
-export const restoreBackup = (data: Backup) => storage.restoreSnapshot('local', data);
+export const restoreBackup = async (data: Backup) => {
+	const currentState = await storage.snapshot('local');
+	await storage.restoreSnapshot('local', data);
 
-const Backup: Describe<Backup> = object({
-	[BlockedChannelsStorage.KEY]: object({
-		id: array(number()),
-		title: array(string()),
-		permalink: array(optional(string())),
-	}),
-	[BlockedChannelsStorage.META_KEY]: optional(
-		object({
-			v: number(),
-		}),
-	),
-	[BlockedTagsStorage.KEY]: string(),
-	[BlockedTagsStorage.META_KEY]: optional(
-		object({
-			v: number(),
-		}),
-	),
-});
+	type RejectReason = [key: string, reason: unknown];
 
-export const isBackup = (value: unknown): value is Backup => is(value, Backup);
+	const failedMigrations = (
+		await Promise.allSettled(
+			storageItems.map(([key, item]) =>
+				item.migrate().catch(reason => {
+					const res: RejectReason = [key, reason];
+					throw res;
+				}),
+			),
+		)
+	).reduce<{ keys: string[]; reasons: unknown[] }>(
+		(obj, res) => {
+			if (res.status === 'rejected') {
+				const [key, reason] = res.reason as RejectReason;
+				obj.keys.push(key);
+				obj.reasons.push(reason);
+				logger.error(key, 'migration failed:', reason);
+			}
+
+			return obj;
+		},
+		{ keys: [], reasons: [] },
+	);
+
+	if (failedMigrations.keys.length) {
+		try {
+			await storage.restoreSnapshot('local', currentState);
+		} catch (err) {
+			logger.error('failed to restore snapshot after failed migrations', err);
+		}
+
+		throw new StorageMigrationsFailed(
+			failedMigrations.keys,
+			new AggregateError(failedMigrations.reasons),
+		);
+	}
+};
+
+export class StorageMigrationsFailed extends Error {
+	constructor(
+		readonly keys: string[],
+		readonly cause: AggregateError,
+	) {
+		super('some migrations are failed', { cause });
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
+}

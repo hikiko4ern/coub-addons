@@ -77,6 +77,7 @@ import-backup = Импортировать резервную копию
 export-backup = Экспортировать резервную копию
 backup-creation-error = Произошла ошибка при создании резервной копии:<br/>{$error}
 backup-restoration-error = Произошла ошибка при импортировании резервной копии:<br/>{$error}
+backup-migrations-failed = Не удалось выполнить миграции для {$keys}: {$error}
 backup-imported-successfully = Резервная копия успешно импортирована
 backup-imported-successfully-but-reinitialization-failed = Резервная копия была успешно импортирована, но обновить состояние не удалось. Расширение будет автоматически перезапущено.
 import-backup-confirmation-header = Вы уверены?

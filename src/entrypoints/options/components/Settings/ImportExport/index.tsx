@@ -17,7 +17,13 @@ import { useCallback, useRef } from 'preact/hooks';
 import { toast } from 'react-toastify';
 
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
-import { type Backup, createBackup, isBackup, restoreBackup } from '@/storage/backup';
+import {
+	type Backup,
+	StorageMigrationsFailed,
+	createBackup,
+	restoreBackup,
+} from '@/storage/backup';
+import { FluentList, t } from '@/translation/js';
 
 const pad = (value: number) => value.toString().padStart(2, '0');
 
@@ -70,7 +76,11 @@ export const ImportExport: FunctionComponent = () => {
 				onClose();
 
 				try {
-					await lazyStorages.blockedChannelsStorage.reinitialize();
+					await Promise.all([
+						lazyStorages.blockedChannelsStorage.reinitialize(),
+						lazyStorages.blockedTagsStorage.reinitialize(),
+						lazyStorages.statsStorage.reinitialize(),
+					]);
 					toast.success(<Localized id="backup-imported-successfully" />);
 				} catch {
 					toast.warn(<Localized id="backup-imported-successfully-but-reinitialization-failed" />, {
@@ -84,7 +94,17 @@ export const ImportExport: FunctionComponent = () => {
 						<Localized
 							id="backup-restoration-error"
 							elems={{ br: <br /> }}
-							vars={{ error: String(err) }}
+							vars={{
+								error:
+									err instanceof StorageMigrationsFailed
+										? t('backup-migrations-failed', {
+												args: {
+													keys: new FluentList(err.keys, { type: 'conjunction' }),
+													error: err.cause.errors.join(', '),
+												},
+											})
+										: String(err),
+							}}
 						>
 							<span />
 						</Localized>
@@ -107,11 +127,9 @@ export const ImportExport: FunctionComponent = () => {
 				const data = JSON.parse(text);
 
 				input.value = '';
+				restoreRef.current = data;
 
-				if (isBackup(data)) {
-					restoreRef.current = data;
-					return onOpen();
-				}
+				return onOpen();
 			} catch {}
 
 			toast.error(<Localized id="file-content-is-not-a-valid-backup" />);

@@ -24,7 +24,7 @@ const defaultValue: RawBlockedChannels = {
 	permalink: [],
 };
 
-const blockedChannelsItem = storage.defineItem<RawBlockedChannels, BlockedChannelsMeta>(
+export const blockedChannelsItem = storage.defineItem<RawBlockedChannels, BlockedChannelsMeta>(
 	`local:${key}`,
 	{
 		version: 1,
