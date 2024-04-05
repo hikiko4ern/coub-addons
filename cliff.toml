@@ -1,0 +1,60 @@
+# git-cliff ~ configuration file
+# https://git-cliff.org/docs/configuration
+
+[changelog]
+header = "# Changelog\n"
+# spell-checker: disable
+body = """
+{% raw %}\n{% endraw %}\
+{% if version %}\
+    ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
+{% else %}\
+    ## [unreleased]
+{% endif %}\
+{% for group, commits in commits | group_by(attribute="group") %}
+    ### {{ group | upper_first }}
+    {% for commit in commits %}
+        - {% if commit.scope %}**({{commit.scope}})** {% endif %}{{ commit.message }}
+        {%- if commit.breaking %}
+        {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
+        {%- endif -%}
+    {%- endfor -%}
+    {% raw %}\n{% endraw %}\
+{% endfor %}\
+"""
+# spell-checker: enable
+trim = true
+
+[git]
+conventional_commits = true
+filter_unconventional = true
+split_commits = false
+commit_parsers = [
+	# ignore
+	{ sha = "393a2bbf704825d51c2659e14d42e1d71ed9e325", skip = true },
+
+	# groups
+	{ message = "^feat", group = "Features" },
+	{ message = "^fix", group = "Bug Fixes" },
+	{ message = "^doc", group = "Documentation", default_scope = "unscoped" },
+	{ message = "^perf", group = "Performance" },
+	{ message = "^refactor", group = "Refactor" },
+	{ message = "^style", group = "Styling" },
+	{ message = "^test", group = "Testing" },
+	{ message = "^chore\\(deps.*\\)", skip = true },
+	{ message = "^chore\\(release\\)", skip = true },
+	{ message = "^chore", group = "Miscellaneous Tasks" },
+	{ body = ".*security", group = "Security" },
+]
+protect_breaking_commits = true
+filter_commits = false
+tag_pattern = "v[0-9].*"
+skip_tags = ""
+ignore_tags = ""
+# spell-checker: ignore topo
+topo_order = false
+sort_commits = "oldest"
+
+[bump]
+features_always_bump_minor = false
+breaking_always_bump_major = false
