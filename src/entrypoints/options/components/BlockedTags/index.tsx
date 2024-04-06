@@ -12,8 +12,11 @@ import { Editor } from '@/options/components/Editor';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
+import { tags } from './grammar';
 
 import styles from './styles.module.scss';
+
+const lang = tags();
 
 export const BlockedTags: FunctionComponent = () => {
 	const editorRef = useRef<Editor.Ref>(null);
@@ -70,6 +73,7 @@ export const BlockedTags: FunctionComponent = () => {
 					defaultValue={blockedTags.data.raw}
 					lineWrapping
 					isModifiedSignal={isModified}
+					language={lang}
 					save={saveTags}
 				/>
 			);

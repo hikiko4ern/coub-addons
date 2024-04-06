@@ -1,0 +1,14 @@
+@top Tags { line* }
+
+line { (RegExp | phrase) lineEnd }
+
+@tokens {
+	lineEnd { "\n" | @eof }
+
+	// spell-checker: disable-next-line
+	RegExp { "/" (![/\\\n[] | "\\" ![\n] | "[" (![\n\\\]] | "\\" ![\n])* "]")+ "/" ($[dgimsuvy]*)? }
+
+  phrase { ![\n]+ }
+
+	@precedence { RegExp, phrase }
+}

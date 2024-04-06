@@ -2,6 +2,7 @@ import 'dotenv-flow/config';
 
 import arrayBuffer from '@coub-addons/vite-plugin-arraybuffer';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
+import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
 import { checker } from 'vite-plugin-checker';
 import sassDts from 'vite-plugin-sass-dts';
@@ -47,6 +48,7 @@ export default defineConfig({
 			arrayBuffer(),
 			preact({ devtoolsInProd: true }),
 			sassDts(),
+			lezer(),
 			// it exits even dev build
 			false && {
 				...checker({
