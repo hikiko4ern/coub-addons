@@ -2,16 +2,16 @@
 
 ## [0.1.8] - 2024-04-06
 
-### Documentation
-
-- **(unscoped)** update MSRV to `v1.73.0`
-
 ### Features
 
 - open options page on toolbar button click
 - **(menu/tag)** add a context menu that allows to copy or block a tag
 - **(settings)** save changes in the editor when `Ctrl-s` is pressed
 - **(settings)** highlight regular expressions in the editor
+
+### Documentation
+
+- update MSRV to `v1.73.0`
 
 ### Miscellaneous Tasks
 
@@ -64,14 +64,14 @@
 - do not broadcast messages to discarded and prohibited tabs
 - **(blocklist)** synchronize storages between tabs correctly
 
-### Documentation
-
-- **(unscoped)** add `README` and change license to The `Unlicense`
-
 ### Features
 
 - adds `Block` button to channel page and dropdown
 - **(settings)** add backup import/export functionality
+
+### Documentation
+
+- add `README` and change license to The `Unlicense`
 
 ### Performance
 

@@ -12,7 +12,7 @@ body = """
     ## [unreleased]
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
-    ### {{ group | upper_first }}
+    ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
         - {% if commit.scope %}**({{commit.scope}})** {% endif %}{{ commit.message }}
         {%- if commit.breaking %}
@@ -34,9 +34,9 @@ commit_parsers = [
 	{ sha = "393a2bbf704825d51c2659e14d42e1d71ed9e325", skip = true },
 
 	# groups
-	{ message = "^feat", group = "Features" },
-	{ message = "^fix", group = "Bug Fixes" },
-	{ message = "^doc", group = "Documentation", default_scope = "unscoped" },
+	{ message = "^fix", group = "<!-- 1 -->Bug Fixes" },
+	{ message = "^feat", group = "<!-- 2 -->Features" },
+	{ message = "^doc", group = "Documentation" },
 	{ message = "^perf", group = "Performance" },
 	{ message = "^refactor", group = "Refactor" },
 	{ message = "^style", group = "Styling" },
@@ -44,7 +44,7 @@ commit_parsers = [
 	{ message = "^chore\\(deps.*\\)", skip = true },
 	{ message = "^chore\\(release\\)", skip = true },
 	{ message = "^chore", group = "Miscellaneous Tasks" },
-	{ body = ".*security", group = "Security" },
+	{ body = ".*security", group = "<!-- 0 -->Security" },
 ]
 protect_breaking_commits = true
 filter_commits = false
