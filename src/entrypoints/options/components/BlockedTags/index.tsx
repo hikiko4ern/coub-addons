@@ -12,7 +12,7 @@ import { Editor } from '@/options/components/Editor';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import { tags } from './grammar';
+import { tags, tagsLinter } from './grammar';
 
 import styles from './styles.module.scss';
 
@@ -69,11 +69,12 @@ export const BlockedTags: FunctionComponent = () => {
 			content = (
 				<Editor
 					stateRef={editorRef}
-					className={cx('w-full flex-grow', styles['blocked-tags__editor'])}
+					className={cx('h-0 w-full flex-grow', styles['blocked-tags__editor'])}
 					defaultValue={blockedTags.data.raw}
 					lineWrapping
 					isModifiedSignal={isModified}
 					language={lang}
+					linter={tagsLinter}
 					save={saveTags}
 				/>
 			);

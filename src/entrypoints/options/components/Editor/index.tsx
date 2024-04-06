@@ -2,10 +2,10 @@ import { closeBrackets, closeBracketsKeymap } from '@codemirror/autocomplete';
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands';
 import { LanguageSupport, bracketMatching } from '@codemirror/language';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-import { Annotation, EditorState, StateEffect } from '@codemirror/state';
+import { Annotation, EditorState, type Extension, StateEffect } from '@codemirror/state';
 import { EditorView, dropCursor, keymap, lineNumbers } from '@codemirror/view';
-import { aura } from '@ddietr/codemirror-themes/aura';
 import type { Signal } from '@preact/signals';
+import { aura } from '@uiw/codemirror-theme-aura';
 import cx from 'clsx';
 import type { FunctionComponent, Ref } from 'preact';
 import { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'preact/hooks';
@@ -19,6 +19,7 @@ interface Props {
 	className?: string;
 	defaultValue: string;
 	language?: LanguageSupport;
+	linter?: Extension;
 	foldable?: boolean;
 	readOnly?: boolean;
 	lineWrapping?: boolean;
@@ -42,6 +43,7 @@ export const Editor: FunctionComponent<Props> = ({
 	className,
 	defaultValue,
 	language,
+	linter,
 	readOnly = false,
 	lineWrapping,
 	isModifiedSignal,
@@ -103,8 +105,9 @@ export const Editor: FunctionComponent<Props> = ({
 				aura,
 				// languages
 				language,
+				linter,
 			].filter(truthyFilter),
-		[language, readOnly, lineWrapping, save],
+		[language, linter, readOnly, lineWrapping, save],
 	);
 
 	const state = useMemo(

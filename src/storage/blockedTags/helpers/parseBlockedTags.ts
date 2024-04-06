@@ -1,6 +1,8 @@
 import type { Logger } from '@/utils/logger';
 import type { BlockedTags, RawBlockedTags } from '..';
+
 import { phrasesToTree } from './phrasesTree';
+import { tryRegexFromLine } from './tryRegexFromLine';
 
 export const parseBlockedTags = (logger: Logger, raw: RawBlockedTags): BlockedTags => {
 	const lines = raw.split('\n');
@@ -16,18 +18,15 @@ export const parseBlockedTags = (logger: Logger, raw: RawBlockedTags): BlockedTa
 			continue;
 		}
 
-		if (line[0] === '/') {
-			const lastSlashIndex = line.lastIndexOf('/');
+		try {
+			const maybeRegex = tryRegexFromLine(line);
 
-			if (lastSlashIndex !== -1 && lastSlashIndex !== 0) {
-				try {
-					const re = new RegExp(line.slice(1, lastSlashIndex), line.slice(lastSlashIndex + 1));
-					regexps.push(re);
-					continue;
-				} catch (err) {
-					logger.error('failed to parse', line, 'as regex', err);
-				}
+			if (maybeRegex) {
+				regexps.push(maybeRegex);
+				continue;
 			}
+		} catch (err) {
+			!(err instanceof SyntaxError) && logger.error('failed to parse', line, 'as regex', err);
 		}
 
 		phrases.push(line);
