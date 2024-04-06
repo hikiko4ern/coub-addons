@@ -26,13 +26,9 @@ export const BlockedTags: FunctionComponent = () => {
 	const blockedTagsRaw = blockedTags.status === StorageHookState.Loaded && blockedTags.data.raw;
 	const prevBlockedTagsRaw = usePrevious(blockedTagsRaw);
 
-	const saveTags = useCallback(() => {
-		const value = editorRef.current?.getValue();
-
-		if (typeof value === 'string') {
-			setIsSaving(true);
-			return blockedTagsStorage.setRaw(value).finally(() => setIsSaving(false));
-		}
+	const saveTags = useCallback((value: string) => {
+		setIsSaving(true);
+		return blockedTagsStorage.setRaw(value).finally(() => setIsSaving(false));
 	}, []);
 
 	const revertChanges = useCallback(() => {
@@ -41,9 +37,15 @@ export const BlockedTags: FunctionComponent = () => {
 		}
 	}, [blockedTags]);
 
+	const handleSaveClick = useCallback(() => {
+		const value = editorRef.current?.getValue();
+		return typeof value === 'string' && saveTags(value);
+	}, []);
+
 	useEffect(
 		() => () => {
-			saveTags();
+			const value = editorRef.current?.getValue();
+			typeof value === 'string' && saveTags(value);
 		},
 		[],
 	);
@@ -68,6 +70,7 @@ export const BlockedTags: FunctionComponent = () => {
 					defaultValue={blockedTags.data.raw}
 					lineWrapping
 					isModifiedSignal={isModified}
+					save={saveTags}
 				/>
 			);
 			break;
@@ -98,7 +101,7 @@ export const BlockedTags: FunctionComponent = () => {
 					color={isModified.value ? 'success' : undefined}
 					isLoading={isSaving}
 					isDisabled={isSaving || !isModified.value}
-					onPress={saveTags}
+					onPress={handleSaveClick}
 				>
 					<Localized id="save" />
 				</Button>

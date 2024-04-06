@@ -23,6 +23,7 @@ interface Props {
 	readOnly?: boolean;
 	lineWrapping?: boolean;
 	isModifiedSignal?: Signal<boolean>;
+	save: (value: string) => void;
 }
 
 const External = Annotation.define<boolean>();
@@ -44,6 +45,7 @@ export const Editor: FunctionComponent<Props> = ({
 	readOnly = false,
 	lineWrapping,
 	isModifiedSignal,
+	save,
 }) => {
 	const container = useRef<HTMLDivElement>(null);
 	const initialValueRef = useRef(defaultValue);
@@ -91,13 +93,18 @@ export const Editor: FunctionComponent<Props> = ({
 								}
 							: km,
 					),
+					{
+						key: 'Mod-s',
+						run: view => (save(view.state.doc.toString()), true),
+						preventDefault: true,
+					},
 				]),
 				// theme
 				aura,
 				// languages
 				language,
 			].filter(truthyFilter),
-		[language, readOnly, lineWrapping],
+		[language, readOnly, lineWrapping, save],
 	);
 
 	const state = useMemo(
