@@ -1,7 +1,7 @@
 {
 	"name": "coub-addons",
 	"description": "Coub.com additional features",
-	"version": "0.1.7",
+	"version": "0.1.8",
 	"type": "module",
 	"scripts": {
 		"prepare": "husky || true",
@@ -24,7 +24,9 @@
 		"version": "git-cliff --bump -o && git add CHANGELOG.md",
 		"bump": "bun run utils/bump.ts"
 	},
-	"workspaces": ["packages/*"],
+	"workspaces": [
+		"packages/*"
+	],
 	"dependencies": {
 		"@codemirror/autocomplete": "^6.15.0",
 		"@codemirror/commands": "^6.3.3",

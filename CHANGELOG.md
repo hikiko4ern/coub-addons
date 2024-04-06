@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.1.8] - 2024-04-06
+
+### Documentation
+
+- **(unscoped)** update MSRV to `v1.73.0`
+
+### Features
+
+- open options page on toolbar button click
+- **(menu/tag)** add a context menu that allows to copy or block a tag
+- **(settings)** save changes in the editor when `Ctrl-s` is pressed
+- **(settings)** highlight regular expressions in the editor
+
+### Miscellaneous Tasks
+
+- **(dev)** add changelog generation
+
 ## [0.1.7] - 2024-04-03
 
 ### Bug Fixes
