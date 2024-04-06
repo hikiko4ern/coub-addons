@@ -3,7 +3,7 @@
 import { permutations } from 'itertools';
 import { expect, it } from 'vitest';
 
-import { phrasesToTree } from '../../../../src/storage/blockedTags/helpers/phrasesToTree';
+import { phrasesToTree } from '@/storage/blockedTags/helpers/phrasesTree';
 
 it('1 word', () => {
 	expect(phrasesToTree(['hewwo'])).toStrictEqual({

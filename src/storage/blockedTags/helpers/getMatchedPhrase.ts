@@ -2,7 +2,7 @@ import { segmentWords } from './segmenter';
 
 import type { ToReadonly } from '@/types/util';
 
-import { type PhrasesTree, preparePhraseForTree } from './phrasesToTree';
+import { type PhrasesTree, preparePhraseForTree } from './phrasesTree';
 
 export const getMatchedPhrase = (tree: ToReadonly<PhrasesTree>, strings: Iterable<string>) => {
 	for (let str of strings) {

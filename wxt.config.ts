@@ -23,6 +23,7 @@ export default defineConfig({
 			'unlimitedStorage',
 			'webRequest',
 			'webRequestBlocking',
+			'menus',
 			`${process.env.VITE_COUB_ORIGIN}/*`,
 		],
 		browser_action: {},

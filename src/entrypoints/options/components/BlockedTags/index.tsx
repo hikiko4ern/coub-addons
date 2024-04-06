@@ -6,6 +6,7 @@ import cx from 'clsx';
 import type { FunctionComponent, VNode } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
+import { usePrevious } from '@/hooks/usePrevious';
 import { Confirm } from '@/options/components/Confirm';
 import { Editor } from '@/options/components/Editor';
 import { ErrorCode } from '@/options/components/ErrorCode';
@@ -21,6 +22,9 @@ export const BlockedTags: FunctionComponent = () => {
 	const isModified = useSignal(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+
+	const blockedTagsRaw = blockedTags.status === StorageHookState.Loaded && blockedTags.data.raw;
+	const prevBlockedTagsRaw = usePrevious(blockedTagsRaw);
 
 	const saveTags = useCallback(() => {
 		const value = editorRef.current?.getValue();
@@ -43,6 +47,15 @@ export const BlockedTags: FunctionComponent = () => {
 		},
 		[],
 	);
+
+	useEffect(() => {
+		typeof prevBlockedTagsRaw === 'string' &&
+			typeof blockedTagsRaw === 'string' &&
+			prevBlockedTagsRaw !== blockedTagsRaw &&
+			editorRef.current &&
+			editorRef.current.getValue() === prevBlockedTagsRaw &&
+			editorRef.current.setValue(blockedTagsRaw);
+	}, [prevBlockedTagsRaw, blockedTagsRaw]);
 
 	let content: string | VNode;
 

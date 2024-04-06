@@ -1,4 +1,4 @@
-import type { PhrasesTree } from './helpers/phrasesToTree';
+import type { PhrasesTree } from './helpers/phrasesTree';
 
 export interface BlockedTags {
 	raw: RawBlockedTags;

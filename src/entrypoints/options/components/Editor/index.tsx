@@ -66,14 +66,11 @@ export const Editor: FunctionComponent<Props> = ({
 							!update.transactions.some(tr => tr.annotation(External))
 						) {
 							const value = update.state.doc.toString();
+							const isModified = value !== initialValueRef.current;
 
-							if (isModifiedSignal) {
-								const isModified = value !== initialValueRef.current;
-
-								if (isModified !== isModifiedRef.current) {
-									isModifiedRef.current = isModified;
-									isModifiedSignal.value = isModified;
-								}
+							if (isModified !== isModifiedRef.current) {
+								isModifiedRef.current = isModified;
+								isModifiedSignal.value = isModified;
 							}
 						}
 					}),
@@ -151,11 +148,14 @@ export const Editor: FunctionComponent<Props> = ({
 
 	useEffect(() => {
 		if (defaultValue !== initialValueRef.current) {
+			const value = view?.state.doc.toString();
+			const isModified = value !== defaultValue;
+
 			initialValueRef.current = defaultValue;
-			isModifiedRef.current = false;
-			isModifiedSignal && (isModifiedSignal.value = false);
+			isModifiedRef.current = isModified;
+			isModifiedSignal && (isModifiedSignal.value = isModified);
 		}
-	}, [defaultValue]);
+	}, [view, defaultValue]);
 
 	return <div ref={container} className={cx(className, styles.editor)} />;
 };

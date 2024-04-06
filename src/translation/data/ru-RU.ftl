@@ -21,6 +21,10 @@ block = Блокировать
 blocked = Заблокирован
 unblock = Разблокировать
 
+## context menu / tags
+copy-tag = Скопировать тег
+block-tag = Заблокировать тег
+
 ## options / error
 error-boundary-exception = Ну, что-то сломалось. Вы можете <recover>{$attempt ->
   [1] Попробовать восстановить ещё раз

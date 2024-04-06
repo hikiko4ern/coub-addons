@@ -7,6 +7,7 @@ import { StorageBase } from '../base';
 import type { FnWithState, StorageMeta } from '../types';
 import { getMatchedPhrase } from './helpers/getMatchedPhrase';
 import { parseBlockedTags } from './helpers/parseBlockedTags';
+import { addPhraseToTree } from './helpers/phrasesTree';
 import type { BlockedTags, RawBlockedTags } from './types';
 
 export type { BlockedTags, RawBlockedTags } from './types';
@@ -24,6 +25,7 @@ export const blockedTagsItem = storage.defineItem<RawBlockedTags, BlockedTagsMet
 	defaultValue,
 });
 
+/** if one of tags is blocked, returns the pattern by which it is blocked */
 export type IsHaveBlockedTagsFn = (tags: Iterable<string>) => string | undefined;
 
 export class BlockedTagsStorage extends StorageBase<
@@ -49,6 +51,17 @@ export class BlockedTagsStorage extends StorageBase<
 	createBoundedIsBlocked = async (): Promise<IsHaveBlockedTagsFn> => {
 		const state = await this.getValue();
 		return tags => this.#isBlocked(state, tags);
+	};
+
+	block = async (tag: string) => {
+		const value = await this.getValue();
+
+		!this.#isBlocked(value, [tag]) &&
+			this.setParsedValue({
+				...value,
+				raw: value.raw.endsWith('\n') ? value.raw + tag : `${value.raw}\n${tag}`,
+				phrases: addPhraseToTree(value.phrases, tag),
+			});
 	};
 
 	setRaw = (raw: RawBlockedTags) => this.setValue(raw);

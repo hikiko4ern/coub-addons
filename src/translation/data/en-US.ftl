@@ -21,6 +21,10 @@ block = Block
 blocked = Blocked
 unblock = Unblock
 
+## context menu / tags
+copy-tag = Copy tag
+block-tag = Block tag
+
 ## options / error
 error-boundary-exception = Well, something's broken. You can <recover>{$attempt ->
   [1] Try to recover again

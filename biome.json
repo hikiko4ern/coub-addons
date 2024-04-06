@@ -101,7 +101,6 @@
 				"noInferrableTypes": "warn",
 				"noNegationElse": "warn",
 				"noNonNullAssertion": "warn",
-				"noParameterAssign": "error",
 				"noRestrictedGlobals": "error",
 				"noUnusedTemplateLiteral": "warn",
 				"noUselessElse": "warn",

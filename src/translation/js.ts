@@ -10,12 +10,21 @@ type FormatArgs = Parameters<FluentBundle['formatPattern']>[1];
 
 const logger = Logger.create('l10n/js');
 const errors: Error[] = [];
-let bundlesCachedIter: Iterable<FluentBundle>;
+let bundlesCachedIter: Iterable<FluentBundle>, lastLocales: readonly string[];
 
-export const setLocales = (locales: readonly string[]) =>
-	(bundlesCachedIter = new CachedIterable(generateBundles(locales)));
+export const setLocales = (locales: readonly string[]) => {
+	if (locales !== lastLocales) {
+		lastLocales = locales;
+		bundlesCachedIter = new CachedIterable(generateBundles(locales));
+	}
+};
 
 setLocales(navigator.languages);
+
+window.addEventListener('languagechange', () => {
+	logger.debug('languagechange', navigator.languages);
+	setLocales(navigator.languages);
+});
 
 interface TransOptions {
 	attr?: string;

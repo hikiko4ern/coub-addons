@@ -1,6 +1,6 @@
 import type { Logger } from '@/utils/logger';
 import type { BlockedTags, RawBlockedTags } from '..';
-import { phrasesToTree } from './phrasesToTree';
+import { phrasesToTree } from './phrasesTree';
 
 export const parseBlockedTags = (logger: Logger, raw: RawBlockedTags): BlockedTags => {
 	const lines = raw.split('\n');

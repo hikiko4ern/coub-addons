@@ -3,7 +3,7 @@
 import { expect, it } from 'vitest';
 
 import { getMatchedPhrase } from '@/storage/blockedTags/helpers/getMatchedPhrase';
-import { phrasesToTree } from '@/storage/blockedTags/helpers/phrasesToTree';
+import { phrasesToTree } from '@/storage/blockedTags/helpers/phrasesTree';
 
 it('simple', () => {
 	const tree = phrasesToTree(['wowwd', 'hewwo wowwd!', 'wowwd hewwo', 'hewwo', 'worldo?']);

@@ -141,6 +141,17 @@ export abstract class StorageBase<
 		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
 	}
 
+	protected async setParsedValue(state: ToReadonly<State>) {
+		this.logger.debug('new parsed value:', state);
+
+		const oldState = this.toRawValue(this.#state);
+
+		await this.#storage.setValue(this.toRawValue(state));
+		this.#state = state;
+
+		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
+	}
+
 	protected parseRawValue(raw: RawState): ToReadonly<State> {
 		return raw as unknown as ToReadonly<State>;
 	}

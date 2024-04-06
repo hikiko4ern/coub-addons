@@ -7,10 +7,16 @@ import type {} from '@/types/tsPatch';
 import { EventDispatcher, EventListener } from '@/events';
 import { Context } from '@/request/ctx';
 import { registerTimelineHandlers } from '@/request/timeline';
+import { setLocales, t } from '@/translation/js';
 import { Logger } from '@/utils/logger';
 
 declare global {
 	var ctx: InstanceType<typeof Context>;
+}
+
+enum MenuItemId {
+	TAG_LINK_COPY = 'tag-link/copy',
+	TAG_LINK_BLOCK = 'tag-link/block',
 }
 
 export default defineBackground(() => {
@@ -19,6 +25,49 @@ export default defineBackground(() => {
 	const logger = Logger.create('bg');
 
 	const ctx = (globalThis.ctx = new Context(logger));
+
+	browser.menus.create({
+		id: MenuItemId.TAG_LINK_COPY,
+		contexts: ['link'],
+		targetUrlPatterns: [`${ctx.origin}/tags/*`],
+		title: t('copy-tag'),
+	});
+
+	browser.menus.create({
+		id: MenuItemId.TAG_LINK_BLOCK,
+		contexts: ['link'],
+		targetUrlPatterns: [`${ctx.origin}/tags/*`],
+		title: t('block-tag'),
+	});
+
+	browser.menus.onClicked.addListener((info, tab) => {
+		logger.debug('handling click on menu item', info.menuItemId, { info, tab });
+
+		switch (info.menuItemId) {
+			case MenuItemId.TAG_LINK_COPY: {
+				info.linkText &&
+					navigator.clipboard
+						.writeText(info.linkText)
+						.catch(err => logger.error('failed to copy tag', { info, tab }, err));
+				break;
+			}
+
+			case MenuItemId.TAG_LINK_BLOCK: {
+				info.linkText &&
+					ctx.blockedTags
+						.block(info.linkText)
+						.catch(err => logger.error('failed to block tag', { info, tab }, err));
+				break;
+			}
+		}
+	});
+
+	window.addEventListener('languagechange', () => {
+		logger.debug('languagechange', navigator.languages);
+		setLocales(navigator.languages);
+		browser.menus.update(MenuItemId.TAG_LINK_COPY, { title: t('copy-tag') });
+		browser.menus.update(MenuItemId.TAG_LINK_BLOCK, { title: t('block-tag') });
+	});
 
 	const eventListener = new EventListener(logger, (event, sender, _sendResponse) => {
 		if (browser.runtime.id !== sender.id) {

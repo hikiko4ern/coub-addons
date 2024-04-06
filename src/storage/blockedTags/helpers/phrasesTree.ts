@@ -1,3 +1,4 @@
+import type { ToReadonly } from '@/types/util';
 import { getFirstWord } from './segmenter';
 
 export interface PhrasesTree {
@@ -17,3 +18,18 @@ export const phrasesToTree = (phrases: Iterable<string>): PhrasesTree => {
 };
 
 export const preparePhraseForTree = (phrase: string) => phrase.toLowerCase();
+
+export const addPhraseToTree = (
+	tree: ToReadonly<PhrasesTree>,
+	phrase: string,
+): ToReadonly<PhrasesTree> => {
+	phrase = preparePhraseForTree(phrase);
+	const word = getFirstWord(phrase);
+
+	return word
+		? {
+				...tree,
+				[word]: new Set(tree[word]).add(phrase),
+			}
+		: tree;
+};
