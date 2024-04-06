@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.9] - 2024-04-06
+
+### Features
+
+- **(settings)** validate regular expressions in the editor
+
+### Documentation
+
+- reorder sections in the changelog and remove the default documentation scope
+
 ## [0.1.8] - 2024-04-06
 
 ### Features
