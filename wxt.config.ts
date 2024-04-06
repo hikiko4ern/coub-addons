@@ -25,6 +25,7 @@ export default defineConfig({
 			'webRequestBlocking',
 			`${process.env.VITE_COUB_ORIGIN}/*`,
 		],
+		browser_action: {},
 		browser_specific_settings: {
 			gecko: {
 				id: process.env.VITE_GECKO_ID,

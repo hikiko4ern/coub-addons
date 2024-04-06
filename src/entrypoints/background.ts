@@ -14,6 +14,8 @@ declare global {
 }
 
 export default defineBackground(() => {
+	browser.browserAction.onClicked.addListener(() => browser.runtime.openOptionsPage());
+
 	const logger = Logger.create('bg');
 
 	const ctx = (globalThis.ctx = new Context(logger));
