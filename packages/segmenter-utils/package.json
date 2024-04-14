@@ -5,13 +5,13 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"prepare": "make"
+		"postinstall": "make"
 	},
 	"dependencies": {
 		"wasm-pack": "^0.12.1"
 	},
 	"devDependencies": {
-		"vitest": "^1.2.2"
+		"vitest": "^1.4.0"
 	},
 	"repository": "https://github.com/hikiko4ern/coub-addons.git",
 	"author": "hikiko4ern",

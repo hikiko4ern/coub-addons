@@ -100,6 +100,7 @@
 		"biome.json",
 		"bun.lockb",
 		"cspell.json",
+		"patches",
 		"packages/@nextui-org/react-rsc-utils"
 	]
 }

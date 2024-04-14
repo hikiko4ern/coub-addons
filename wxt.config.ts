@@ -4,7 +4,6 @@ import arrayBuffer from '@coub-addons/vite-plugin-arraybuffer';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
-import { checker } from 'vite-plugin-checker';
 import sassDts from 'vite-plugin-sass-dts';
 import { defineConfig } from 'wxt';
 
@@ -43,22 +42,6 @@ export default defineConfig({
 		manifest.options_ui!.open_in_tab = true;
 	},
 	vite: () => ({
-		plugins: [
-			ValidateEnv(),
-			arrayBuffer(),
-			preact({ devtoolsInProd: true }),
-			sassDts(),
-			lezer(),
-			// it exits even dev build
-			false && {
-				...checker({
-					overlay: false,
-					typescript: {
-						tsconfigPath: 'tsconfig.vite.json',
-					},
-				}),
-				enforce: 'post',
-			},
-		],
+		plugins: [ValidateEnv(), arrayBuffer(), preact({ devtoolsInProd: true }), sassDts(), lezer()],
 	}),
 });
