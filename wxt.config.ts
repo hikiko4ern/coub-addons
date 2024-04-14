@@ -18,6 +18,7 @@ export default defineConfig({
 		'@/options': 'src/entrypoints/options',
 	},
 	manifest: {
+		name: 'Coub addons',
 		permissions: [
 			'storage',
 			'unlimitedStorage',
