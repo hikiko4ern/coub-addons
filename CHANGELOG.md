@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.1.10] - 2024-04-14
+
+### Bug Fixes
+
+- **(publish)** add `.env` to Firefox sources zip
+- change the name of the addon from `coub-addons` to `Coub addons`
+
+### Documentation
+
+- **(dev)** adds development dependency on Node.js
+
+### Miscellaneous Tasks
+
+- **(dev)** use the `Bun` runtime for almost all commands
+- **(settings)** change the statistics icon from pie to bars
+
+### Refactor
+
+- import auto-imported modules
+
 ## [0.1.9] - 2024-04-06
 
 ### Features

@@ -1,7 +1,7 @@
 {
 	"name": "coub-addons",
 	"description": "Coub.com additional features",
-	"version": "0.1.9",
+	"version": "0.1.10",
 	"type": "module",
 	"scripts": {
 		"prepare": "husky || true",
