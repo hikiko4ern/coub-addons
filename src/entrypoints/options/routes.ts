@@ -1,4 +1,4 @@
-import ChartPieIcon from '@heroicons/react/24/solid/ChartPieIcon';
+import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
 import Cog6ToothIcon from '@heroicons/react/24/solid/Cog6ToothIcon';
 import HashtagIcon from '@heroicons/react/24/solid/HashtagIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
@@ -14,7 +14,7 @@ interface Route {
 	path: string;
 	title: string;
 	component: ComponentType<RouteComponentProps>;
-	icon: ComponentType<ComponentProps<typeof ChartPieIcon | typeof UsersIcon>>;
+	icon: ComponentType<ComponentProps<typeof ChartBarIcon>>;
 }
 
 export const routes: Route[] = [
@@ -34,7 +34,7 @@ export const routes: Route[] = [
 		path: '/stats',
 		title: 'stats',
 		component: Stats,
-		icon: ChartPieIcon,
+		icon: ChartBarIcon,
 	},
 	{
 		path: '/settings',
