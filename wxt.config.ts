@@ -35,13 +35,16 @@ export default defineConfig({
 		content_security_policy: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
 	},
 	zip: {
+		includeSources: ['.env'],
 		excludeSources: ['target/**', 'test/**', 'utils/**'],
 	},
-	transformManifest(manifest) {
-		// biome-ignore lint/style/noNonNullAssertion: `options_ui` is always represented since we have an `options` entrypoint
-		manifest.options_ui!.open_in_tab = true;
+	hooks: {
+		'build:manifestGenerated'(_, manifest) {
+			// biome-ignore lint/style/noNonNullAssertion: `options_ui` is always presented since we have an `options` entrypoint
+			manifest.options_ui!.open_in_tab = true;
+		},
 	},
 	vite: () => ({
-		plugins: [ValidateEnv(), arrayBuffer(), preact({ devtoolsInProd: true }), sassDts(), lezer()],
+		plugins: [ValidateEnv(), arrayBuffer(), preact({ devToolsEnabled: false }), sassDts(), lezer()],
 	}),
 });
