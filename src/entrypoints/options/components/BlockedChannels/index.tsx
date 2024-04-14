@@ -6,10 +6,10 @@ import type { FunctionComponent, VNode } from 'preact';
 import { useCallback } from 'preact/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 
+import { useWatchingRef } from '@/hooks/useWatchingRef';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-
 import { BlockedChannelsTable } from './components/BlockedChannelsTable';
 import { ClearBlockedChannels } from './components/ClearBlockedChannels';
 import { useSearch } from './hooks/useSearch';

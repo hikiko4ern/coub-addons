@@ -1,5 +1,5 @@
 import { chain, filter } from 'itertools';
-import type { Unwatch } from 'wxt/storage';
+import { type Unwatch, storage } from 'wxt/storage';
 
 import { symmetricDifference } from '@/helpers/symmetricDifference';
 import type { ToReadonly } from '@/types/util';

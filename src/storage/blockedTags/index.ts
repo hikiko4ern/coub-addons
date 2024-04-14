@@ -1,4 +1,5 @@
 import type { Asyncify } from 'type-fest';
+import { storage } from 'wxt/storage';
 
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';

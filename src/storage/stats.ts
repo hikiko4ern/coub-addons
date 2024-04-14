@@ -1,3 +1,5 @@
+import { storage } from 'wxt/storage';
+
 import { CoubExclusionReason } from '@/request/coub';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
