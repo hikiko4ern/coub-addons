@@ -8,7 +8,7 @@
 	"json": {},
 	"markdown": {},
 	"toml": {},
-	"includes": ["**/*.{ts,tsx,cts,mts,js,jsx,cjs,mjs,json,jsonc,json5,md,toml}"],
+	"includes": ["**/*.{json,jsonc,json5,md,toml}"],
 	"excludes": [
 		"**/.output",
 		"**/.wxt",

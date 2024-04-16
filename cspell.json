@@ -71,6 +71,7 @@
 		"julr",
 		"justfile",
 		"keymap",
+		"lefthook",
 		"lezer",
 		"lightningcss",
 		"MSRV",
