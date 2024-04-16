@@ -37,10 +37,11 @@ Web Extension, добавляющий дополнительный функци�
 
 ## Building
 
-Для сборки требуются:
+Для сборки требуются глобально установленные:
 
 - [Node.js][node.js][^1] со включенным [Corepack]
 - [Rust] (MSRV: `1.73.0`)
+- `wasm-opt` из [Binaryen] (опционально, используется для оптимизации WASM из [`segmenter-utils`](./packages/segmenter-utils/README.md))
 
 1. устанавливаем зависимости
    ```sh
@@ -63,15 +64,24 @@ Web Extension, добавляющий дополнительный функци�
 
 ## Contributing
 
-1. устанавливаем [Node.js][node.js][^1] и [Rust]\
-   для удобства в [`justfile`](./justfile) собраны некоторые команды, для запуска которых требуется [Just]
-2. устанавливаем зависимости: `pnpm i`
+1. устанавливаем [Node.js][node.js][^1] и [Rust]
+
+   для удобства в [`Taskfile`](./Taskfile.yml) собраны некоторые команды\
+   посмотреть их список: `pnpm task -l`, запустить: `pnpm task {task}` (например, `pnpm task su:watch`)
+
+2. устанавливаем зависимости
+   ```sh
+   pnpm i
+   ```
+
 3. если не хочется, чтобы dev-версия расширения конфликтовала с prod-версией, создаём файл `.env.local` с содержимым:
    ```sh
    # ext
    VITE_GECKO_ID=some@ext.id # см. https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/browser_specific_settings#extension_id_format
    ```
+
 4. выполняем `pnpm dev:ff` для дев-сборки под Firefox-based браузеры
+
 5. [загружаем расширение][firefox-temp-install] из директории `.output/firefox-mv2`
 
 Сгенерировать `N` фейковых каналов для стора `blockedChannels`:
@@ -89,8 +99,9 @@ Web Extension, добавляющий дополнительный функци�
 
 [coub.com]: https://coub.com
 [node.js]: https://nodejs.org
+[corepack]: https://github.com/nodejs/corepack
 [rust]: https://www.rust-lang.org
+[binaryen]: https://github.com/WebAssembly/binaryen
 [just]: https://github.com/casey/just
 [firefox-temp-install]: https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/
-[corepack]: https://github.com/nodejs/corepack
 [fnm]: https://github.com/Schniz/fnm

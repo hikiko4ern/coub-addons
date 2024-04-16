@@ -29,6 +29,7 @@ web-ext.config.ts
 blockedChannels.json
 
 # caches
+.task
 .cspellcache
 *.tsbuildinfo
 

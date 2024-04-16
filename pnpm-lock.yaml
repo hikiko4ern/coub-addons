@@ -226,6 +226,9 @@ importers:
       '@faker-js/faker':
         specifier: ^8.4.1
         version: 8.4.1
+      '@go-task/cli':
+        specifier: ^3.36.0
+        version: 3.36.0
       cspell:
         specifier: ^8.7.0
         version: 8.7.0
@@ -250,6 +253,12 @@ importers:
 
   packages/segmenter-utils:
     dependencies:
+      '@go-task/cli':
+        specifier: ^3.36.0
+        version: 3.36.0
+      rimraf:
+        specifier: ^5.0.5
+        version: 5.0.5
       wasm-pack:
         specifier: ^0.12.1
         version: 0.12.1
@@ -1573,6 +1582,16 @@ packages:
     dependencies:
       tslib: 2.6.2
     dev: false
+
+  /@go-task/cli@3.36.0:
+    resolution: {integrity: sha512-6tkVdlpd9HbAyDFMMwPXtMmclVe8/GSavITEIZ2Nib5ejMp27ERi39OtlTu1QirS4dhpZT13gQ+1M5FEsy6rIg==}
+    requiresBuild: true
+    dependencies:
+      '@go-task/go-npm': 0.2.0
+
+  /@go-task/go-npm@0.2.0:
+    resolution: {integrity: sha512-vQbdtBvesHm8EUFHX8QKg4rbBodmu9VsAXH1ozpbiN5jdTMOYHTCMM31EurAYmY+rNNtxJQ4JGy6t383RPlqbw==}
+    hasBin: true
 
   /@heroicons/react@2.1.3(react@18.2.0):
     resolution: {integrity: sha512-fEcPfo4oN345SoqdlCDdSa4ivjaKbk0jTd+oubcgNxnNgAfzysfwWfQUr+51wigiWHQQRiZNd1Ao0M5Y3M2EGg==}
@@ -7042,6 +7061,14 @@ packages:
     hasBin: true
     dependencies:
       glob: 7.2.3
+    dev: false
+
+  /rimraf@5.0.5:
+    resolution: {integrity: sha512-CqDakW+hMe/Bz202FPEymy68P+G50RfMQK+Qo5YUqc9SPipvbGjCGKd0RSKEelbsfQuw3g5NZDSrlZZAJurH1A==}
+    engines: {node: '>=14'}
+    hasBin: true
+    dependencies:
+      glob: 10.3.12
     dev: false
 
   /rollup@4.14.3:

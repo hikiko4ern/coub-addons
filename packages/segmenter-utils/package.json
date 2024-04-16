@@ -5,9 +5,12 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"scripts": {
-		"postinstall": "make"
+		"postinstall": "task",
+		"clean": "rimraf lib"
 	},
 	"dependencies": {
+		"@go-task/cli": "^3.36.0",
+		"rimraf": "^5.0.5",
 		"wasm-pack": "^0.12.1"
 	},
 	"devDependencies": {

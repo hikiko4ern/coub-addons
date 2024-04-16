@@ -22,7 +22,8 @@
 		"version": "run-s \"version:*\"",
 		"version:gen-changelog": "git-cliff --bump -o",
 		"version:add-changelog": "git add CHANGELOG.md",
-		"bump": "node --disable-warning=ExperimentalWarning ./utils/bump.js"
+		"bump": "node --disable-warning=ExperimentalWarning ./utils/bump.js",
+		"su": "pnpm --filter=\"@coub-addons/segmenter-utils\""
 	},
 	"dependencies": {
 		"@codemirror/autocomplete": "^6.16.0",
@@ -95,6 +96,7 @@
 		"@biomejs/biome": "^1.7.0",
 		"@cspell/dict-ru_ru": "^2.2.1",
 		"@faker-js/faker": "^8.4.1",
+		"@go-task/cli": "^3.36.0",
 		"cspell": "^8.7.0",
 		"dprint": "^0.45.1",
 		"execa": "^8.0.1",

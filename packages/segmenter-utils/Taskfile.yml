@@ -1,0 +1,29 @@
+version: '3'
+
+set: [pipefail]
+
+tasks:
+  default:
+    cmds:
+      - task: build
+
+  build:
+    aliases: [b]
+    desc: builds WASM for browser
+    run: when_changed
+    vars:
+      MODE: '{{default "release" .MODE}}'
+      LAST_MODE:
+        sh: if grep -q 'corrupt heap' lib/segmenter_utils_rs.js; then echo dev; else echo release; fi
+    cmds:
+      - pnpm wasm-pack build --out-dir lib -s coub-addons -t web --{{.MODE}} {{.CLI_ARGS}} .
+    sources:
+      - ../../Cargo.lock
+      - ../../Cargo.toml
+      - Taskfile.yml
+      - Cargo.toml
+      - src/**/*
+    generates:
+      - lib/segmenter_utils_rs_bg.wasm
+    status:
+      - test {{.MODE}} = {{.LAST_MODE}}
