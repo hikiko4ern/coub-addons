@@ -11,13 +11,19 @@ body = """
 {% else %}\
     ## [unreleased]
 {% endif %}\
+{% set breaking_commits = commits | filter(attribute="breaking", value=true) -%}
+{% if breaking_commits %}
+	### BREAKING CHANGES
+	{% for commit in breaking_commits %}
+			- {% if commit.scope %}**({{commit.scope}})** {% endif %}{{commit.breaking_description}}
+	{% endfor %}\
+{% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
-        - {% if commit.scope %}**({{commit.scope}})** {% endif %}{{ commit.message }}
-        {%- if commit.breaking %}
-        {% raw %}  {% endraw %}- **BREAKING**: {{commit.breaking_description}}
-        {%- endif -%}
+        - {% if commit.breaking %}**\\[breaking\\]** {% endif -%}
+					{% if commit.scope %}**({{commit.scope}})** {% endif -%}
+					{{ commit.message }}
     {%- endfor -%}
     {% raw %}\n{% endraw %}\
 {% endfor %}\
