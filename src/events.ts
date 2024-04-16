@@ -1,4 +1,4 @@
-import type { Browser, Events } from 'webextension-polyfill';
+import type { AugmentedBrowser as Browser, Events } from 'wxt/browser';
 
 import { Logger } from '@/utils/logger';
 import type { StorageEvent } from './storage/types';

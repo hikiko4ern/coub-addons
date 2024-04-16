@@ -1,7 +1,7 @@
-diff --git a/node_modules/preact/compat/src/index.d.ts b/node_modules/preact/compat/src/index.d.ts
-index 3a054da..434b6a3 100644
---- a/node_modules/preact/compat/src/index.d.ts
-+++ b/node_modules/preact/compat/src/index.d.ts
+diff --git a/compat/src/index.d.ts b/compat/src/index.d.ts
+index 3a054da47c464adf3a93d58938fbf33ef6b162d3..434b6a3b7bc8534987053a0c2a6f39bffc0e9af6 100644
+--- a/compat/src/index.d.ts
++++ b/compat/src/index.d.ts
 @@ -217,4 +217,9 @@ declare namespace React {
  		callback: () => void
  	): void;

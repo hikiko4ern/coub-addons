@@ -11,7 +11,7 @@
 		"wasm-pack": "^0.12.1"
 	},
 	"devDependencies": {
-		"vitest": "^1.4.0"
+		"vitest": "^1.5.0"
 	},
 	"repository": "https://github.com/hikiko4ern/coub-addons.git",
 	"author": "hikiko4ern",

@@ -1,18 +1,18 @@
+import fs from 'node:fs/promises';
 import { faker } from '@faker-js/faker';
-
-import type { Backup } from '@/storage/backup';
-import type { RawBlockedChannels } from '@/storage/blockedChannels/types';
 
 const DEST = 'blockedChannels.json';
 const size = Number.parseInt(process.argv[2], 10) || 1000;
 
-const data: RawBlockedChannels = {
+/** @type {import('@/storage/blockedChannels/types').RawBlockedChannels} */
+const data = {
 	id: new Array(size),
 	title: new Array(size),
 	permalink: new Array(size),
 };
 
-const backup: Backup = {
+/** @type {import('@/storage/backup').Backup} */
+const backup = {
 	blockedChannels: data,
 	blockedChannels$: { v: 1 },
 	blockedTags: '',
@@ -29,7 +29,7 @@ for (let i = 0; i < size; i++) {
 	data.permalink[i] = faker.internet.userName({ firstName, lastName });
 }
 
-await Bun.write(DEST, JSON.stringify(backup));
+await fs.writeFile(DEST, JSON.stringify(backup));
 
 const formattedSize = new Intl.NumberFormat('en').format(size);
 console.log(`Wrote ${formattedSize} channels to ${DEST}`);

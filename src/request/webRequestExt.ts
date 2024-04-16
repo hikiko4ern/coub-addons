@@ -1,4 +1,4 @@
-import type { WebRequest } from 'webextension-polyfill';
+import type { WebRequest } from 'wxt/browser';
 
 import { Logger } from '@/utils/logger';
 

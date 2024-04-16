@@ -4,10 +4,8 @@
 	"version": "0.1.0",
 	"type": "module",
 	"main": "src/index.js",
-	"dependencies": {
-		"base64-arraybuffer": "^1.0.2"
-	},
 	"peerDependencies": {
+		"base64-arraybuffer": "^1",
 		"vite": "^5"
 	},
 	"repository": "https://github.com/hikiko4ern/coub-addons.git",
