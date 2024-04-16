@@ -55,7 +55,7 @@ export default defineContentScript({
 			followButtonSelector: '.channel__relationships__follow',
 			followButtonActualButtonSelector: ':where(.follow-button__container, .follow-btn) > button',
 			followButtonContainerSelector:
-				'.follow-button__container, .follow-btn:not(:has(> .follow-button__container))',
+				'.follow-btn[data-channel-id] > .follow-button__container, .follow-btn',
 			followButtonTextSelector: '.text',
 			followButtonTextDummySelector: '.text-dummy',
 			followButtonTextDummyClassName: 'text-dummy',

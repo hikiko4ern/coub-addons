@@ -44,7 +44,7 @@ export default defineContentScript({
 			followButtonSelector: '.follow-btn',
 			followButtonActualButtonSelector: ':where(.follow-button__container, .follow-btn) > button',
 			followButtonContainerSelector:
-				'.follow-button__container, .follow-btn:not(:has(> .follow-button__container))',
+				'.follow-button__container, .follow-btn:not([data-channel-id])',
 			followButtonTextSelector: '.text',
 			followButtonTextDummySelector: '.text-dummy',
 			followButtonTextDummyClassName: 'text-dummy',
@@ -55,8 +55,6 @@ export default defineContentScript({
 			const addedNodes = new Map<Element, () => void>();
 
 			const handleMutations: MutationCallback = async mutations => {
-				const startMark = performance.mark('channelDropdown CS mutations start');
-
 				for (const mutation of mutations) {
 					if (mutation.removedNodes.length) {
 						for (const [node, unregister] of addedNodes) {
@@ -182,13 +180,6 @@ export default defineContentScript({
 						}
 					}
 				}
-
-				const endMark = performance.mark('channelDropdown CS mutations end');
-
-				performance.measure('channelDropdown CS mutations', {
-					start: startMark.startTime,
-					end: endMark.duration,
-				});
 			};
 
 			const observer = new MutationObserver(handleMutations);

@@ -69,6 +69,7 @@
 		"justfile",
 		"keymap",
 		"lezer",
+		"lightningcss",
 		"MSRV",
 		"nextui",
 		"plasmo",

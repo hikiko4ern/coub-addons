@@ -31,6 +31,7 @@ export default defineConfig({
 		browser_specific_settings: {
 			gecko: {
 				id: process.env.VITE_GECKO_ID,
+				strict_min_version: '101.0',
 			},
 		},
 		content_security_policy: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
@@ -47,5 +48,16 @@ export default defineConfig({
 	},
 	vite: () => ({
 		plugins: [ValidateEnv(), arrayBuffer(), preact({ devToolsEnabled: false }), sassDts(), lezer()],
+		css: {
+			lightningcss: {
+				targets: {
+					firefox: 101 << 16,
+				},
+			},
+		},
+		build: {
+			target: ['es2022', 'firefox101'],
+			cssMinify: 'lightningcss',
+		},
 	}),
 });

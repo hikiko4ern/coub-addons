@@ -1,3 +1,5 @@
+import 'react-toastify/dist/ReactToastify.min.css';
+
 import { NextUIProvider } from '@nextui-org/system';
 import { render } from 'preact';
 import { HelmetProvider } from 'react-helmet-async';

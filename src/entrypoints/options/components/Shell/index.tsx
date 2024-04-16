@@ -3,7 +3,6 @@ import { Link } from '@nextui-org/link';
 import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/navbar';
 import type { FunctionComponent } from 'preact';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
 import { Link as WLink, useLocation } from 'wouter-preact';
 
 import { ErrorBoundary } from '@/options/components/ErrorBoundary';
