@@ -6,7 +6,7 @@ edition = "2021"
 license = "Unlicense"
 publish = false
 repository = "https://github.com/hikiko4ern/coub-addons"
-rust-version = "1.67.1"
+rust-version = "1.73"
 description = "Intl.Segmenter utils based on ICU4X"
 
 [lib]
