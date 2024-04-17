@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.1.11] - 2024-04-17
+
+### Bug Fixes
+
+- **(stats)** count coubs from channel's timeline, unless they are blocked due to that channel being blocked
+
+### Features
+
+- **(blocklist/title)** implement filtering of coubs by title
+
+### Documentation
+
+- **(features)** mention context menu that allows to copy or block a tag
+
+### Miscellaneous Tasks
+
+- lower the minimum supported version of Firefox to 101
+- **(changelog)** move breaking changes to a separate section
+- **(dev)** use `Node.js` and `pnpm` instead of `Bun`
+- **(build)** swap `make` and `just` for `Task`
+- **(dev)** replace `husky` with `lefthook`
+- **(dev)** run `tsc` on any file change
+
 ## [0.1.10] - 2024-04-14
 
 ### Bug Fixes
