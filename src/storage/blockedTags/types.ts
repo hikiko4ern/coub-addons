@@ -1,9 +1,5 @@
-import type { PhrasesTree } from './helpers/phrasesTree';
+import type { PhrasesBlocklist, RawPhrasesBlocklist } from '../phrasesBlocklist';
 
-export interface BlockedTags {
-	raw: RawBlockedTags;
-	phrases: PhrasesTree;
-	regexps: RegExp[];
-}
+export type BlockedTags = PhrasesBlocklist;
 
-export type RawBlockedTags = string;
+export type RawBlockedTags = RawPhrasesBlocklist;

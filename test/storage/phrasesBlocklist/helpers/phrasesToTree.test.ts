@@ -3,7 +3,7 @@
 import { permutations } from 'itertools';
 import { expect, it } from 'vitest';
 
-import { phrasesToTree } from '@/storage/blockedTags/helpers/phrasesTree';
+import { phrasesToTree } from '@/storage/phrasesBlocklist/helpers/phrasesTree';
 
 it('1 word', () => {
 	expect(phrasesToTree(['hewwo'])).toStrictEqual({
@@ -69,7 +69,9 @@ it('many words', () => {
 	).toStrictEqual({
 		// cspell:disable
 		teh: new Set([
-			'teh rabbit-hwowal went stwaight on wike a tunnyew fwow swome way (o´∀`o) and when dipped suddenwy dwown (* ^ ω ^) swo suddenwy dat awice had nyot a mwoment two fwink abwout stwopping hewsewf befwowe she fwound hewsewf fawwing dwown a wewwy deep weww uwu',
+			'teh rabbit-hwowal went stwaight on wike a tunnyew fwow swome way (o´∀`o) and when dipped suddenwy dwown (* ^ ω ^) swo suddenwy dat awice had nyot a mwoment two fwink abwout stwopping hewsewf befwowe she fwound hewsewf fawwing dwown a wewwy deep weww uwu'.normalize(
+				'NFKC',
+			),
 		]),
 		// cspell:enable
 	});

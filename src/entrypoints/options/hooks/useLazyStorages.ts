@@ -1,4 +1,5 @@
 import { BlockedChannelsStorage } from '@/storage/blockedChannels';
+import { BlockedCoubTitlesStorage } from '@/storage/blockedCoubTitles';
 import { BlockedTagsStorage } from '@/storage/blockedTags';
 import { StatsStorage } from '@/storage/stats';
 
@@ -8,11 +9,13 @@ import { tabId } from './useTabId';
 interface Storages {
 	readonly blockedChannelsStorage: BlockedChannelsStorage;
 	readonly blockedTagsStorage: BlockedTagsStorage;
+	readonly blockedCoubTitlesStorage: BlockedCoubTitlesStorage;
 	readonly statsStorage: StatsStorage;
 }
 
 let blockedChannelsStorage: BlockedChannelsStorage,
 	blockedTagsStorage: BlockedTagsStorage,
+	blockedCoubTitlesStorage: BlockedCoubTitlesStorage,
 	statsStorage: StatsStorage;
 
 const lazyStorages = Object.defineProperties<Storages>(Object.create(null), {
@@ -23,6 +26,11 @@ const lazyStorages = Object.defineProperties<Storages>(Object.create(null), {
 	blockedTagsStorage: {
 		configurable: false,
 		get: () => (blockedTagsStorage ||= new BlockedTagsStorage(tabId, 'options', logger)),
+	},
+	blockedCoubTitlesStorage: {
+		configurable: false,
+		get: () =>
+			(blockedCoubTitlesStorage ||= new BlockedCoubTitlesStorage(tabId, 'options', logger)),
 	},
 	statsStorage: {
 		configurable: false,

@@ -17,6 +17,8 @@ const backup = {
 	blockedChannels$: { v: 1 },
 	blockedTags: '',
 	blockedTags$: { v: 1 },
+	blockedCoubTitles: '',
+	blockedCoubTitles$: { v: 1 },
 };
 
 for (let i = 0; i < size; i++) {

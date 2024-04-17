@@ -1,4 +1,4 @@
-@top Tags { line* }
+@top PhrasesBlocklist { line* }
 
 line { RegExp | Phrase }
 

@@ -42,6 +42,7 @@ const EXCLUSION_REASON_TEXT: Record<CoubExclusionReason, string> = {
 	[CoubExclusionReason.COUB_DISLIKED]: 'coub is disliked',
 	[CoubExclusionReason.CHANNEL_BLOCKED]: 'author is blocked manually',
 	[CoubExclusionReason.TAG_BLOCKED]: 'tag is blocked',
+	[CoubExclusionReason.COUB_TITLE_BLOCKED]: "blocked by coub's title",
 };
 
 export const registerTimelineHandlers = (ctx: Context) => {
@@ -83,7 +84,11 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				isModified = filteredCoubs.length !== origAmount;
 
 				if (filteredOutCoubs.length) {
-					logger.groupCollapsed('filtered out', filteredOutCoubs.length, 'coubs');
+					logger.groupCollapsed(
+						'filtered out',
+						filteredOutCoubs.length,
+						filteredOutCoubs.length > 1 ? 'coubs' : 'coub',
+					);
 					logger.tableRaw(filteredOutCoubs, ['title', 'author', 'tReason', 'pattern', 'link']);
 					logger.groupEnd();
 

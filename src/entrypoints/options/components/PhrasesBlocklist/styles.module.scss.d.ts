@@ -1,5 +1,5 @@
 declare const classNames: {
-  readonly "blocked-tags__editor": "blocked-tags__editor";
+  readonly "phrases-blocklist__editor": "phrases-blocklist__editor";
   readonly "cm-editor": "cm-editor";
   readonly "cm-scroller": "cm-scroller";
 };

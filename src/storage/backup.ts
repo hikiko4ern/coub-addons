@@ -4,13 +4,19 @@ import { storage } from 'wxt/storage';
 import { logger } from '@/options/constants';
 import {
 	type BlockedChannelsMeta,
-	BlockedChannelsStorage,
+	type BlockedChannelsStorage,
 	type RawBlockedChannels,
 	blockedChannelsItem,
 } from './blockedChannels';
 import {
+	type BlockedCoubTitlesMeta,
+	type BlockedCoubTitlesStorage,
+	type RawBlockedCoubTitles,
+	blockedCoubTitlesItem,
+} from './blockedCoubTitles';
+import {
 	type BlockedTagsMeta,
-	BlockedTagsStorage,
+	type BlockedTagsStorage,
 	type RawBlockedTags,
 	blockedTagsItem,
 } from './blockedTags';
@@ -21,11 +27,14 @@ export interface Backup {
 	[BlockedChannelsStorage.META_KEY]?: OmitIndexSignature<BlockedChannelsMeta>;
 	[BlockedTagsStorage.KEY]: RawBlockedTags;
 	[BlockedTagsStorage.META_KEY]?: OmitIndexSignature<BlockedTagsMeta>;
+	[BlockedCoubTitlesStorage.KEY]: RawBlockedCoubTitles;
+	[BlockedCoubTitlesStorage.META_KEY]?: OmitIndexSignature<BlockedCoubTitlesMeta>;
 }
 
 const storageItems = [
 	['blockedChannels', blockedChannelsItem],
 	['blockedTags', blockedTagsItem],
+	['blockedCoubTitles', blockedCoubTitlesItem],
 	['stats', statsItem],
 ] as const;
 

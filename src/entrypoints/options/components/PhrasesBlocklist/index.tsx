@@ -10,72 +10,75 @@ import { usePrevious } from '@/hooks/usePrevious';
 import { Confirm } from '@/options/components/Confirm';
 import { Editor } from '@/options/components/Editor';
 import { ErrorCode } from '@/options/components/ErrorCode';
-import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import { tags, tagsLinter } from './grammar';
+import type { PhrasesBlocklistStorage } from '@/storage/phrasesBlocklist';
+import { phrasesBlocklist, phrasesBlocklistLinter } from './grammar';
 
 import styles from './styles.module.scss';
 
-const lang = tags();
+const lang = phrasesBlocklist();
 
-export const BlockedTags: FunctionComponent = () => {
+interface Props {
+	storage: PhrasesBlocklistStorage<string>;
+}
+
+export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage }) => {
 	const editorRef = useRef<Editor.Ref>(null);
-	const { blockedTagsStorage } = useLazyStorages();
-	const blockedTags = useStorageState({ storage: blockedTagsStorage });
+	const storageState = useStorageState({ storage });
 	const isModified = useSignal(false);
 	const [isSaving, setIsSaving] = useState(false);
 	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
-	const blockedTagsRaw = blockedTags.status === StorageHookState.Loaded && blockedTags.data.raw;
-	const prevBlockedTagsRaw = usePrevious(blockedTagsRaw);
+	const storageRaw = storageState.status === StorageHookState.Loaded && storageState.data.raw;
+	const prevStorageRaw = usePrevious(storageRaw);
 
-	const saveTags = useCallback((value: string) => {
+	const save = useCallback((value: string) => {
 		setIsSaving(true);
-		return blockedTagsStorage.setRaw(value).finally(() => setIsSaving(false));
+		return storage.setRaw(value).finally(() => setIsSaving(false));
 	}, []);
 
 	const revertChanges = useCallback(() => {
-		if (editorRef.current && blockedTags.status === StorageHookState.Loaded) {
-			editorRef.current.setValue(blockedTags.data.raw);
+		if (editorRef.current && storageState.status === StorageHookState.Loaded) {
+			editorRef.current.setValue(storageState.data.raw);
 		}
-	}, [blockedTags]);
+	}, [storageState]);
 
 	const handleSaveClick = useCallback(() => {
 		const value = editorRef.current?.getValue();
-		return typeof value === 'string' && saveTags(value);
+		return typeof value === 'string' && save(value);
 	}, []);
 
 	useEffect(
 		() => () => {
 			const value = editorRef.current?.getValue();
-			typeof value === 'string' && saveTags(value);
+			typeof value === 'string' && save(value);
 		},
 		[],
 	);
 
 	useEffect(() => {
-		typeof prevBlockedTagsRaw === 'string' &&
-			typeof blockedTagsRaw === 'string' &&
-			prevBlockedTagsRaw !== blockedTagsRaw &&
+		typeof prevStorageRaw === 'string' &&
+			typeof storageRaw === 'string' &&
+			prevStorageRaw !== storageRaw &&
 			editorRef.current &&
-			editorRef.current.getValue() === prevBlockedTagsRaw &&
-			editorRef.current.setValue(blockedTagsRaw);
-	}, [prevBlockedTagsRaw, blockedTagsRaw]);
+			editorRef.current.getValue() === prevStorageRaw &&
+			editorRef.current.setValue(storageRaw);
+	}, [prevStorageRaw, storageRaw]);
 
 	let content: string | VNode;
 
-	switch (blockedTags.status) {
+	switch (storageState.status) {
 		case StorageHookState.Loaded: {
 			content = (
 				<Editor
 					stateRef={editorRef}
-					className={cx('h-0 w-full flex-grow', styles['blocked-tags__editor'])}
-					defaultValue={blockedTags.data.raw}
+					className={cx('h-0 w-full flex-grow', styles['phrases-blocklist__editor'])}
+					defaultValue={storageState.data.raw}
 					lineWrapping
 					isModifiedSignal={isModified}
 					language={lang}
-					linter={tagsLinter}
-					save={saveTags}
+					linter={phrasesBlocklistLinter}
+					save={save}
 				/>
 			);
 			break;
@@ -83,7 +86,7 @@ export const BlockedTags: FunctionComponent = () => {
 
 		case StorageHookState.Loading: {
 			content = (
-				<p className={cx('w-full flex-grow', styles['blocked-tags__editor'])}>
+				<p className={cx('w-full flex-grow', styles['phrases-blocklist__editor'])}>
 					<Localized id="loading" />
 				</p>
 			);
@@ -91,7 +94,7 @@ export const BlockedTags: FunctionComponent = () => {
 		}
 
 		case StorageHookState.Error: {
-			content = <ErrorCode data={blockedTags.error} />;
+			content = <ErrorCode data={storageState.error} />;
 			break;
 		}
 	}
@@ -121,8 +124,8 @@ export const BlockedTags: FunctionComponent = () => {
 				</Button>
 
 				<Confirm
-					title={<Localized id="revert-blocked-tags-changes-confirmation-title" />}
-					description={<Localized id="revert-blocked-tags-changes-confirmation-description" />}
+					title={<Localized id="revert-changes-confirmation-title" />}
+					description={<Localized id="revert-changes-confirmation-description" />}
 					actionText={<Localized id="revert" />}
 					isOpen={isOpen}
 					onConfirm={revertChanges}

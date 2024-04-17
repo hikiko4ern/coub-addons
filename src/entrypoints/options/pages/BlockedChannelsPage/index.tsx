@@ -14,7 +14,7 @@ import { BlockedChannelsTable } from './components/BlockedChannelsTable';
 import { ClearBlockedChannels } from './components/ClearBlockedChannels';
 import { useSearch } from './hooks/useSearch';
 
-export const BlockedChannels: FunctionComponent = () => {
+export const BlockedChannelsPage: FunctionComponent = () => {
 	const { blockedChannelsStorage } = useLazyStorages();
 	const {
 		searchResult,

@@ -25,21 +25,21 @@ export const Shell: FunctionComponent = ({ children }) => {
 
 			<Navbar
 				// TODO: switch to vertical layout on <sm
-				className="w-auto flex-col justify-normal border-divider border-r p-4"
+				className="w-auto shrink-0 grow flex-col justify-normal border-divider border-r p-4"
 				classNames={{
 					wrapper: 'w-auto h-auto flex-grow px-0 my-0 max-w-none',
 				}}
 				position="static"
 			>
-				<NavbarContent className="flex-col items-stretch" justify="start">
+				<NavbarContent className="max-w-64 flex-col items-stretch" justify="start">
 					{routes.map(({ path, title, icon: Icon }) => {
 						const isActive = path === location;
 
 						return (
-							<NavbarItem key={path} isActive={isActive}>
+							<NavbarItem key={path} className="whitespace-normal" isActive={isActive}>
 								<WLink href={path} asChild>
 									<Link
-										className="w-full font-medium"
+										className="w-full items-baseline font-medium"
 										isBlock
 										{...(isActive
 											? {
@@ -49,7 +49,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 													color: 'foreground',
 												})}
 									>
-										<Icon className="mr-2" height="1em" />
+										<Icon className="mr-2 shrink-0" height="1em" />
 										<Localized id={title} />
 									</Link>
 								</WLink>

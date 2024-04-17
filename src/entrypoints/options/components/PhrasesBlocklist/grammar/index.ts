@@ -2,10 +2,10 @@ import { LRLanguage, LanguageSupport, syntaxTree } from '@codemirror/language';
 import { type Diagnostic, linter } from '@codemirror/lint';
 import { styleTags, tags as t } from '@lezer/highlight';
 
-import { tryRegexFromLine } from '@/storage/blockedTags/helpers/tryRegexFromLine';
+import { tryRegexFromLine } from '@/storage/phrasesBlocklist/helpers/tryRegexFromLine';
 import { parser } from './syntax.grammar';
 
-export const tagsLanguage = LRLanguage.define({
+export const phrasesBlocklistLanguage = LRLanguage.define({
 	parser: parser.configure({
 		props: [
 			styleTags({
@@ -15,7 +15,7 @@ export const tagsLanguage = LRLanguage.define({
 	}),
 });
 
-export const tagsLinter = linter(view => {
+export const phrasesBlocklistLinter = linter(view => {
 	const diagnostics: Diagnostic[] = [];
 
 	syntaxTree(view.state)
@@ -43,4 +43,4 @@ export const tagsLinter = linter(view => {
 	return diagnostics;
 });
 
-export const tags = () => new LanguageSupport(tagsLanguage);
+export const phrasesBlocklist = () => new LanguageSupport(phrasesBlocklistLanguage);

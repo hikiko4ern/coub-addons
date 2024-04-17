@@ -2,8 +2,8 @@
 
 import { expect, it } from 'vitest';
 
-import { getMatchedPhrase } from '@/storage/blockedTags/helpers/getMatchedPhrase';
-import { phrasesToTree } from '@/storage/blockedTags/helpers/phrasesTree';
+import { getMatchedPhrase } from '@/storage/phrasesBlocklist/helpers/getMatchedPhrase';
+import { phrasesToTree } from '@/storage/phrasesBlocklist/helpers/phrasesTree';
 
 it('simple', () => {
 	const tree = phrasesToTree(['wowwd', 'hewwo wowwd!', 'wowwd hewwo', 'hewwo', 'worldo?']);

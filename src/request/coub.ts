@@ -1,9 +1,9 @@
 import { imap } from 'itertools';
 
 import type { IsChannelBlockedFn } from '@/storage/blockedChannels';
+import type { IsCoubBlockedByTitle } from '@/storage/blockedCoubTitles';
 import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
 import { Logger } from '@/utils/logger';
-
 import type { Context } from './ctx';
 import type { TimelineResponseCoub } from './timeline';
 import type { Channel } from './types';
@@ -28,6 +28,7 @@ export enum CoubExclusionReason {
 	COUB_DISLIKED = 'coub-is-disliked',
 	CHANNEL_BLOCKED = 'channel-is-blocked',
 	TAG_BLOCKED = 'tag-is-blocked',
+	COUB_TITLE_BLOCKED = 'coub-title-is-blocked',
 }
 
 const logger = Logger.create('CoubHelpers');
@@ -66,13 +67,16 @@ export class CoubHelpers {
 class CoubBlocklistChecker {
 	readonly #isChannelBlocked: IsChannelBlockedFn;
 	readonly #isHaveBlockedTags: IsHaveBlockedTagsFn;
+	readonly #isBlockedByTitle: IsCoubBlockedByTitle;
 
 	private constructor(
 		isChannelBlocked: IsChannelBlockedFn,
 		isHaveBlockedTags: IsHaveBlockedTagsFn,
+		isHaveBlockedCoubTitles: IsCoubBlockedByTitle,
 	) {
 		this.#isChannelBlocked = isChannelBlocked;
 		this.#isHaveBlockedTags = isHaveBlockedTags;
+		this.#isBlockedByTitle = isHaveBlockedCoubTitles;
 	}
 
 	static async create(ctx: Context) {
@@ -80,6 +84,7 @@ class CoubBlocklistChecker {
 			...(await Promise.all([
 				ctx.blockedChannels.createBoundedIsBlocked(),
 				ctx.blockedTags.createBoundedIsBlocked(),
+				ctx.blockedCoubTitles.createBoundedIsBlocked(),
 			])),
 		);
 	}
@@ -89,6 +94,7 @@ class CoubBlocklistChecker {
 	):
 		| [isExclude: true, reason: Exclude<CoubExclusionReason, CoubExclusionReason.TAG_BLOCKED>]
 		| [isExclude: true, reason: CoubExclusionReason.TAG_BLOCKED, blockedByPattern: string]
+		| [isExclude: true, reason: CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern: string]
 		| [isExclude: false] => {
 		if (
 			coub == null ||
@@ -114,6 +120,10 @@ class CoubBlocklistChecker {
 		}
 
 		let blockedByPattern: string | undefined;
+
+		if (typeof coub.title === 'string' && (blockedByPattern = this.#isBlockedByTitle(coub.title))) {
+			return [true, CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern];
+		}
 
 		if (
 			Array.isArray(coub.tags) &&

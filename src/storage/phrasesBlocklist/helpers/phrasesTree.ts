@@ -17,7 +17,7 @@ export const phrasesToTree = (phrases: Iterable<string>): PhrasesTree => {
 	return tree;
 };
 
-export const preparePhraseForTree = (phrase: string) => phrase.toLowerCase();
+export const preparePhraseForTree = (phrase: string) => phrase.normalize('NFKC').toLowerCase();
 
 export const addPhraseToTree = (
 	tree: ToReadonly<PhrasesTree>,

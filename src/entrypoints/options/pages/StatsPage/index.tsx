@@ -7,7 +7,7 @@ import { StorageHookState, useStorageState } from '@/options/hooks/useStorageSta
 
 import { FilteredOutCoubs } from './components/FilteredOutCoubs';
 
-export const Stats: FunctionComponent = () => {
+export const StatsPage: FunctionComponent = () => {
 	const { statsStorage } = useLazyStorages();
 	const stats = useStorageState({ storage: statsStorage });
 

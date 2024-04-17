@@ -39,6 +39,11 @@ error-boundary-exception = Ну, что-то сломалось. Вы может
   *[other] Попробовать восстановить
 }</recover>, если Вам повезет.
 
+## options / phrases blocklist
+revert-changes = Откатить изменения
+revert-changes-confirmation-title = Откат изменений
+revert-changes-confirmation-description = Вы уверены, что хотите откатить все изменения до момента последнего сохранения?
+
 ## options / blocked channels
 blocked-channels = Заблокированные каналы
 blocked-channels-list = Список заблокированных каналов
@@ -60,9 +65,9 @@ clear-blocked-channels-confirmation-description = Вы уверены, что х
 
 ## options / blocked tags
 blocked-tags = Заблокированные теги
-revert-changes = Откатить изменения
-revert-blocked-tags-changes-confirmation-title = Откат изменений списка тегов
-revert-blocked-tags-changes-confirmation-description = Вы уверены, что хотите откатить все изменения до момента последнего сохранения?
+
+## options / blocked coub titles
+blocked-coub-titles = Заблокированные названия коубов
 
 ## options / stats
 stats = Статистика
@@ -73,6 +78,7 @@ count = Количество
 coub-is-disliked = коубу поставлен дизлайк
 channel-is-blocked = канал заблокирован
 tag-is-blocked = тег заблокирован
+coub-title-is-blocked = коуб заблокирован по имени
 
 ## options / settings
 settings = Настройки

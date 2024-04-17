@@ -39,6 +39,11 @@ error-boundary-exception = Well, something's broken. You can <recover>{$attempt 
   *[other] Try to recover
 }</recover> if you're lucky.
 
+## options / phrases blocklist
+revert-changes = Revert changes
+revert-changes-confirmation-title = Reverting changes
+revert-changes-confirmation-description = Are you sure you want to revert all changes back to when you last saved?
+
 ## options / blocked channels
 blocked-channels = Blocked channels
 blocked-channels-list = Blocked channels list
@@ -59,9 +64,9 @@ clear-blocked-channels-confirmation-description = Are you sure you want to remov
 
 ## options / blocked tags
 blocked-tags = Blocked tags
-revert-changes = Revert changes
-revert-blocked-tags-changes-confirmation-title = Reverting tag list changes
-revert-blocked-tags-changes-confirmation-description = Are you sure you want to revert all changes back to when you last saved?
+
+## options / blocked coub titles
+blocked-coub-titles = Blocked coub titles
 
 ## options / stats
 stats = Stats
@@ -72,6 +77,7 @@ count = Count
 coub-is-disliked = coub is disliked
 channel-is-blocked = channel is blocked
 tag-is-blocked = tag is blocked
+coub-title-is-blocked = coub is blocked by title
 
 ## options / settings
 settings = Settings

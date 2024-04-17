@@ -79,6 +79,7 @@ export const ImportExport: FunctionComponent = () => {
 					await Promise.all([
 						lazyStorages.blockedChannelsStorage.reinitialize(),
 						lazyStorages.blockedTagsStorage.reinitialize(),
+						lazyStorages.blockedCoubTitlesStorage.reinitialize(),
 						lazyStorages.statsStorage.reinitialize(),
 					]);
 					toast.success(<Localized id="backup-imported-successfully" />);
