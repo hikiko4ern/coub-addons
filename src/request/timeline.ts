@@ -1,4 +1,4 @@
-import { CoubExclusionReason, type CoubTitleData } from './coub';
+import { CoubExclusionReason, type CoubTitleData, type FilteredOutCoubForStats } from './coub';
 import type { Context } from './ctx';
 import type { Channel } from './types';
 
@@ -31,8 +31,7 @@ interface TimelineResponseCoubTag {
 	value: string;
 }
 
-interface FilteredOutCoub extends CoubTitleData {
-	reason: CoubExclusionReason;
+interface FilteredOutCoub extends CoubTitleData, FilteredOutCoubForStats {
 	tReason: string;
 	pattern: string | undefined;
 	link: string;
@@ -69,7 +68,8 @@ export const registerTimelineHandlers = (ctx: Context) => {
 					if (isExclude) {
 						filteredOutCoubs.push({
 							...ctx.coubHelpers.getCoubTitleData(coub),
-							reason: reason,
+							channelPermalink: coub.channel?.permalink,
+							reason,
 							tReason: EXCLUSION_REASON_TEXT[reason],
 							pattern: blockedByPattern,
 							link: ctx.coubHelpers.getCoubPermalink(coub.permalink).toString(),
@@ -92,8 +92,9 @@ export const registerTimelineHandlers = (ctx: Context) => {
 					logger.tableRaw(filteredOutCoubs, ['title', 'author', 'tReason', 'pattern', 'link']);
 					logger.groupEnd();
 
-					ctx.coubHelpers.isCountTimelineRequestInStats(details) &&
-						ctx.stats.countFilteredOutCoubs(filteredOutCoubs);
+					ctx.stats.countFilteredOutCoubs(
+						ctx.coubHelpers.getCountedInStatsTimelineRequestCoubs(details, filteredOutCoubs),
+					);
 				}
 
 				logger.debug(

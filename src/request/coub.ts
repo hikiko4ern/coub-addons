@@ -31,7 +31,13 @@ export enum CoubExclusionReason {
 	COUB_TITLE_BLOCKED = 'coub-title-is-blocked',
 }
 
+export interface FilteredOutCoubForStats {
+	channelPermalink: string | undefined;
+	reason: CoubExclusionReason;
+}
+
 const logger = Logger.create('CoubHelpers');
+const CHANNEL_TIMELINE_PREFIX = '/api/v2/timeline/channel/';
 
 export class CoubHelpers {
 	readonly #ctx: Context;
@@ -49,18 +55,27 @@ export class CoubHelpers {
 
 	createChecker = async () => CoubBlocklistChecker.create(this.#ctx);
 
-	isCountTimelineRequestInStats = (details: RequestDetails) => {
+	getCountedInStatsTimelineRequestCoubs = <F extends FilteredOutCoubForStats>(
+		details: RequestDetails,
+		filtered: F[],
+	): F[] => {
 		try {
 			const url = new URL(details.url);
 
-			if (url.origin === this.#ctx.origin && url.pathname.startsWith('/api/v2/timeline/channel/')) {
-				return false;
+			if (url.origin === this.#ctx.origin && url.pathname.startsWith(CHANNEL_TIMELINE_PREFIX)) {
+				const channelPermalink = url.pathname.slice(CHANNEL_TIMELINE_PREFIX.length);
+
+				return filtered.filter(
+					f =>
+						f.reason !== CoubExclusionReason.CHANNEL_BLOCKED ||
+						f.channelPermalink !== channelPermalink,
+				);
 			}
 		} catch (err) {
 			logger.error('failed to check if request should be counted in stats', details, err);
 		}
 
-		return true;
+		return filtered;
 	};
 }
 
