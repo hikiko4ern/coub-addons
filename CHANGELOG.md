@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.12] - 2024-04-18
+
+### Features
+
+- **(blocklist)** implement blocking of recoubs
+
+### Documentation
+
+- add link to the latest release
+
+### Miscellaneous Tasks
+
+- **(segmenter-utils)** change `rust-version` to `1.73`
+- **(dev)** update `pnpm` to `9.0.2`
+
 ## [0.1.11] - 2024-04-17
 
 ### Bug Fixes
