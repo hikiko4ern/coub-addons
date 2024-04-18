@@ -49,7 +49,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 													color: 'foreground',
 												})}
 									>
-										<Icon className="mr-2 shrink-0" height="1em" />
+										<Icon className="relative top-[2px] mr-2 shrink-0" height="1em" />
 										<Localized id={title} />
 									</Link>
 								</WLink>

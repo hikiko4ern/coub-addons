@@ -1,9 +1,9 @@
 import { BlockedChannelsStorage } from '@/storage/blockedChannels';
 import { BlockedCoubTitlesStorage } from '@/storage/blockedCoubTitles';
 import { BlockedTagsStorage } from '@/storage/blockedTags';
+import { BlocklistStorage } from '@/storage/blocklist';
 import { StatsStorage } from '@/storage/stats';
 import type { Logger } from '@/utils/logger';
-
 import { CoubHelpers } from './coub';
 import { WebRequestExt } from './webRequestExt';
 
@@ -14,6 +14,7 @@ export class Context implements Disposable {
 	readonly blockedChannels: BlockedChannelsStorage;
 	readonly blockedTags: BlockedTagsStorage;
 	readonly blockedCoubTitles: BlockedCoubTitlesStorage;
+	readonly blocklist: BlocklistStorage;
 	readonly stats: StatsStorage;
 
 	constructor(logger: Logger) {
@@ -23,6 +24,7 @@ export class Context implements Disposable {
 		this.blockedChannels = new BlockedChannelsStorage(undefined, 'bg', logger);
 		this.blockedTags = new BlockedTagsStorage(undefined, 'bg', logger);
 		this.blockedCoubTitles = new BlockedCoubTitlesStorage(undefined, 'bg', logger);
+		this.blocklist = new BlocklistStorage(undefined, 'bg', logger);
 		this.stats = new StatsStorage(undefined, 'bg', logger);
 	}
 

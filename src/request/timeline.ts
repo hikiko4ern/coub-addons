@@ -21,6 +21,8 @@ export interface TimelineResponseCoub {
 	channel: Channel;
 	/** coub's tags */
 	tags: TimelineResponseCoubTag[];
+	/** "media blocks" like sources or original coubs */
+	media_blocks: TimelineResponseCoubMediaBlocks;
 }
 
 interface TimelineResponseCoubTag {
@@ -29,6 +31,11 @@ interface TimelineResponseCoubTag {
 	title: string;
 	/** {@link title} encoded as a URI component */
 	value: string;
+}
+
+interface TimelineResponseCoubMediaBlocks {
+	/** original coubs for recoubs and remixes */
+	remixed_from_coubs: unknown[];
 }
 
 interface FilteredOutCoub extends CoubTitleData, FilteredOutCoubForStats {
@@ -42,6 +49,7 @@ const EXCLUSION_REASON_TEXT: Record<CoubExclusionReason, string> = {
 	[CoubExclusionReason.CHANNEL_BLOCKED]: 'author is blocked manually',
 	[CoubExclusionReason.TAG_BLOCKED]: 'tag is blocked',
 	[CoubExclusionReason.COUB_TITLE_BLOCKED]: "blocked by coub's title",
+	[CoubExclusionReason.RECOUBS_BLOCKED]: 'recoubs are blocked',
 };
 
 export const registerTimelineHandlers = (ctx: Context) => {
@@ -100,7 +108,8 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				logger.debug(
 					'processed',
 					origAmount,
-					'coubs, returning',
+					origAmount > 1 ? 'coubs,' : 'coub,',
+					'returning',
 					isModified ? filteredCoubs.length : 'all',
 					'of them',
 				);

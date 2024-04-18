@@ -5,20 +5,20 @@ import { ErrorCode } from '@/options/components/ErrorCode';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
 
-import { FilteredOutCoubs } from './components/FilteredOutCoubs';
+import { BlocklistSettings } from './components/BlocklistSettings';
 
-export const StatsPage: FunctionComponent = () => {
-	const { statsStorage } = useLazyStorages();
-	const stats = useStorageState({ storage: statsStorage });
+export const BlocklistPage: FunctionComponent = () => {
+	const { blocklistStorage } = useLazyStorages();
+	const blocklist = useStorageState({ storage: blocklistStorage });
 
-	switch (stats.status) {
+	switch (blocklist.status) {
 		case StorageHookState.Loaded:
-			return <FilteredOutCoubs data={stats.data.filtered} />;
+			return <BlocklistSettings storage={blocklistStorage} state={blocklist.data} />;
 
 		case StorageHookState.Loading:
 			return <Localized id="loading" />;
 
 		case StorageHookState.Error:
-			return <ErrorCode data={stats.error} />;
+			return <ErrorCode data={blocklist.error} />;
 	}
 };

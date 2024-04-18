@@ -2,6 +2,7 @@ import ChartBarIcon from '@heroicons/react/24/solid/ChartBarIcon';
 import Cog6ToothIcon from '@heroicons/react/24/solid/Cog6ToothIcon';
 import DocumentTextIcon from '@heroicons/react/24/solid/DocumentTextIcon';
 import HashtagIcon from '@heroicons/react/24/solid/HashtagIcon';
+import NoSymbolIcon from '@heroicons/react/24/solid/NoSymbolIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import type { ComponentProps, ComponentType } from 'preact';
 import type { RouteComponentProps } from 'wouter-preact';
@@ -9,6 +10,7 @@ import type { RouteComponentProps } from 'wouter-preact';
 import { BlockedChannelsPage } from './pages/BlockedChannelsPage';
 import { BlockedCoubTitlesPage } from './pages/BlockedCoubTitlesPage';
 import { BlockedTagsPage } from './pages/BlockedTagsPage';
+import { BlocklistPage } from './pages/BlocklistPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { StatsPage } from './pages/StatsPage';
 
@@ -37,6 +39,12 @@ export const routes: Route[] = [
 		title: 'blocked-coub-titles',
 		component: BlockedCoubTitlesPage,
 		icon: DocumentTextIcon,
+	},
+	{
+		path: '/blocklist',
+		title: 'blocklist',
+		component: BlocklistPage,
+		icon: NoSymbolIcon,
 	},
 	{
 		path: '/stats',

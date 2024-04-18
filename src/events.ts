@@ -44,7 +44,12 @@ export class EventDispatcher {
 			logger.debug('dispatching event', event, 'to', target);
 			return await sendMessage(event);
 		} catch (err) {
-			logger.error('dispatching error:', err);
+			if (String(err).includes('Receiving end does not exist')) {
+				// it's ok if there are no receivers
+				logger.debug(target, 'dispatching error:', err);
+			} else {
+				logger.error(target, 'dispatching error:', err);
+			}
 		}
 	}
 

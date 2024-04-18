@@ -20,6 +20,12 @@ import {
 	type RawBlockedTags,
 	blockedTagsItem,
 } from './blockedTags';
+import {
+	type Blocklist,
+	type BlocklistMeta,
+	type BlocklistStorage,
+	blocklistItem,
+} from './blocklist';
 import { StatsStorage, statsItem } from './stats';
 
 export interface Backup {
@@ -29,12 +35,15 @@ export interface Backup {
 	[BlockedTagsStorage.META_KEY]?: OmitIndexSignature<BlockedTagsMeta>;
 	[BlockedCoubTitlesStorage.KEY]: RawBlockedCoubTitles;
 	[BlockedCoubTitlesStorage.META_KEY]?: OmitIndexSignature<BlockedCoubTitlesMeta>;
+	[BlocklistStorage.KEY]: Blocklist;
+	[BlocklistStorage.META_KEY]?: OmitIndexSignature<BlocklistMeta>;
 }
 
 const storageItems = [
 	['blockedChannels', blockedChannelsItem],
 	['blockedTags', blockedTagsItem],
 	['blockedCoubTitles', blockedCoubTitlesItem],
+	['blocklist', blocklistItem],
 	['stats', statsItem],
 ] as const;
 

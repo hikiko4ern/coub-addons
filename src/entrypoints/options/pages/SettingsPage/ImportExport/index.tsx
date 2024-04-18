@@ -80,6 +80,7 @@ export const ImportExport: FunctionComponent = () => {
 						lazyStorages.blockedChannelsStorage.reinitialize(),
 						lazyStorages.blockedTagsStorage.reinitialize(),
 						lazyStorages.blockedCoubTitlesStorage.reinitialize(),
+						lazyStorages.blocklistStorage.reinitialize(),
 						lazyStorages.statsStorage.reinitialize(),
 					]);
 					toast.success(<Localized id="backup-imported-successfully" />);

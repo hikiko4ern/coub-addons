@@ -19,6 +19,8 @@ const backup = {
 	blockedTags$: { v: 1 },
 	blockedCoubTitles: '',
 	blockedCoubTitles$: { v: 1 },
+	blocklist: { isBlockRecoubs: false },
+	blocklist$: { v: 1 },
 };
 
 for (let i = 0; i < size; i++) {

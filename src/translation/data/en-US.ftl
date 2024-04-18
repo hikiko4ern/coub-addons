@@ -68,6 +68,10 @@ blocked-tags = Blocked tags
 ## options / blocked coub titles
 blocked-coub-titles = Blocked coub titles
 
+## options / blocklist
+blocklist = Blocklist
+block-recoubs = Блокировать рекоубы
+
 ## options / stats
 stats = Stats
 filtered-out-coubs = Filtered out coubs
@@ -78,6 +82,7 @@ coub-is-disliked = coub is disliked
 channel-is-blocked = channel is blocked
 tag-is-blocked = tag is blocked
 coub-title-is-blocked = coub is blocked by title
+recoubs-are-blocked = recoubs are blocked
 
 ## options / settings
 settings = Settings

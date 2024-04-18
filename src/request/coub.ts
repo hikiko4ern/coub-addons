@@ -3,6 +3,7 @@ import { imap } from 'itertools';
 import type { IsChannelBlockedFn } from '@/storage/blockedChannels';
 import type { IsCoubBlockedByTitle } from '@/storage/blockedCoubTitles';
 import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
+import type { ReadonlyBlocklist } from '@/storage/blocklist';
 import { Logger } from '@/utils/logger';
 import type { Context } from './ctx';
 import type { TimelineResponseCoub } from './timeline';
@@ -29,6 +30,7 @@ export enum CoubExclusionReason {
 	CHANNEL_BLOCKED = 'channel-is-blocked',
 	TAG_BLOCKED = 'tag-is-blocked',
 	COUB_TITLE_BLOCKED = 'coub-title-is-blocked',
+	RECOUBS_BLOCKED = 'recoubs-are-blocked',
 }
 
 export interface FilteredOutCoubForStats {
@@ -83,15 +85,18 @@ class CoubBlocklistChecker {
 	readonly #isChannelBlocked: IsChannelBlockedFn;
 	readonly #isHaveBlockedTags: IsHaveBlockedTagsFn;
 	readonly #isBlockedByTitle: IsCoubBlockedByTitle;
+	readonly #blocklist: ReadonlyBlocklist;
 
 	private constructor(
 		isChannelBlocked: IsChannelBlockedFn,
 		isHaveBlockedTags: IsHaveBlockedTagsFn,
 		isHaveBlockedCoubTitles: IsCoubBlockedByTitle,
+		blocklist: ReadonlyBlocklist,
 	) {
 		this.#isChannelBlocked = isChannelBlocked;
 		this.#isHaveBlockedTags = isHaveBlockedTags;
 		this.#isBlockedByTitle = isHaveBlockedCoubTitles;
+		this.#blocklist = blocklist;
 	}
 
 	static async create(ctx: Context) {
@@ -100,6 +105,7 @@ class CoubBlocklistChecker {
 				ctx.blockedChannels.createBoundedIsBlocked(),
 				ctx.blockedTags.createBoundedIsBlocked(),
 				ctx.blockedCoubTitles.createBoundedIsBlocked(),
+				ctx.blocklist.getValue(),
 			])),
 		);
 	}
@@ -123,6 +129,16 @@ class CoubBlocklistChecker {
 
 		if (coub.dislike === true) {
 			return [true, CoubExclusionReason.COUB_DISLIKED];
+		}
+
+		if (
+			this.#blocklist.isBlockRecoubs &&
+			typeof coub.media_blocks === 'object' &&
+			coub.media_blocks !== null &&
+			Array.isArray(coub.media_blocks.remixed_from_coubs) &&
+			coub.media_blocks.remixed_from_coubs.length
+		) {
+			return [true, CoubExclusionReason.RECOUBS_BLOCKED];
 		}
 
 		if (
