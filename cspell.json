@@ -55,6 +55,7 @@
 		"bindgen",
 		"biomejs",
 		"cdylib",
+		"clientside",
 		"clsx",
 		"codegen",
 		"codemirror",
@@ -107,10 +108,10 @@
 		"/@fluent/\\w+/"
 	],
 	"ignorePaths": [
-		"biome.json",
-		"cspell.json",
-		"pnpm-lock.yaml",
-		"patches",
-		"packages/@nextui-org/react-rsc-utils"
+		"/biome.json",
+		"/cspell.json",
+		"/pnpm-lock.yaml",
+		"/patches",
+		"/packages/@nextui-org/react-rsc-utils"
 	]
 }

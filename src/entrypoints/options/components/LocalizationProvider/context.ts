@@ -1,6 +1,7 @@
 import { createContext } from 'preact';
 
-import { type AvailableLocale, DEFAULT_LOCALE } from '@/translation/bundle';
+import type { AvailableLocale } from '@/translation/bundle';
+import { DEFAULT_LOCALE } from '@/translation/constants';
 
 export interface LocalizationContext {
 	locale: AvailableLocale;

@@ -21,6 +21,10 @@ export class Logger {
 		return new Logger(`${id} | ${prefix}`);
 	}
 
+	get prefix(): string {
+		return this.#prefix;
+	}
+
 	debug = (...args: unknown[]) => console.debug(...this.#withHeader(args));
 	info = (...args: unknown[]) => console.info(...this.#withHeader(args));
 	warn = (...args: unknown[]) => console.warn(...this.#withHeader(args));

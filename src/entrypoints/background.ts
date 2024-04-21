@@ -1,4 +1,5 @@
 import { chain, ifilter, imap, uniqueEverseen } from 'itertools';
+import { nanoid } from 'nanoid';
 import { createRouter } from 'radix3';
 
 import '@/register';
@@ -23,6 +24,8 @@ export default defineBackground(() => {
 	browser.browserAction.onClicked.addListener(() => browser.runtime.openOptionsPage());
 
 	const logger = Logger.create('bg');
+	const unloadStylesClassPrefix = `${browser.runtime.id}__unload-styles__`;
+	const unloadStylesClass = `${unloadStylesClassPrefix}${nanoid()}`;
 
 	const ctx = (globalThis.ctx = new Context(logger));
 
@@ -79,6 +82,28 @@ export default defineBackground(() => {
 		switch (event.type) {
 			case 'GetTabId':
 				return sendResponse(sender.tab?.id);
+
+			case 'GetUnloadStylesClassWithPrefix': {
+				return sendResponse([unloadStylesClassPrefix, unloadStylesClass]);
+			}
+
+			case 'GetUnloadStylesClass': {
+				(async () => {
+					try {
+						logger.debug('inserting unload styles to tab', sender.tab?.id, 'frame', sender.frameId);
+						await browser.tabs.insertCSS(sender.tab?.id, {
+							code: `.${CSS.escape(unloadStylesClass)} { opacity: 0 !important; }`,
+							frameId: sender.frameId,
+							runAt: 'document_start',
+						});
+						sendResponse(unloadStylesClass);
+					} catch (err) {
+						logger.error('failed to insert unload styles:', err);
+					}
+				})();
+
+				return true;
+			}
 
 			default:
 				(async () => {

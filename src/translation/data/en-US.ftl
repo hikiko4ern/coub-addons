@@ -1,5 +1,6 @@
 ## common
 title = Title
+action = Action
 actions = Actions
 loading = Loading...
 an-error-occurred-while-loading = An error occurred while loading
@@ -10,6 +11,7 @@ confirm = Confirm
 cancel = Cancel
 save = Save
 revert = Revert
+edit = Edit
 
 ## follow button
 
@@ -70,7 +72,22 @@ blocked-coub-titles = Blocked coub titles
 
 ## options / blocklist
 blocklist = Blocklist
-block-recoubs = Блокировать рекоубы
+block-recoubs = Block recoubs
+
+## options / player settings
+player = Player
+prevent-playback-rate-change = Prevent playback rate changes
+prevent-playback-rate-change-tooltip = Prevents changing the playback rate by pressing <kbd>W</kbd>/<kbd>S</kbd>
+keyboard-shortcuts = Keyboard shortcuts
+keyboard-shortcuts-settings = Keyboard shortcuts settings
+shortcut = Shortcut
+dislike = dislike
+bookmark = bookmark
+fullscreen = fullscreen
+built-in = built-in
+press-any-key-combination = Press any key combination
+recording-key-combination-label = Recording
+conflicts-with-actions = Conflicts with actions: {$with}
 
 ## options / stats
 stats = Stats

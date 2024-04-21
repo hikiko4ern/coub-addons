@@ -81,6 +81,7 @@ export const ImportExport: FunctionComponent = () => {
 						lazyStorages.blockedTagsStorage.reinitialize(),
 						lazyStorages.blockedCoubTitlesStorage.reinitialize(),
 						lazyStorages.blocklistStorage.reinitialize(),
+						lazyStorages.playerSettingsStorage.reinitialize(),
 						lazyStorages.statsStorage.reinitialize(),
 					]);
 					toast.success(<Localized id="backup-imported-successfully" />);

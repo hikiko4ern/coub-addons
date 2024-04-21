@@ -16,4 +16,4 @@ pre-commit:
     type-check:
       run: pnpm tsc --noEmit
     spell-check:
-      run: pnpm cspell lint --no-progress --no-summary {staged_files}
+      run: pnpm cspell lint --no-progress --no-summary --no-must-find-files {staged_files}

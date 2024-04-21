@@ -1,5 +1,6 @@
 ## common
 title = Название
+action = Действие
 actions = Действия
 loading = Загружаем...
 an-error-occurred-while-loading = Произошла ошибка при загрузке
@@ -10,6 +11,7 @@ confirm = Подтвердить
 cancel = Отменить
 save = Сохранить
 revert = Откатить
+edit = Редактировать
 
 ## Follow button
 
@@ -72,6 +74,21 @@ blocked-coub-titles = Заблокированные названия коубо
 ## options / blocklist
 blocklist = Блок-лист
 block-recoubs = Блокировать рекоубы
+
+## options / player settings
+player = Плеер
+prevent-playback-rate-change = Предотвращать изменение скорости воспроизведения
+prevent-playback-rate-change-tooltip = Предотвращает изменение скорости воспроизведения нажатием <kbd>W</kbd>/<kbd>S</kbd>
+keyboard-shortcuts = Клавиатурные сокращения
+keyboard-shortcuts-settings = Настройки клавиатурных сокращений
+shortcut = Сочетание
+dislike = дизлайк
+bookmark = избранное
+fullscreen = полноэкранный режим
+built-in = встроенное
+press-any-key-combination = Нажмите любое сочетание клавиш
+recording-key-combination-label = Запись
+conflicts-with-actions = Конфликтует с действиями: {$with}
 
 ## options / stats
 stats = Статистика

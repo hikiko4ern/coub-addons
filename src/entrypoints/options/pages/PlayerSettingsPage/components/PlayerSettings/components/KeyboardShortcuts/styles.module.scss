@@ -1,0 +1,12 @@
+.keyboard-shortcuts {
+  th {
+    text-transform: uppercase;
+  }
+
+  th,
+  td {
+    &::before {
+      pointer-events: none;
+    }
+  }
+}

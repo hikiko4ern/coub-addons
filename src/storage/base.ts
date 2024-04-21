@@ -45,7 +45,7 @@ export abstract class StorageBase<
 		this.initialize();
 
 		this.#unwatch = this.#storage.watch((_state, oldState) => {
-			const state = this.parseRawValue(_state);
+			const state = this.parseRawValue(_state as ToReadonly<RawState>);
 			this.#state = state;
 			this.#notifyWatchers(state, oldState, false);
 		});
@@ -73,7 +73,7 @@ export abstract class StorageBase<
 		return (this.#statePromise = this.#storage
 			.getValue()
 			.then(res => {
-				const state = (this.#state = this.parseRawValue(res));
+				const state = (this.#state = this.parseRawValue(res as ToReadonly<RawState>));
 				this.logger.debug('initialized with state', state, 'from raw', res);
 				return state;
 			})
@@ -100,7 +100,7 @@ export abstract class StorageBase<
 	}
 
 	clear() {
-		return this.setValue(structuredClone(this.#storage.defaultValue));
+		return this.setValue(structuredClone(this.#storage.defaultValue) as ToReadonly<RawState>);
 	}
 
 	#notifyWatchers(
@@ -130,12 +130,12 @@ export abstract class StorageBase<
 			} as StorageEvent);
 	}
 
-	protected async setValue(value: RawState) {
+	protected async setValue(value: ToReadonly<RawState>) {
 		this.logger.debug('new value:', value);
 
 		const oldState = (await this.#storage.getValue()) as RawState | null;
 
-		await this.#storage.setValue(value);
+		await this.#storage.setValue(value as RawState);
 		const state = (this.#state = this.parseRawValue(value));
 
 		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
@@ -152,7 +152,7 @@ export abstract class StorageBase<
 		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
 	}
 
-	protected parseRawValue(raw: RawState): ToReadonly<State> {
+	protected parseRawValue(raw: ToReadonly<RawState>): ToReadonly<State> {
 		return raw as unknown as ToReadonly<State>;
 	}
 

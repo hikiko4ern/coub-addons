@@ -17,7 +17,20 @@ interface GetTabIdEvent {
 	type: 'GetTabId';
 }
 
-type Event = I18nLocaleEvent | StorageUpdatedEvent | GetTabIdEvent;
+interface GetUnloadStylesClassWithPrefixEvent {
+	type: 'GetUnloadStylesClassWithPrefix';
+}
+
+interface GetUnloadStylesClassEvent {
+	type: 'GetUnloadStylesClass';
+}
+
+type Event =
+	| I18nLocaleEvent
+	| StorageUpdatedEvent
+	| GetTabIdEvent
+	| GetUnloadStylesClassWithPrefixEvent
+	| GetUnloadStylesClassEvent;
 
 type EventHandler = OnMessageHandlerWithMessageType<Event>;
 
@@ -25,6 +38,8 @@ const EVENT_IDS: ReadonlySet<Event['type']> = new Set([
 	'I18nLocaleEvent',
 	'StorageUpdatedEvent',
 	'GetTabId',
+	'GetUnloadStylesClassWithPrefix',
+	'GetUnloadStylesClass',
 ]);
 const logger = Logger.create('events');
 
@@ -60,6 +75,14 @@ export class EventDispatcher {
 		EventDispatcher.dispatchEvent({ type: 'StorageUpdatedEvent', data });
 
 	static getTabId = () => EventDispatcher.dispatchEvent<number>({ type: 'GetTabId' });
+
+	static getUnloadStylesClassWithPrefix = () =>
+		EventDispatcher.dispatchEvent<[prefix: string, className: string]>({
+			type: 'GetUnloadStylesClassWithPrefix',
+		});
+
+	static getUnloadStylesClass = () =>
+		EventDispatcher.dispatchEvent<string>({ type: 'GetUnloadStylesClass' });
 }
 
 export class EventListener implements Disposable {

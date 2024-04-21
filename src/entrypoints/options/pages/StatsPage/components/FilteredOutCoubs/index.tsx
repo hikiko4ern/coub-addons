@@ -3,10 +3,10 @@ import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from 
 import type { FunctionComponent } from 'preact';
 import { useMemo } from 'preact/hooks';
 
+import { CardSection } from '@/options/components/CardSection';
 import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
 import type { ReadonlyStats } from '@/storage/stats';
 
-import { StatsSection } from '../StatsSection';
 import styles from './styles.module.scss';
 
 interface Props {
@@ -19,7 +19,7 @@ export const FilteredOutCoubs: FunctionComponent<Props> = ({ data }) => {
 	const countFormat = useMemo(() => new Intl.NumberFormat(locale), [locale]);
 
 	return (
-		<StatsSection title={<Localized id="filtered-out-coubs" />}>
+		<CardSection title={<Localized id="filtered-out-coubs" />}>
 			<Table
 				classNames={{ table: styles['filtered-out-coubs'] }}
 				removeWrapper
@@ -46,6 +46,6 @@ export const FilteredOutCoubs: FunctionComponent<Props> = ({ data }) => {
 					))}
 				</TableBody>
 			</Table>
-		</StatsSection>
+		</CardSection>
 	);
 };

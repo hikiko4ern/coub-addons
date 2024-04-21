@@ -17,8 +17,10 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 	);
 
 	return (
-		<Checkbox isSelected={state.isBlockRecoubs} onValueChange={handleIsBlockRecoubsChange}>
-			<Localized id="block-recoubs" />
-		</Checkbox>
+		<div>
+			<Checkbox isSelected={state.isBlockRecoubs} onValueChange={handleIsBlockRecoubsChange}>
+				<Localized id="block-recoubs" />
+			</Checkbox>
+		</div>
 	);
 };

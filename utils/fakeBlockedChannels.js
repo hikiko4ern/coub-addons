@@ -21,6 +21,13 @@ const backup = {
 	blockedCoubTitles$: { v: 1 },
 	blocklist: { isBlockRecoubs: false },
 	blocklist$: { v: 1 },
+	playerSettings: {
+		isPreventPlaybackRateChange: false,
+		toggleDislikeHotkey: { mods: [], key: 'd' },
+		toggleBookmarkHotkey: { mods: [], key: 'b' },
+		toggleFullscreenHotkey: { mods: [], key: 'f' },
+	},
+	playerSettings$: { v: 1 },
 };
 
 for (let i = 0; i < size; i++) {

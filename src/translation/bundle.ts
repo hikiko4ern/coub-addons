@@ -1,6 +1,7 @@
 import { FluentBundle, FluentResource } from '@fluent/bundle';
 import { negotiateLanguages as fluentNegotiateLanguages } from '@fluent/langneg';
 
+import { DEFAULT_LOCALE } from './constants';
 import enUs from './data/en-US.ftl?raw';
 import ruRu from './data/ru-RU.ftl?raw';
 
@@ -14,7 +15,6 @@ const RESOURCES = {
 type Resources = typeof RESOURCES;
 export type AvailableLocale = keyof Resources;
 
-export const DEFAULT_LOCALE: AvailableLocale = 'ru-RU';
 const AVAILABLE_LOCALES = Object.keys(RESOURCES) as AvailableLocale[];
 const BUNDLES: Partial<Record<keyof Resources, FluentBundle>> = {};
 

@@ -26,6 +26,12 @@ import {
 	type BlocklistStorage,
 	blocklistItem,
 } from './blocklist';
+import {
+	type PlayerSettings,
+	type PlayerSettingsMeta,
+	type PlayerSettingsStorage,
+	playerSettingsItem,
+} from './playerSettings';
 import { StatsStorage, statsItem } from './stats';
 
 export interface Backup {
@@ -37,6 +43,8 @@ export interface Backup {
 	[BlockedCoubTitlesStorage.META_KEY]?: OmitIndexSignature<BlockedCoubTitlesMeta>;
 	[BlocklistStorage.KEY]: Blocklist;
 	[BlocklistStorage.META_KEY]?: OmitIndexSignature<BlocklistMeta>;
+	[PlayerSettingsStorage.KEY]: PlayerSettings;
+	[PlayerSettingsStorage.META_KEY]?: OmitIndexSignature<PlayerSettingsMeta>;
 }
 
 const storageItems = [
@@ -44,6 +52,7 @@ const storageItems = [
 	['blockedTags', blockedTagsItem],
 	['blockedCoubTitles', blockedCoubTitlesItem],
 	['blocklist', blocklistItem],
+	['playerSettings', playerSettingsItem],
 	['stats', statsItem],
 ] as const;
 
