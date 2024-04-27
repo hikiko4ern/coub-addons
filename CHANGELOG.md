@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.13] - 2024-04-27
+
+### Features
+
+- **(hotkey)** add keyboard shortcuts for `dislike`, `bookmark` and `fullscreen`
+
+### Documentation
+
+- add a recommendation to make backups
+
+### Miscellaneous Tasks
+
+- **(dev)** update `pnpm` to `9.0.6`
+
 ## [0.1.12] - 2024-04-18
 
 ### Features
