@@ -1,13 +1,12 @@
 import { Localized } from '@fluent/react';
-import QuestionMarkCircleIcon from '@heroicons/react/24/outline/QuestionMarkCircleIcon';
 import { Checkbox } from '@nextui-org/checkbox';
 import { Divider } from '@nextui-org/divider';
 import { Kbd } from '@nextui-org/kbd';
-import { Tooltip } from '@nextui-org/tooltip';
 import type { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
 
 import { CardSection } from '@/options/components/CardSection';
+import { HintTooltip } from '@/options/components/HintTooltip';
 import type { PlayerSettingsStorage, ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 
@@ -32,16 +31,11 @@ export const PlayerSettings: FunctionComponent<Props> = ({ storage, state }) => 
 					<Localized id="prevent-playback-rate-change" />
 				</Checkbox>
 
-				<Tooltip
-					content={
-						<Localized id="prevent-playback-rate-change-tooltip" elems={{ kbd: <Kbd /> }}>
-							<span />
-						</Localized>
-					}
-					placement="right"
-				>
-					<QuestionMarkCircleIcon className="ml-2 inline-block h-4 w-4 align-baseline" />
-				</Tooltip>
+				<HintTooltip iconClassName="ml-2">
+					<Localized id="prevent-playback-rate-change-tooltip" elems={{ kbd: <Kbd /> }}>
+						<span />
+					</Localized>
+				</HintTooltip>
 			</div>
 
 			<Divider />

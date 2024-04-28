@@ -3,30 +3,25 @@ import {
 	ReactLocalization,
 } from '@fluent/react';
 import type { FunctionComponent } from 'preact';
-import { useMemo } from 'preact/hooks';
+import { useContext, useMemo } from 'preact/hooks';
 import { Helmet } from 'react-helmet-async';
 
+import { SettingsContext } from '@/options/components/SettingsProvider/context';
 import { logger } from '@/options/constants';
-import {
-	type AvailableLocale,
-	generateBundlesFromNegotiated,
-	negotiateLanguages,
-} from '@/translation/bundle';
-
+import { type AvailableLocale, generateBundlesFromNegotiated } from '@/translation/bundle';
 import { LocalizationContext } from './context';
 
-const createInstance = (
-	userLocales: readonly string[],
-): [readonly AvailableLocale[], ReactLocalization] => {
-	logger.debug('creating `ReactLocalization` instance with languages', userLocales);
+const createInstance = (locales: readonly AvailableLocale[]): ReactLocalization => {
+	logger.debug('creating `ReactLocalization` instance with locales', locales);
 
-	const currentLocales = negotiateLanguages(userLocales);
-	return [currentLocales, new ReactLocalization(generateBundlesFromNegotiated(currentLocales))];
+	return new ReactLocalization(generateBundlesFromNegotiated(locales));
 };
 
 export const LocalizationProvider: FunctionComponent = ({ children }) => {
-	const [currentLocales, l10n] = useMemo(() => createInstance(navigator.languages), []);
-	const currentLocale = currentLocales[0];
+	const { locales } = useContext(SettingsContext);
+	const currentLocale = locales[0];
+
+	const l10n = useMemo(() => createInstance(locales), [locales]);
 	const lang = useMemo(() => currentLocale.split('-')[0], [currentLocale]);
 
 	const ctx = useMemo(

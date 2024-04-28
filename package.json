@@ -85,6 +85,7 @@
 		"serialize-javascript": "^6.0.2",
 		"superstruct": "^1.0.4",
 		"tailwindcss": "^3.4.3",
+		"thememirror": "^2.0.1",
 		"type-fest": "^4.17.0",
 		"typed-query-selector": "^2.11.2",
 		"typescript": "^5.4.5",

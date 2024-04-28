@@ -1,4 +1,10 @@
 .editor {
+  :global(.cm-editor) {
+    outline: none;
+  }
+}
+
+.editor_theme_dark {
   :global(.cm-gutterElement) {
     filter: opacity(0.3);
   }

@@ -32,6 +32,7 @@ import {
 	type PlayerSettingsStorage,
 	playerSettingsItem,
 } from './playerSettings';
+import { type Settings, type SettingsMeta, type SettingsStorage, settingsItem } from './settings';
 import { StatsStorage, statsItem } from './stats';
 
 export interface Backup {
@@ -45,6 +46,8 @@ export interface Backup {
 	[BlocklistStorage.META_KEY]?: OmitIndexSignature<BlocklistMeta>;
 	[PlayerSettingsStorage.KEY]: PlayerSettings;
 	[PlayerSettingsStorage.META_KEY]?: OmitIndexSignature<PlayerSettingsMeta>;
+	[SettingsStorage.KEY]: Settings;
+	[SettingsStorage.META_KEY]?: OmitIndexSignature<SettingsMeta>;
 }
 
 const storageItems = [
@@ -54,6 +57,7 @@ const storageItems = [
 	['blocklist', blocklistItem],
 	['playerSettings', playerSettingsItem],
 	['stats', statsItem],
+	['settings', settingsItem],
 ] as const;
 
 export const createBackup = async () =>

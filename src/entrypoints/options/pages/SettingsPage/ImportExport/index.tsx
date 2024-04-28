@@ -1,8 +1,7 @@
 import { name } from '../../../../../../package.json';
 
-import { Localized } from '@fluent/react';
+import { Localized, useLocalization } from '@fluent/react';
 import { Button } from '@nextui-org/button';
-import { Card, CardBody, CardHeader } from '@nextui-org/card';
 import {
 	Modal,
 	ModalBody,
@@ -16,6 +15,7 @@ import type { FunctionComponent, JSX } from 'preact';
 import { useCallback, useRef } from 'preact/hooks';
 import { toast } from 'react-toastify';
 
+import { CardSection } from '@/options/components/CardSection';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import {
 	type Backup,
@@ -23,7 +23,7 @@ import {
 	createBackup,
 	restoreBackup,
 } from '@/storage/backup';
-import { FluentList, t } from '@/translation/js';
+import { FluentList } from '@/translation/intl';
 
 const pad = (value: number) => value.toString().padStart(2, '0');
 
@@ -32,6 +32,7 @@ export const ImportExport: FunctionComponent = () => {
 	const restoreRef = useRef<Backup>();
 	const isLoading = useSignal(false);
 	const isRestoring = useSignal(false);
+	const { l10n } = useLocalization();
 	const lazyStorages = useLazyStorages();
 	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
@@ -83,6 +84,7 @@ export const ImportExport: FunctionComponent = () => {
 						lazyStorages.blocklistStorage.reinitialize(),
 						lazyStorages.playerSettingsStorage.reinitialize(),
 						lazyStorages.statsStorage.reinitialize(),
+						lazyStorages.settingsStorage.reinitialize(),
 					]);
 					toast.success(<Localized id="backup-imported-successfully" />);
 				} catch {
@@ -100,11 +102,9 @@ export const ImportExport: FunctionComponent = () => {
 							vars={{
 								error:
 									err instanceof StorageMigrationsFailed
-										? t('backup-migrations-failed', {
-												args: {
-													keys: new FluentList(err.keys, { type: 'conjunction' }),
-													error: err.cause.errors.join(', '),
-												},
+										? l10n.getString('backup-migrations-failed', {
+												keys: new FluentList(err.keys, { type: 'conjunction' }),
+												error: err.cause.errors.join(', '),
 											})
 										: String(err),
 							}}
@@ -118,7 +118,7 @@ export const ImportExport: FunctionComponent = () => {
 				isRestoring.value = false;
 			}
 		}
-	}, []);
+	}, [l10n]);
 
 	const handleChange = useCallback<JSX.GenericEventHandler<HTMLInputElement>>(async e => {
 		const input = e.currentTarget;
@@ -140,68 +140,62 @@ export const ImportExport: FunctionComponent = () => {
 	}, []);
 
 	return (
-		<Card className="items-start" as="section" fullWidth={false}>
-			<CardHeader>
-				<Localized id="backups" />
-			</CardHeader>
+		<CardSection bodyClassName="flex min-w-60 flex-col gap-4" title={<Localized id="backups" />}>
+			<Button
+				color="primary"
+				isLoading={isLoading.value && !isRestoring.value}
+				isDisabled={isLoading.value}
+				onPress={createAndDownloadBackup}
+			>
+				<Localized id="export-backup" />
+			</Button>
 
-			<CardBody className="flex w-auto min-w-60 flex-col gap-4">
-				<Button
-					color="primary"
-					isLoading={isLoading.value && !isRestoring.value}
-					isDisabled={isLoading.value}
-					onPress={createAndDownloadBackup}
-				>
-					<Localized id="export-backup" />
-				</Button>
+			<Button
+				className="relative"
+				as="label"
+				isLoading={isLoading.value && !isRestoring.value}
+				isDisabled={isLoading.value}
+			>
+				<Localized id="import-backup" />
 
-				<Button
-					className="relative"
-					as="label"
-					isLoading={isLoading.value && !isRestoring.value}
-					isDisabled={isLoading.value}
-				>
-					<Localized id="import-backup" />
+				<input
+					ref={inputRef}
+					className="absolute h-0 w-0 opacity-0"
+					type="file"
+					accept="application/json"
+					onChange={handleChange}
+				/>
 
-					<input
-						ref={inputRef}
-						className="absolute h-0 w-0 opacity-0"
-						type="file"
-						accept="application/json"
-						onChange={handleChange}
-					/>
+				<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+					<ModalContent>
+						{onClose => (
+							<>
+								<ModalHeader className="flex flex-col gap-1">
+									<Localized id="import-backup-confirmation-header" />
+								</ModalHeader>
 
-					<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-						<ModalContent>
-							{onClose => (
-								<>
-									<ModalHeader className="flex flex-col gap-1">
-										<Localized id="import-backup-confirmation-header" />
-									</ModalHeader>
+								<ModalBody>
+									<Localized id="import-backup-confirmation-message" />
+								</ModalBody>
 
-									<ModalBody>
-										<Localized id="import-backup-confirmation-message" />
-									</ModalBody>
+								<ModalFooter>
+									<Button color="primary" onPress={restore}>
+										<Localized id="confirm" />
+									</Button>
 
-									<ModalFooter>
-										<Button color="primary" onPress={restore}>
-											<Localized id="confirm" />
-										</Button>
-
-										<Button
-											isLoading={isLoading.value && isRestoring.value}
-											isDisabled={isLoading.value}
-											onPress={onClose}
-										>
-											<Localized id="cancel" />
-										</Button>
-									</ModalFooter>
-								</>
-							)}
-						</ModalContent>
-					</Modal>
-				</Button>
-			</CardBody>
-		</Card>
+									<Button
+										isLoading={isLoading.value && isRestoring.value}
+										isDisabled={isLoading.value}
+										onPress={onClose}
+									>
+										<Localized id="cancel" />
+									</Button>
+								</ModalFooter>
+							</>
+						)}
+					</ModalContent>
+				</Modal>
+			</Button>
+		</CardSection>
 	);
 };

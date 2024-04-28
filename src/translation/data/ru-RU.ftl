@@ -12,6 +12,7 @@ cancel = Отменить
 save = Сохранить
 revert = Откатить
 edit = Редактировать
+extension = Расширение
 
 ## Follow button
 
@@ -115,3 +116,14 @@ backup-imported-successfully-but-reinitialization-failed = Резервная к
 import-backup-confirmation-header = Вы уверены?
 import-backup-confirmation-message = Все существующие данные будут перезаписаны резервной копией. Продолжить?
 file-content-is-not-a-valid-backup = Содержимое файла не является валидной резервной копией
+extension-settings-tooltip = Эти настройки влияют только на само расширение. Контент, добавляемый на Coub.com, будет стараться соответствовать настройкам Coub.com
+theme-setting =
+  .label = Тема
+theme-setting-system = Системная
+theme-setting-dark = Тёмная
+theme-setting-light = Светлая
+locale-setting =
+  .label = Язык
+locale-setting-system = Системный
+locale-setting-ru-RU = Русский
+locale-setting-en-US = English

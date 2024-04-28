@@ -2,23 +2,31 @@ import { Localized } from '@fluent/react';
 import { Link } from '@nextui-org/link';
 import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/navbar';
 import type { FunctionComponent } from 'preact';
+import { useContext, useLayoutEffect } from 'preact/hooks';
 import { ToastContainer } from 'react-toastify';
 import { Link as WLink, useLocation } from 'wouter-preact';
 
 import { ErrorBoundary } from '@/options/components/ErrorBoundary';
-import { useTabId } from '@/options/hooks/useTabId';
+import { SettingsContext } from '@/options/components/SettingsProvider/context';
 import { routes } from '@/options/routes';
+import { Theme } from '@/storage/settings/types';
 
 export const Shell: FunctionComponent = ({ children }) => {
 	const [location] = useLocation();
-	const { isTabIdLoaded } = useTabId();
+	const { theme } = useContext(SettingsContext);
+
+	useLayoutEffect(() => {
+		const isDark = theme === Theme.DARK;
+		document.documentElement.classList.toggle('dark', isDark);
+		document.documentElement.classList.toggle('text-foreground', isDark);
+	}, [theme]);
 
 	return (
 		<div className="flex min-h-screen w-full">
 			<ToastContainer
 				className="w-auto min-w-[var(--toastify-toast-width)] max-w-xl"
 				position="top-center"
-				theme="dark"
+				theme={theme}
 				newestOnTop
 				closeOnClick
 			/>
@@ -60,7 +68,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 			</Navbar>
 
 			<div className="flex w-full flex-col items-start p-4">
-				<ErrorBoundary>{isTabIdLoaded.value ? children : null}</ErrorBoundary>
+				<ErrorBoundary>{children}</ErrorBoundary>
 			</div>
 		</div>
 	);

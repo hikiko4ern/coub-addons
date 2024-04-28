@@ -12,6 +12,7 @@ cancel = Cancel
 save = Save
 revert = Revert
 edit = Edit
+extension = Extension
 
 ## follow button
 
@@ -114,3 +115,14 @@ backup-imported-successfully-but-reinitialization-failed = The backup was succes
 import-backup-confirmation-header = Are you sure?
 import-backup-confirmation-message = All your existing data will be overwritten by the backup. Continue?
 file-content-is-not-a-valid-backup = The contents of the file are not a valid backup
+extension-settings-tooltip = These settings only affect the extension itself. Content added to Coub.com will try to match the Coub.com settings
+theme-setting =
+  .label = Theme
+theme-setting-system = System
+theme-setting-dark = Dark
+theme-setting-light = Light
+locale-setting =
+  .label = Locale
+locale-setting-system = System
+locale-setting-ru-RU = Русский
+locale-setting-en-US = English

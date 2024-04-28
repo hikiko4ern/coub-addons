@@ -8,4 +8,8 @@ export type GuardType<T, P> = P extends (value: unknown, ...args: unknown[]) => 
 	? U
 	: T;
 
-export type Value<T> = T extends ReadonlySet<infer U> ? U : T;
+export type Value<T> = T extends ReadonlySet<infer U>
+	? U
+	: T extends Record<infer _, infer U>
+		? U
+		: T;

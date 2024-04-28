@@ -8,9 +8,19 @@ import type { Signal } from '@preact/signals';
 import { aura } from '@uiw/codemirror-theme-aura';
 import cx from 'clsx';
 import type { FunctionComponent, Ref } from 'preact';
-import { useEffect, useImperativeHandle, useMemo, useRef, useState } from 'preact/hooks';
+import {
+	useContext,
+	useEffect,
+	useImperativeHandle,
+	useMemo,
+	useRef,
+	useState,
+} from 'preact/hooks';
+import { tomorrow } from 'thememirror';
 
 import { truthyFilter } from '@/helpers/truthyFilter';
+import { SettingsContext } from '@/options/components/SettingsProvider/context';
+import { Theme } from '@/storage/settings/types';
 
 import styles from './styles.module.scss';
 
@@ -49,6 +59,7 @@ export const Editor: FunctionComponent<Props> = ({
 	isModifiedSignal,
 	save,
 }) => {
+	const { theme } = useContext(SettingsContext);
 	const container = useRef<HTMLDivElement>(null);
 	const initialValueRef = useRef(defaultValue);
 	const isModifiedRef = useRef(false);
@@ -102,12 +113,12 @@ export const Editor: FunctionComponent<Props> = ({
 					},
 				]),
 				// theme
-				aura,
+				theme === Theme.DARK ? aura : tomorrow,
 				// languages
 				language,
 				linter,
 			].filter(truthyFilter),
-		[language, linter, readOnly, lineWrapping, save],
+		[language, linter, readOnly, lineWrapping, theme, save],
 	);
 
 	const state = useMemo(
@@ -167,5 +178,10 @@ export const Editor: FunctionComponent<Props> = ({
 		}
 	}, [view, defaultValue]);
 
-	return <div ref={container} className={cx(className, styles.editor)} />;
+	return (
+		<div
+			ref={container}
+			className={cx(className, styles.editor, styles[`editor_theme_${theme as 'dark'}`])}
+		/>
+	);
 };

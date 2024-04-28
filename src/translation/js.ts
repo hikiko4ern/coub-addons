@@ -1,4 +1,4 @@
-import { type FluentBundle, FluentType, type Scope } from '@fluent/bundle';
+import type { FluentBundle } from '@fluent/bundle';
 import { mapBundleSync } from '@fluent/sequence';
 import { CachedIterable } from 'indexed-iterable';
 
@@ -32,8 +32,6 @@ interface TransOptions {
 }
 
 export function t(id: string, opts?: TransOptions) {
-	logger.debug('translating', id, 'with options', opts);
-
 	const ctx = mapBundleSync(bundlesCachedIter, id);
 
 	if (!ctx) {
@@ -57,29 +55,4 @@ export function t(id: string, opts?: TransOptions) {
 	}
 
 	return res;
-}
-
-declare module '@fluent/bundle/esm/scope' {
-	export interface Scope {
-		memoizeIntlObject(ctor: typeof Intl.ListFormat, opts: Intl.ListFormatOptions): Intl.ListFormat;
-	}
-}
-
-export class FluentList extends FluentType<Iterable<string>> {
-	private opts: Intl.ListFormatOptions;
-
-	constructor(value: Iterable<string>, opts: Intl.ListFormatOptions) {
-		super(value);
-		this.opts = opts;
-	}
-
-	toString(scope: Scope): string {
-		try {
-			const lf = scope.memoizeIntlObject(Intl.ListFormat, this.opts);
-			return lf.format(this.value);
-		} catch (err) {
-			scope.reportError(err);
-			return Array.isArray(this.value) ? this.value.join(', ') : Array.from(this.value).join(', ');
-		}
-	}
 }

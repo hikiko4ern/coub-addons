@@ -76,22 +76,19 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 		return dataAsArray.slice(start, end);
 	}, [dataAsArray, page, perPage]);
 
-	const handleRowsPerPageChange = useCallback(
-		(keys: Selection) => {
-			if (keys === 'all') {
-				return;
-			}
+	const handleRowsPerPageChange = useCallback((keys: Selection) => {
+		if (keys === 'all') {
+			return;
+		}
 
-			const item = keys.values().next();
+		const item = keys.values().next();
 
-			if (item.done) {
-				return;
-			}
+		if (item.done) {
+			return;
+		}
 
-			setPerPage(item.value as RowsPerPage);
-		},
-		[perPage],
-	);
+		setPerPage(item.value as RowsPerPage);
+	}, []);
 
 	const renderCell = (channel: BlockedChannelData, columnKey: ColumnKey) => {
 		switch (columnKey) {

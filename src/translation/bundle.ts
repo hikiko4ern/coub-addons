@@ -8,14 +8,14 @@ import ruRu from './data/ru-RU.ftl?raw';
 // Store all translations as a simple object which is available
 // synchronously and bundled with the rest of the code.
 const RESOURCES = {
-	'en-US': new FluentResource(enUs),
 	'ru-RU': new FluentResource(ruRu),
+	'en-US': new FluentResource(enUs),
 } satisfies Record<Intl.UnicodeBCP47LocaleIdentifier, FluentResource>;
 
 type Resources = typeof RESOURCES;
 export type AvailableLocale = keyof Resources;
 
-const AVAILABLE_LOCALES = Object.keys(RESOURCES) as AvailableLocale[];
+export const AVAILABLE_LOCALES = Object.keys(RESOURCES) as AvailableLocale[];
 const BUNDLES: Partial<Record<keyof Resources, FluentBundle>> = {};
 
 export const negotiateLanguages = (userLocales: readonly string[]) =>

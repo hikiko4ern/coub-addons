@@ -3,6 +3,7 @@ import { BlockedCoubTitlesStorage } from '@/storage/blockedCoubTitles';
 import { BlockedTagsStorage } from '@/storage/blockedTags';
 import { BlocklistStorage } from '@/storage/blocklist';
 import { PlayerSettingsStorage } from '@/storage/playerSettings';
+import { SettingsStorage } from '@/storage/settings';
 import { StatsStorage } from '@/storage/stats';
 
 import { logger } from '../constants';
@@ -15,6 +16,7 @@ interface Storages {
 	readonly blocklistStorage: BlocklistStorage;
 	readonly playerSettingsStorage: PlayerSettingsStorage;
 	readonly statsStorage: StatsStorage;
+	readonly settingsStorage: SettingsStorage;
 }
 
 let blockedChannelsStorage: BlockedChannelsStorage,
@@ -22,7 +24,8 @@ let blockedChannelsStorage: BlockedChannelsStorage,
 	blockedCoubTitlesStorage: BlockedCoubTitlesStorage,
 	blocklistStorage: BlocklistStorage,
 	playerSettingsStorage: PlayerSettingsStorage,
-	statsStorage: StatsStorage;
+	statsStorage: StatsStorage,
+	settingsStorage: SettingsStorage;
 
 const lazyStorages = Object.defineProperties<Storages>(Object.create(null), {
 	blockedChannelsStorage: {
@@ -49,6 +52,10 @@ const lazyStorages = Object.defineProperties<Storages>(Object.create(null), {
 	statsStorage: {
 		configurable: false,
 		get: () => (statsStorage ||= new StatsStorage(tabId, 'options', logger)),
+	},
+	settingsStorage: {
+		configurable: false,
+		get: () => (settingsStorage ||= new SettingsStorage(tabId, 'options', logger)),
 	},
 });
 

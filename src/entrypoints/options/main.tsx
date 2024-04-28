@@ -8,6 +8,7 @@ import { useHashLocation } from 'wouter-preact/use-hash-location';
 
 import { LocalizationProvider } from './components/LocalizationProvider';
 import { Router } from './components/Router';
+import { SettingsProvider } from './components/SettingsProvider';
 import { Shell } from './components/Shell';
 import './style.scss';
 
@@ -15,11 +16,13 @@ render(
 	<HelmetProvider>
 		<Wouter hook={useHashLocation}>
 			<NextUIProvider>
-				<LocalizationProvider>
-					<Shell>
-						<Router />
-					</Shell>
-				</LocalizationProvider>
+				<SettingsProvider>
+					<LocalizationProvider>
+						<Shell>
+							<Router />
+						</Shell>
+					</LocalizationProvider>
+				</SettingsProvider>
 			</NextUIProvider>
 		</Wouter>
 	</HelmetProvider>,

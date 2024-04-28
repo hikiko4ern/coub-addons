@@ -34,7 +34,9 @@ export default defineConfig({
 				strict_min_version: '101.0',
 			},
 		},
-		content_security_policy: "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'",
+		// don't forget to reload the extension after changing the hash!
+		content_security_policy:
+			"script-src 'self' 'wasm-unsafe-eval' 'sha256-tommjNcTFgpLYmOWXGx1CR0O2Eh5jNbwvUsWT6+GO4Q='; object-src 'self'",
 	},
 	zip: {
 		includeSources: ['.env'],
