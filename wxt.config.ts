@@ -37,6 +37,13 @@ export default defineConfig({
 		// don't forget to reload the extension after changing the hash!
 		content_security_policy:
 			"script-src 'self' 'wasm-unsafe-eval' 'sha256-tommjNcTFgpLYmOWXGx1CR0O2Eh5jNbwvUsWT6+GO4Q='; object-src 'self'",
+		icons: {
+			16: '/icon.svg',
+			32: '/icon.svg',
+			48: '/icon.svg',
+			96: '/icon.svg',
+			128: '/icon.svg',
+		},
 	},
 	zip: {
 		includeSources: ['.env'],
