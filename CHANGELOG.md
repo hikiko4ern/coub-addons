@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.14] - 2024-05-06
+
+### Bug Fixes
+
+- **(channel-dropdown)** raise the buttons higher so that they don't overlap the description
+
+### Features
+
+- **(settings)** allow changing the theme and language of the settings page
+
+### Miscellaneous Tasks
+
+- add simple icon
+
 ## [0.1.13] - 2024-04-27
 
 ### Features
