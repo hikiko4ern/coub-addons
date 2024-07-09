@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.15] - 2024-07-09
+
+### Bug Fixes
+
+- **(hotkey)** do not perform an action if a modifier not specified in the hotkey is pressed
+
+### Features
+
+- **(blocklist)** implement hiding comments from blocked channels
+
+### Refactor
+
+- store hotkey modifiers as a number instead of an array
+
 ## [0.1.14] - 2024-05-06
 
 ### Bug Fixes
