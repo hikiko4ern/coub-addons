@@ -1,10 +1,9 @@
 import type { SetOptional } from 'type-fest';
 
 import type { ToReadonly } from '@/types/util';
-import type { HotkeyModifier } from './constants';
 
 export interface Hotkey {
-	mods: HotkeyModifier[];
+	mods: number;
 	key: string;
 }
 export type ReadonlyHotkey = ToReadonly<Hotkey>;

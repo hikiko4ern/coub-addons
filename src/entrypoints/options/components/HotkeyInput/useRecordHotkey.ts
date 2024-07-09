@@ -43,6 +43,7 @@ export interface Options {
 	onChange: (hotkey: ReadonlyHotkey | undefined) => void;
 }
 
+// autocorrect: false
 // React Spectrum doesn't work well with Preact's compat ヾ(`ヘ´)ﾉﾞ
 type RscKeyboardNativeEvent = Omit<KeyboardEvent, 'target'> & { target?: HTMLInputElement };
 
@@ -110,7 +111,7 @@ export const useRecordHotkey = (options: Options) => {
 
 			const activeModifiers = getActiveKeyboardEventModifiers(nativeEvent);
 
-			if (!activeModifiers.length && isStopKey(key)) {
+			if (!activeModifiers && isStopKey(key)) {
 				setIsRecording(false);
 				blurredBy.current = key;
 				nativeEvent.target?.blur?.();
@@ -129,7 +130,7 @@ export const useRecordHotkey = (options: Options) => {
 					? key
 					: undefined;
 
-			if (activeModifiers.length || nonModifierKey) {
+			if (activeModifiers || nonModifierKey) {
 				setHotkey({
 					mods: activeModifiers,
 					key: nonModifierKey,

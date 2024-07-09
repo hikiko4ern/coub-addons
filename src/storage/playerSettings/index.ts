@@ -1,18 +1,15 @@
 import { storage } from 'wxt/storage';
 
-import type { Hotkey } from '@/hotkey/types';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
-import { StorageBase } from './base';
-import type { StorageMeta } from './types';
+import { StorageBase } from '../base';
+import type { StorageMeta } from '../types';
 
-export interface PlayerSettings {
-	isPreventPlaybackRateChange: boolean;
-	toggleDislikeHotkey: Hotkey | undefined;
-	toggleBookmarkHotkey: Hotkey | undefined;
-	toggleFullscreenHotkey: Hotkey | undefined;
-}
+import { playerSettingsMigrations } from './migrations';
+import type { PlayerSettingsV2 as PlayerSettings } from './types';
+
+export type { PlayerSettings };
 
 export interface PlayerSettingsMeta extends StorageMeta {}
 
@@ -23,15 +20,15 @@ const key = 'playerSettings' as const;
 const defaultValue: PlayerSettings = {
 	isPreventPlaybackRateChange: false,
 	toggleDislikeHotkey: {
-		mods: [],
+		mods: 0,
 		key: 'd',
 	},
 	toggleBookmarkHotkey: {
-		mods: [],
+		mods: 0,
 		key: 'b',
 	},
 	toggleFullscreenHotkey: {
-		mods: [],
+		mods: 0,
 		key: 'f',
 	},
 };
@@ -39,8 +36,9 @@ const defaultValue: PlayerSettings = {
 export const playerSettingsItem = storage.defineItem<PlayerSettings, PlayerSettingsMeta>(
 	`local:${key}`,
 	{
-		version: 1,
+		version: 2,
 		defaultValue,
+		migrations: playerSettingsMigrations,
 	},
 );
 

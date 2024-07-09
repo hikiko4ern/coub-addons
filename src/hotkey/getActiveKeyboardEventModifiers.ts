@@ -1,13 +1,13 @@
-import { HOTKEY_MODIFIERS, type HotkeyModifier } from './constants';
+import { HOTKEY_MODIFIERS_ENTRIES, type HotkeyModifierKey } from './constants';
 
 export const getActiveKeyboardEventModifiers = (
-	event: Pick<KeyboardEvent, `${HotkeyModifier}Key`>,
+	event: Pick<KeyboardEvent, `${HotkeyModifierKey}Key`>,
 ) => {
-	const res: HotkeyModifier[] = [];
+	let res = 0;
 
-	for (const mod of HOTKEY_MODIFIERS) {
-		if (event[`${mod}Key`]) {
-			res.push(mod);
+	for (const [key, mod] of HOTKEY_MODIFIERS_ENTRIES) {
+		if (event[`${key}Key`]) {
+			res |= mod;
 		}
 	}
 

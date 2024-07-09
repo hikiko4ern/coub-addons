@@ -1,5 +1,5 @@
 import type { ToReadonly } from '@/types/util';
-import { HOTKEY_MODIFIERS } from './constants';
+import { HOTKEY_MODIFIERS_ENTRIES } from './constants';
 import { getUniversalHotkeyKey } from './getUniversalHotkeyKey';
 import type { Hotkey } from './types';
 
@@ -10,8 +10,10 @@ export const isHotkeyPressed = (event: KeyboardEvent, hotkey: ToReadonly<Hotkey>
 		return false;
 	}
 
-	for (const mod of HOTKEY_MODIFIERS) {
-		if (hotkey.mods.includes(mod) !== event[`${mod}Key`]) {
+	for (const [key, mod] of HOTKEY_MODIFIERS_ENTRIES) {
+		const isMustBeActive = (hotkey.mods & mod) === mod;
+
+		if (isMustBeActive !== event[`${key}Key`]) {
 			return false;
 		}
 	}
