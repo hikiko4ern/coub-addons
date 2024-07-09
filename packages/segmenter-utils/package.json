@@ -9,12 +9,12 @@
 		"clean": "rimraf lib"
 	},
 	"dependencies": {
-		"@go-task/cli": "^3.36.0",
-		"rimraf": "^5.0.5",
-		"wasm-pack": "^0.12.1"
+		"@go-task/cli": "^3.38.0",
+		"rimraf": "^6.0.0",
+		"wasm-pack": "^0.13.0"
 	},
 	"devDependencies": {
-		"vitest": "^1.6.0"
+		"vitest": "^2.0.1"
 	},
 	"repository": "https://github.com/hikiko4ern/coub-addons.git",
 	"author": "hikiko4ern",

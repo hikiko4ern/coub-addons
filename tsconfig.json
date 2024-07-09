@@ -11,5 +11,10 @@
 		"isolatedModules": true,
 		"verbatimModuleSyntax": true
 	},
-	"exclude": ["./packages/@nextui-org/react-rsc-utils", "./packages/*/lib"]
+	"exclude": [
+		"./vitest.config.ts.*.mjs",
+		"./.output",
+		"./packages/@nextui-org/react-rsc-utils",
+		"./packages/*/lib"
+	]
 }

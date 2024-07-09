@@ -29,7 +29,6 @@ declare global {
 			} & CoubBlockClientsidePatches;
 		}
 
-		// biome-ignore lint/suspicious/noEmptyInterface: must be an `interface` to allow declaration merging
 		interface CoubBlockClientsidePatches {}
 
 		interface Html5Player {
@@ -48,7 +47,6 @@ declare global {
 			} & Html5PlayerPatches;
 		}
 
-		// biome-ignore lint/suspicious/noEmptyInterface: must be an `interface` to allow declaration merging
 		interface Html5PlayerPatches {}
 
 		namespace widgets {

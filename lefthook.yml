@@ -3,7 +3,7 @@ pre-commit:
   commands:
     biome:
       glob: '*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}'
-      run: pnpm biome check --apply --error-on-warnings {staged_files}
+      run: pnpm biome check --write --error-on-warnings {staged_files}
       stage_fixed: true
     dprint:
       glob: '*.{json,jsonc,json5,md,toml}'

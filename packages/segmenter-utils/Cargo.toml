@@ -14,10 +14,10 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 console_error_panic_hook = { version = "0.1.7", optional = true }
-icu_segmenter = "1.4.0"
-itertools = { version = "0.12.1", default-features = false }
+icu_segmenter = "1.5.0"
+itertools = { version = "0.13.0", default-features = false }
 js-sys = "0.3.69"
-serde = { version = "1.0.197", features = ["derive"] }
+serde = { version = "1.0.204", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 tsify = { version = "0.4.5", default-features = false, features = ["js"] }
 wasm-bindgen = "0.2.92"
