@@ -1,3 +1,4 @@
+import { isObject } from '@/helpers/isObject';
 import type { Logger } from '@/utils/logger';
 import { getJQuery } from '../getJQuery';
 import type { GetGlobalsRes } from '../types';
@@ -22,7 +23,7 @@ export const getHtml5PlayerGlobals = (logger: Logger): GetGlobalsRes<Html5Player
 		return { isValid: false, ret: ['jQuery is not a function:', $] };
 	}
 
-	if (typeof Html5Player !== 'object' && typeof Html5Player !== 'function') {
+	if (typeof Html5Player !== 'function' && !isObject(Html5Player)) {
 		return {
 			isValid: false,
 			ret: ['`Html5Player` is not an object/function-like:', Html5Player],

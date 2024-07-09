@@ -9,6 +9,7 @@ import { WebRequestExt } from './webRequestExt';
 
 export class Context implements Disposable {
 	readonly origin: string;
+	readonly commentsOrigin: string;
 	readonly webRequest: WebRequestExt;
 	readonly coubHelpers: CoubHelpers;
 	readonly blockedChannels: BlockedChannelsStorage;
@@ -19,6 +20,7 @@ export class Context implements Disposable {
 
 	constructor(logger: Logger) {
 		this.origin = import.meta.env.VITE_COUB_ORIGIN;
+		this.commentsOrigin = import.meta.env.VITE_COUB_COMMENTS_ORIGIN;
 		this.webRequest = new WebRequestExt(this);
 		this.coubHelpers = new CoubHelpers(this);
 		this.blockedChannels = new BlockedChannelsStorage(undefined, 'bg', logger);

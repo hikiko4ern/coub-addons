@@ -17,6 +17,8 @@
 		"version:gen-changelog": "git-cliff --bump -o",
 		"version:add-changelog": "git add CHANGELOG.md",
 		"bump": "node --disable-warning=ExperimentalWarning ./utils/bump.js",
+		"gql:fetch-schema": "tsx -r dotenv-flow/config ./utils/fetchGqlSchema.ts",
+		"gql:gen": "graphql-codegen --config ./utils/gqlCodegen.ts",
 		"su": "pnpm --filter=\"@coub-addons/segmenter-utils\""
 	},
 	"dependencies": {
@@ -69,6 +71,7 @@
 		"dotenv-flow": "^4.1.0",
 		"flexsearch": "^0.7.43",
 		"framer-motion": "^11.2.14",
+		"graphql-config": "^5.0.3",
 		"indent-string": "^5.0.0",
 		"indexed-iterable": "^1.0.2",
 		"itertools": "^2.3.2",
@@ -99,12 +102,18 @@
 		"@cspell/dict-ru_ru": "^2.2.1",
 		"@faker-js/faker": "^8.4.1",
 		"@go-task/cli": "^3.38.0",
+		"@graphql-codegen/add": "^5.0.3",
+		"@graphql-codegen/cli": "^5.0.2",
+		"@graphql-codegen/typescript": "^4.0.9",
+		"@graphql-codegen/typescript-operations": "^4.2.3",
 		"cspell": "^8.10.4",
 		"dprint": "^0.47.1",
 		"execa": "^9.3.0",
 		"git-cliff": "^2.4.0",
+		"graphql": "^16.9.0",
 		"lefthook": "^1.7.1",
 		"prettier": "^3.3.2",
+		"tsx": "^4.16.2",
 		"vitest": "^2.0.1"
 	},
 	"pnpm": {

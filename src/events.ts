@@ -1,6 +1,7 @@
 import type { AugmentedBrowser as Browser, Events } from 'wxt/browser';
 
 import { Logger } from '@/utils/logger';
+import { isObject } from './helpers/isObject';
 import type { StorageEvent } from './storage/types';
 
 interface I18nLocaleEvent {
@@ -118,10 +119,7 @@ export class EventListener implements Disposable {
 }
 
 const isEvent = (value: unknown): value is Event =>
-	typeof value === 'object' &&
-	value !== null &&
-	'type' in value &&
-	EVENT_IDS.has(value.type as never);
+	isObject(value) && 'type' in value && EVENT_IDS.has(value.type as never);
 
 type OnMessageHandler = Browser['runtime']['onMessage'] extends Events.Event<infer Handler>
 	? Handler

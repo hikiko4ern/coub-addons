@@ -1,0 +1,53 @@
+# saved at 2024/07/09
+
+fragment CommentFields on DisqusComment {
+  author {
+    avatar {
+      cache
+      permalink
+      __typename
+    }
+    coubcomChannelId
+    name
+    profileUrl
+    __typename
+  }
+  createdAt
+  disqusCommentId
+  hasChildren
+  isDeleted
+  isEdited
+  isReported
+  message
+  parentPostId
+  __typename
+}
+
+query EntityComments(
+  $entityId: ID!
+  $entityType: Entity!
+  $cursorNext: String
+  $limit: Int
+  $order: SortOrder
+  $parentPostId: String
+) {
+  entityComments(
+    entityId: $entityId
+    entityType: $entityType
+    cursorNext: $cursorNext
+    limit: $limit
+    order: $order
+    parentPostId: $parentPostId
+  ) {
+    cursor {
+      next
+      hasNext
+      __typename
+    }
+    comments {
+      ...CommentFields
+      __typename
+    }
+    __typename
+  }
+}

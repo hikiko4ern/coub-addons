@@ -26,6 +26,7 @@ export default defineConfig({
 			'webRequestBlocking',
 			'menus',
 			`${process.env.VITE_COUB_ORIGIN}/*`,
+			`${process.env.VITE_COUB_COMMENTS_ORIGIN}/graphql`,
 		],
 		browser_action: {},
 		browser_specific_settings: {

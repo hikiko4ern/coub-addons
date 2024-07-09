@@ -75,6 +75,7 @@ blocked-coub-titles = Заблокированные названия коубо
 ## options / blocklist
 blocklist = Блок-лист
 block-recoubs = Блокировать рекоубы
+hide-comments-from-blocked-channels = Скрывать комментарии от заблокированных каналов
 
 ## options / player settings
 player = Плеер
@@ -95,6 +96,8 @@ conflicts-with-actions = Конфликтует с действиями: {$with}
 stats = Статистика
 filtered-out-coubs = Скрытые коубы
 statistics-of-filtered-out-coubs = Статистика отфильтрованных коубов
+filtered-out-comments = Скрытые комментарии
+statistics-of-filtered-out-comments = Статистика отфильтрованных комментариев
 reason = Причина
 count = Количество
 coub-is-disliked = коубу поставлен дизлайк

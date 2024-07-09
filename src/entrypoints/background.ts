@@ -6,6 +6,7 @@ import '@/register';
 import type {} from '@/types/tsPatch';
 
 import { EventDispatcher, EventListener } from '@/events';
+import { registerCommentsHandlers } from '@/request/comments';
 import { Context } from '@/request/ctx';
 import { registerTimelineHandlers } from '@/request/timeline';
 import { setLocales, t } from '@/translation/js';
@@ -131,6 +132,7 @@ export default defineBackground(() => {
 	});
 
 	registerTimelineHandlers(ctx);
+	registerCommentsHandlers(ctx);
 
 	const prohibitedRouter = createRouter({
 		routes: {

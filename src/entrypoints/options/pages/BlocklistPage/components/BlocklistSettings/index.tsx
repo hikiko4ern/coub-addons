@@ -3,23 +3,35 @@ import { Checkbox } from '@nextui-org/checkbox';
 import type { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
 
-import type { BlocklistStorage, ReadonlyBlocklist } from '@/storage/blocklist';
+import type { Blocklist, BlocklistStorage, ReadonlyBlocklist } from '@/storage/blocklist';
 
 interface Props {
 	storage: BlocklistStorage;
 	state: ReadonlyBlocklist;
 }
 
+const useMergeCallback = <Key extends keyof Blocklist>(storage: BlocklistStorage, key: Key) =>
+	useCallback((value: Blocklist[Key]) => storage.mergeWith({ [key]: value }), [storage, key]);
+
 export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) => {
-	const handleIsBlockRecoubsChange = useCallback(
-		(isBlockRecoubs: boolean) => storage.mergeWith({ isBlockRecoubs }),
-		[storage],
+	const handleIsBlockRecoubsChange = useMergeCallback(storage, 'isBlockRecoubs');
+
+	const handleIsHideCommentsFromBlockedChannelsChange = useMergeCallback(
+		storage,
+		'isHideCommentsFromBlockedChannels',
 	);
 
 	return (
-		<div>
+		<div className="flex flex-col flex-wrap gap-4">
 			<Checkbox isSelected={state.isBlockRecoubs} onValueChange={handleIsBlockRecoubsChange}>
 				<Localized id="block-recoubs" />
+			</Checkbox>
+
+			<Checkbox
+				isSelected={state.isHideCommentsFromBlockedChannels}
+				onValueChange={handleIsHideCommentsFromBlockedChannelsChange}
+			>
+				<Localized id="hide-comments-from-blocked-channels" />
 			</Checkbox>
 		</div>
 	);

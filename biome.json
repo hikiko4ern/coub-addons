@@ -4,6 +4,7 @@
 		"ignore": [
 			"**/*.json",
 			"**/*.scss.d.ts",
+			"**/src/gql/**",
 			"**/packages/@nextui-org/react-rsc-utils/**",
 			"**/packages/*/lib/**"
 		]

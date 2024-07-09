@@ -5,6 +5,7 @@ import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
 import type { RevertPatch } from '../../types';
 
+import { isObject } from '@/helpers/isObject';
 import { prependJqListener } from '@/helpers/prependJqListener';
 import {
 	CBC_GET_VIEWER_BLOCK_KEY,
@@ -180,8 +181,8 @@ const getToggleDislikeAction = (logger: Logger): string | 0 => {
 	const DislikeButton = (window.wrappedJSObject || window).widgets?.DislikeButton;
 
 	if (
-		(typeof DislikeButton === 'object' || typeof DislikeButton === 'function') &&
-		typeof DislikeButton.ACTIONS === 'object' &&
+		(typeof DislikeButton === 'function' || isObject(DislikeButton)) &&
+		isObject(DislikeButton.ACTIONS) &&
 		'TOGGLE_DISLIKE' in DislikeButton.ACTIONS &&
 		DislikeButton.ACTIONS.TOGGLE_DISLIKE
 	) {

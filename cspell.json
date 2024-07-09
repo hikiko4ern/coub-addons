@@ -31,6 +31,7 @@
 		"cmds",
 		"coub",
 		"coubs",
+		"disqus",
 		"pipefail",
 		"recoub",
 		"recoubs",
@@ -61,6 +62,7 @@
 		"codegen",
 		"codemirror",
 		"Corepack",
+		"coubcomChannelId",
 		"cssnano",
 		"ddietr",
 		"dprint",
@@ -70,6 +72,7 @@
 		"flexsearch",
 		"fmt",
 		"follow-btn",
+		"gql",
 		"heroicons",
 		"hikiko4ern",
 		"ifilter",
@@ -110,9 +113,12 @@
 		"/@fluent/\\w+/"
 	],
 	"ignorePaths": [
+		"/.gitattributes",
+		"/.gitignore",
 		"/biome.json",
 		"/cspell.json",
 		"/pnpm-lock.yaml",
+		"/src/gql",
 		"/patches",
 		"/packages/@nextui-org/react-rsc-utils"
 	]

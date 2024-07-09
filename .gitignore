@@ -12,6 +12,7 @@ node_modules
 stats.html
 .wxt
 web-ext.config.ts
+vitest.config.ts.*.mjs
 
 # Editor directories and files
 .vscode/*

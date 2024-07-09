@@ -1,0 +1,4 @@
+projects:
+  comments:
+    schema: './src/gql/comments/schema.json'
+    documents: './src/gql/comments/**/*.graphql'

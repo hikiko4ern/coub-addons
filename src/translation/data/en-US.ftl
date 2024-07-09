@@ -74,6 +74,7 @@ blocked-coub-titles = Blocked coub titles
 ## options / blocklist
 blocklist = Blocklist
 block-recoubs = Block recoubs
+hide-comments-from-blocked-channels = Hide comments from blocked channels
 
 ## options / player settings
 player = Player
@@ -94,6 +95,8 @@ conflicts-with-actions = Conflicts with actions: {$with}
 stats = Stats
 filtered-out-coubs = Filtered out coubs
 statistics-of-filtered-out-coubs = Statistics of filtered out coubs
+filtered-out-comments = Filtered out comments
+statistics-of-filtered-out-comments = Statistics of filtered out comments
 reason = Reason
 count = Count
 coub-is-disliked = coub is disliked

@@ -1,5 +1,7 @@
 import { imap } from 'itertools';
 
+import type { CommentFieldsFragment } from '@/gql/comments/graphql';
+import { isObject } from '@/helpers/isObject';
 import type { IsChannelBlockedFn } from '@/storage/blockedChannels';
 import type { IsCoubBlockedByTitle } from '@/storage/blockedCoubTitles';
 import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
@@ -31,6 +33,10 @@ export enum CoubExclusionReason {
 	TAG_BLOCKED = 'tag-is-blocked',
 	COUB_TITLE_BLOCKED = 'coub-title-is-blocked',
 	RECOUBS_BLOCKED = 'recoubs-are-blocked',
+}
+
+export enum CommentExclusionReason {
+	CHANNEL_BLOCKED = 'channel-is-blocked',
 }
 
 export interface FilteredOutCoubForStats {
@@ -117,13 +123,7 @@ class CoubBlocklistChecker {
 		| [isExclude: true, reason: CoubExclusionReason.TAG_BLOCKED, blockedByPattern: string]
 		| [isExclude: true, reason: CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern: string]
 		| [isExclude: false] => {
-		if (
-			coub == null ||
-			typeof coub !== 'object' ||
-			Array.isArray(coub) ||
-			coub.like === true ||
-			coub.favourite === true
-		) {
+		if (!isObject(coub) || coub.like === true || coub.favourite === true) {
 			return [false];
 		}
 
@@ -133,8 +133,7 @@ class CoubBlocklistChecker {
 
 		if (
 			this.#blocklist.isBlockRecoubs &&
-			typeof coub.media_blocks === 'object' &&
-			coub.media_blocks !== null &&
+			isObject(coub.media_blocks) &&
 			Array.isArray(coub.media_blocks.remixed_from_coubs) &&
 			coub.media_blocks.remixed_from_coubs.length
 		) {
@@ -142,8 +141,7 @@ class CoubBlocklistChecker {
 		}
 
 		if (
-			coub.channel != null &&
-			typeof coub.channel === 'object' &&
+			isObject(coub.channel) &&
 			typeof coub.channel.id === 'number' &&
 			this.#isChannelBlocked(coub.channel.id)
 		) {
@@ -158,14 +156,30 @@ class CoubBlocklistChecker {
 
 		if (
 			Array.isArray(coub.tags) &&
-			coub.tags[0] != null &&
-			typeof coub.tags[0] === 'object' &&
-			!Array.isArray(coub.tags[0]) &&
+			isObject(coub.tags[0]) &&
 			'title' in coub.tags[0] &&
 			typeof coub.tags[0].title === 'string' &&
 			(blockedByPattern = this.#isHaveBlockedTags(imap(coub.tags, tag => tag.title)))
 		) {
 			return [true, CoubExclusionReason.TAG_BLOCKED, blockedByPattern];
+		}
+
+		return [false];
+	};
+
+	isExcludeComment = (
+		comment: CommentFieldsFragment,
+	): [isExclude: true, reason: CommentExclusionReason] | [isExclude: false] => {
+		if (!isObject(comment)) {
+			return [false];
+		}
+
+		if (isObject(comment.author) && typeof comment.author.coubcomChannelId === 'string') {
+			const channelId = Number.parseInt(comment.author.coubcomChannelId);
+
+			if (!Number.isNaN(channelId) && this.#isChannelBlocked(channelId)) {
+				return [true, CommentExclusionReason.CHANNEL_BLOCKED];
+			}
 		}
 
 		return [false];

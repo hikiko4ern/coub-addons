@@ -1,3 +1,4 @@
+import { isObject } from '@/helpers/isObject';
 import { getJQuery } from '../getJQuery';
 import type { GetGlobalsRes } from '../types';
 
@@ -21,7 +22,7 @@ export const getCoubBlockClientsideGlobals = (): GetGlobalsRes<CoubBlockClientsi
 		return { isValid: false, ret: ['jQuery is not a function:', $] };
 	}
 
-	if (typeof CoubBlockClientside !== 'object' && typeof CoubBlockClientside !== 'function') {
+	if (typeof CoubBlockClientside !== 'function' && !isObject(CoubBlockClientside)) {
 		return {
 			isValid: false,
 			ret: ['`CoubBlockClientside` is not an object/function-like:', CoubBlockClientside],

@@ -1,3 +1,4 @@
+import { isObject } from '@/helpers/isObject';
 import { CoubExclusionReason, type CoubTitleData, type FilteredOutCoubForStats } from './coub';
 import type { Context } from './ctx';
 import type { Channel } from './types';
@@ -53,16 +54,15 @@ const EXCLUSION_REASON_TEXT: Record<CoubExclusionReason, string> = {
 };
 
 export const registerTimelineHandlers = (ctx: Context) => {
-	ctx.webRequest.rewriteCompleteJsonResponse(
-		{
+	ctx.webRequest.rewriteCompleteJsonResponse<TimelineResponse>({
+		filter: {
 			urls: ['/api/v2/timeline', '/api/v2/timeline?*', '/api/v2/timeline/*'],
 			types: ['xmlhttprequest'],
 		},
-		data => JSON.parse(data) as TimelineResponse,
-		async ({ details, data, logger }) => {
+		rewrite: async ({ details, data, logger }) => {
 			let isModified = false;
 
-			if (typeof data === 'object' && data !== null && Array.isArray(data.coubs)) {
+			if (isObject(data) && Array.isArray(data.coubs)) {
 				const origAmount = data.coubs.length;
 
 				const filteredCoubs: (typeof data)['coubs'] = [];
@@ -119,5 +119,5 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				return data;
 			}
 		},
-	);
+	});
 };

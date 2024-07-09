@@ -1,4 +1,4 @@
-import type { CoubExclusionReason } from '@/request/coub';
+import type { CommentExclusionReason, CoubExclusionReason } from '@/request/coub';
 
 // v1
 
@@ -32,4 +32,14 @@ type CoubExclusionReasonV4 = CoubExclusionReasonV3 | CoubExclusionReason.RECOUBS
 
 export interface StatsV4 {
 	filtered: Record<CoubExclusionReasonV4, number>;
+}
+
+// v5
+
+type CoubExclusionReasonV5 = CoubExclusionReasonV4;
+type CommentExclusionReasonV5 = CommentExclusionReason.CHANNEL_BLOCKED;
+
+export interface StatsV5 {
+	filteredCoubs: Record<CoubExclusionReasonV5, number>;
+	filteredComments: Record<CommentExclusionReasonV5, number>;
 }

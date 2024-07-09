@@ -1,29 +1,33 @@
-import { Localized, useLocalization } from '@fluent/react';
+import { Localized } from '@fluent/react';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table';
-import type { FunctionComponent } from 'preact';
+import type { FunctionComponent, VNode } from 'preact';
 import { useMemo } from 'preact/hooks';
 
 import { CardSection } from '@/options/components/CardSection';
 import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
-import type { ReadonlyStats } from '@/storage/stats';
 
 import styles from './styles.module.scss';
 
 interface Props {
-	data: ReadonlyStats['filtered'];
+	title: VNode;
+	data: Record<string, number>;
+	'aria-label': string;
 }
 
-export const FilteredOutCoubs: FunctionComponent<Props> = ({ data }) => {
-	const { l10n } = useLocalization();
+export const FilteredOutSection: FunctionComponent<Props> = ({
+	title,
+	data,
+	'aria-label': ariaLabel,
+}) => {
 	const { locale } = useLocalizationContext();
 	const countFormat = useMemo(() => new Intl.NumberFormat(locale), [locale]);
 
 	return (
-		<CardSection title={<Localized id="filtered-out-coubs" />}>
+		<CardSection title={title}>
 			<Table
-				classNames={{ table: styles['filtered-out-coubs'] }}
+				classNames={{ table: styles['filtered-out-section'] }}
 				removeWrapper
-				aria-label={l10n.getString('statistics-of-filtered-out-coubs')}
+				aria-label={ariaLabel}
 			>
 				<TableHeader>
 					<TableColumn>

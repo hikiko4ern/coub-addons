@@ -1,13 +1,14 @@
+import type { ConditionalKeys } from 'type-fest';
 import { storage } from 'wxt/storage';
 
-import { CoubExclusionReason } from '@/request/coub';
+import { CommentExclusionReason, CoubExclusionReason } from '@/request/coub';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
+
 import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
-
 import { statsMigrations } from './migrations';
-import type { StatsV4 as Stats } from './types';
+import type { StatsV5 as Stats } from './types';
 
 export interface StatsMeta extends StorageMeta {}
 
@@ -15,18 +16,25 @@ interface FilteredOutCoub {
 	reason: CoubExclusionReason;
 }
 
+interface FilteredOutComment {
+	reason: CommentExclusionReason;
+}
+
 export type ReadonlyStats = ToReadonly<Stats>;
 
 const key = 'stats' as const;
 
 const defaultValue: Stats = {
-	filtered: Object.fromEntries(
+	filteredCoubs: Object.fromEntries(
 		Object.values(CoubExclusionReason).map(reason => [reason, 0]),
-	) as Stats['filtered'],
+	) as Stats['filteredCoubs'],
+	filteredComments: Object.fromEntries(
+		Object.values(CommentExclusionReason).map(reason => [reason, 0]),
+	) as Stats['filteredComments'],
 };
 
 export const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
-	version: 4,
+	version: 5,
 	defaultValue,
 	migrations: statsMigrations,
 });
@@ -42,16 +50,28 @@ export class StatsStorage extends StorageBase<typeof key, Stats, StatsMeta> {
 		this.logger = childLogger;
 	}
 
-	async countFilteredOutCoubs(filtered: readonly Readonly<FilteredOutCoub>[]) {
+	countFilteredOutCoubs(filtered: readonly Readonly<FilteredOutCoub>[]) {
+		return this.countFilteredOut('filteredCoubs', filtered);
+	}
+
+	countFilteredOutComments(filtered: readonly Readonly<FilteredOutComment>[]) {
+		return this.countFilteredOut('filteredComments', filtered);
+	}
+
+	private async countFilteredOut<Key extends ConditionalKeys<Stats, Record<string, number>>>(
+		key: Key,
+		filtered: readonly Readonly<{ reason: keyof Stats[Key] }>[],
+	) {
 		if (!filtered.length) {
 			return;
 		}
 
 		const stats = await this.getValue();
-		const newStats: Stats = { ...stats, filtered: { ...stats.filtered } };
+		const newStats: Stats = { ...stats, [key]: { ...stats[key] } };
+		const newStatsFiltered = newStats[key] as Record<keyof Stats[Key], number>;
 
-		for (const { reason: _reason } of filtered) {
-			newStats.filtered[_reason] = (newStats.filtered[_reason] || 0) + 1;
+		for (const { reason } of filtered) {
+			newStatsFiltered[reason] = (newStatsFiltered[reason] || 0) + 1;
 		}
 
 		await this.setValue(newStats);
