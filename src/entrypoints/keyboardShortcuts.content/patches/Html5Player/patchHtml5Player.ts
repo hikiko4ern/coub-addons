@@ -5,6 +5,7 @@ import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
 import type { RevertPatch } from '../../types';
 
+import { isObject } from '@/helpers/isObject';
 import { prependJqListener } from '@/helpers/prependJqListener';
 import {
 	H5P_ATTACH_EVENTS_KEY,
@@ -154,6 +155,22 @@ const addKeyUpHandlerToNode = (
 		) {
 			e.stopImmediatePropagation();
 			return this.toggleFullScreen();
+		}
+
+		if (
+			playerSettings.copyCoubPermalinkHotkey &&
+			isHotkeyPressed(e.originalEvent as KeyboardEvent, playerSettings.copyCoubPermalinkHotkey)
+		) {
+			logger.debug('copying permalink to', this.data);
+			e.stopImmediatePropagation();
+			return (
+				isObject(this.data) &&
+				typeof this.data.permalink === 'string' &&
+				this.data.permalink &&
+				navigator.clipboard.writeText(
+					new URL(`/view/${this.data.permalink}`, window.location.toString()).toString(),
+				)
+			);
 		}
 
 		if (playerSettings.isPreventPlaybackRateChange && (e.which === 87 || e.which === 83)) {

@@ -7,7 +7,7 @@ import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
 
 import { playerSettingsMigrations } from './migrations';
-import type { PlayerSettingsV2 as PlayerSettings } from './types';
+import type { PlayerSettingsV3 as PlayerSettings } from './types';
 
 export type { PlayerSettings };
 
@@ -31,12 +31,13 @@ const defaultValue: PlayerSettings = {
 		mods: 0,
 		key: 'f',
 	},
+	copyCoubPermalinkHotkey: undefined,
 };
 
 export const playerSettingsItem = storage.defineItem<PlayerSettings, PlayerSettingsMeta>(
 	`local:${key}`,
 	{
-		version: 2,
+		version: 3,
 		defaultValue,
 		migrations: playerSettingsMigrations,
 	},

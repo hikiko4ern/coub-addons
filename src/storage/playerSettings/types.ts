@@ -17,11 +17,18 @@ export interface PlayerSettingsV1 {
 
 // v2
 
-type PlayerSettingsV2ChangedHotkeyKeys =
-	| 'toggleDislikeHotkey'
-	| 'toggleBookmarkHotkey'
-	| 'toggleFullscreenHotkey';
-
 export interface PlayerSettingsV2
-	extends Omit<PlayerSettingsV1, PlayerSettingsV2ChangedHotkeyKeys>,
-		Record<PlayerSettingsV2ChangedHotkeyKeys, HotkeyV2 | undefined> {}
+	extends Omit<
+		PlayerSettingsV1,
+		'toggleDislikeHotkey' | 'toggleBookmarkHotkey' | 'toggleFullscreenHotkey'
+	> {
+	toggleDislikeHotkey: HotkeyV2 | undefined;
+	toggleBookmarkHotkey: HotkeyV2 | undefined;
+	toggleFullscreenHotkey: HotkeyV2 | undefined;
+}
+
+// v3
+
+export interface PlayerSettingsV3 extends PlayerSettingsV2 {
+	copyCoubPermalinkHotkey: HotkeyV2 | undefined;
+}

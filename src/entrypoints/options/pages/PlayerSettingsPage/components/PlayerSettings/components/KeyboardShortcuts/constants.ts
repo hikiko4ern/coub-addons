@@ -1,6 +1,7 @@
+import type { ConditionalKeys } from 'type-fest';
+
 import type { Hotkey } from '@/hotkey/types';
 import type { PlayerSettings } from '@/storage/playerSettings';
-import type { ConditionalKeys } from 'type-fest';
 
 interface HotkeyConfig {
 	key: ConditionalKeys<PlayerSettings, Hotkey | undefined>;
@@ -19,5 +20,9 @@ export const PLAYER_HOTKEYS: HotkeyConfig[] = [
 	{
 		key: 'toggleFullscreenHotkey',
 		l10nKey: 'fullscreen',
+	},
+	{
+		key: 'copyCoubPermalinkHotkey',
+		l10nKey: 'copy-coub-link',
 	},
 ];

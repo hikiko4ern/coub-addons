@@ -87,6 +87,7 @@ shortcut = Сочетание
 dislike = дизлайк
 bookmark = избранное
 fullscreen = полноэкранный режим
+copy-coub-link = скопировать ссылку на коуб
 built-in = встроенное
 press-any-key-combination = Нажмите любое сочетание клавиш
 recording-key-combination-label = Запись

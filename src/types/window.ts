@@ -1,6 +1,8 @@
 import type jQuery from 'jquery';
 import type { ConditionalKeys } from 'type-fest';
 
+import type { TimelineResponseCoub } from '@/request/timeline';
+
 declare global {
 	namespace coub {
 		interface I18n {
@@ -32,6 +34,7 @@ declare global {
 		interface CoubBlockClientsidePatches {}
 
 		interface Html5Player {
+			data: Pick<TimelineResponseCoub, 'permalink'>;
 			vb: JQuery;
 			attachEvents(
 				this: Html5Player & { wrappedJSObject?: Html5Player },
