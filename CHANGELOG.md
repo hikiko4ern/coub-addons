@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.16] - 2024-07-10
+
+### Features
+
+- **(hotkey)** add a hotkey for copying a coub link
+- **(blocklist)** exclude likes and bookmarks timelines from processing
+
 ## [0.1.15] - 2024-07-09
 
 ### Bug Fixes
