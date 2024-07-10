@@ -90,7 +90,7 @@ export class WebRequestExt implements Disposable {
 
 				const requestCtx: OnBeforeRequestCtx = { ctx: this.#ctx, details, logger };
 
-				{
+				try {
 					let isHandle = false,
 						ignoreReason: unknown[] | undefined;
 
@@ -104,6 +104,8 @@ export class WebRequestExt implements Disposable {
 						logger.debug('ignoring request due to `isHandleRequest`:', ...ignoreReason);
 						return;
 					}
+				} catch (err) {
+					logger.error('`isHandleRequest` failed', err);
 				}
 
 				const filter = browser.webRequest.filterResponseData(requestId);

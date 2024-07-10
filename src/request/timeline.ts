@@ -59,6 +59,19 @@ export const registerTimelineHandlers = (ctx: Context) => {
 			urls: ['/api/v2/timeline', '/api/v2/timeline?*', '/api/v2/timeline/*'],
 			types: ['xmlhttprequest'],
 		},
+		isHandleRequest: ({ details }) => {
+			const { pathname } = new URL(details.url);
+			switch (pathname) {
+				case '/api/v2/timeline/likes':
+					return [false, 'likes timeline'];
+
+				case '/api/v2/timeline/favourites':
+					return [false, 'bookmarks timeline'];
+
+				default:
+					return [true];
+			}
+		},
 		rewrite: async ({ details, data, logger }) => {
 			let isModified = false;
 
