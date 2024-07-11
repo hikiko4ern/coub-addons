@@ -1,6 +1,7 @@
 import type { EntityCommentsQuery } from '@/gql/comments/graphql';
 import { isObject } from '@/helpers/isObject';
-import { isPromise } from '@/helpers/isPromise';
+import type { BlockedChannelData } from '@/storage/blockedChannels';
+import type { Logger } from '@/utils/logger';
 import { CommentExclusionReason } from './coub';
 import type { Context } from './ctx';
 
@@ -17,7 +18,7 @@ const EXCLUSION_REASON_TEXT: Record<CommentExclusionReason, string> = {
 };
 
 export const registerCommentsHandlers = (ctx: Context) => {
-	ctx.webRequest.rewriteCompleteGraphql<EntityCommentsQuery, { isCheckSetting?: true }>({
+	ctx.webRequest.rewriteCompleteGraphql<EntityCommentsQuery>({
 		filter: {
 			urls: [`${ctx.commentsOrigin}/graphql`],
 			types: ['xmlhttprequest'],
@@ -25,34 +26,32 @@ export const registerCommentsHandlers = (ctx: Context) => {
 		// NOTE: as of July 10, 2024, the `threadComments` request is not present in `disqus-3d9410fccc8802be8a3b.js`
 		// fyi: Coub uses Apollo Client (v3.7.10 at the time of writing; https://www.apollographql.com/docs/react)
 		ifQueriesFields: ['entityComments'],
-		isHandleRequest: ctx => {
-			const isHide = ctx.ctx.blocklist.isHideCommentsFromBlockedChannels();
-
-			return isPromise(isHide)
-				? (ctx.logger.debug('deferring `blocklist.isHideCommentsFromBlockedChannels`', isHide),
-					(ctx.isCheckSetting = true),
-					[true])
-				: isHide
-					? [true]
-					: [false, 'isHideCommentsFromBlockedChannels =', isHide];
-		},
-		rewrite: async ({ ctx, data, logger, isCheckSetting }) => {
-			if (isCheckSetting && !(await ctx.blocklist.isHideCommentsFromBlockedChannels())) {
-				return;
-			}
-
+		rewrite: async ({ ctx, data, logger }) => {
 			let isModified = false;
 			const { entityComments } = data;
-
-			const filteredComments: (typeof entityComments)['comments'] = [];
-			const filteredOutComments: FilteredOutComment[] = [];
 
 			if (
 				isObject(entityComments) &&
 				Array.isArray(entityComments.comments) &&
 				entityComments.comments.length > 0
 			) {
+				ctx.blockedChannels
+					.actualizeChannelsData(iterAsBlockedChannels(logger, entityComments.comments))
+					.catch((err: unknown) => logger.error('failed to actualize blocked channels data', err));
+
+				{
+					const isHide = await ctx.blocklist.isHideCommentsFromBlockedChannels();
+
+					if (!isHide) {
+						logger.debug('ignoring comments response due to isHideCommentsFromBlockedChannels =');
+						return;
+					}
+				}
+
 				const origAmount = entityComments.comments.length;
+
+				const filteredComments: (typeof entityComments)['comments'] = [];
+				const filteredOutComments: FilteredOutComment[] = [];
 
 				const checker = await ctx.coubHelpers.createChecker();
 
@@ -108,4 +107,40 @@ export const registerCommentsHandlers = (ctx: Context) => {
 			}
 		},
 	});
+};
+
+function* iterAsBlockedChannels(
+	logger: Logger,
+	comments: EntityCommentsQuery['entityComments']['comments'],
+): Generator<BlockedChannelData, void, never> {
+	for (const comment of comments) {
+		if (
+			isObject(comment) &&
+			isObject(comment.author) &&
+			typeof comment.author.coubcomChannelId === 'string' &&
+			typeof comment.author.name === 'string' &&
+			typeof comment.author.profileUrl === 'string' &&
+			comment.author.profileUrl
+		) {
+			const id = Number.parseInt(comment.author.coubcomChannelId, 10);
+			const permalink = getPermalinkFromUrl(logger, comment.author.profileUrl);
+
+			if (!Number.isNaN(id) && permalink) {
+				yield {
+					id,
+					title: comment.author.name,
+					permalink,
+				};
+			}
+		}
+	}
+}
+
+const getPermalinkFromUrl = (logger: Logger, profileUrl: string) => {
+	try {
+		const url = new URL(profileUrl);
+		return url.pathname.slice(1);
+	} catch (err) {
+		logger.error('failed to parse `profileUrl`', err);
+	}
 };

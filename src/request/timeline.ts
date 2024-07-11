@@ -1,4 +1,5 @@
 import { isObject } from '@/helpers/isObject';
+import type { BlockedChannelData } from '@/storage/blockedChannels';
 import { CoubExclusionReason, type CoubTitleData, type FilteredOutCoubForStats } from './coub';
 import type { Context } from './ctx';
 import type { Channel } from './types';
@@ -59,23 +60,31 @@ export const registerTimelineHandlers = (ctx: Context) => {
 			urls: ['/api/v2/timeline', '/api/v2/timeline?*', '/api/v2/timeline/*'],
 			types: ['xmlhttprequest'],
 		},
-		isHandleRequest: ({ details }) => {
-			const { pathname } = new URL(details.url);
-			switch (pathname) {
-				case '/api/v2/timeline/likes':
-					return [false, 'likes timeline'];
-
-				case '/api/v2/timeline/favourites':
-					return [false, 'bookmarks timeline'];
-
-				default:
-					return [true];
-			}
-		},
 		rewrite: async ({ details, data, logger }) => {
 			let isModified = false;
 
 			if (isObject(data) && Array.isArray(data.coubs)) {
+				ctx.blockedChannels
+					.actualizeChannelsData(iterAsBlockedChannels(data.coubs))
+					.catch((err: unknown) => logger.error('failed to actualize blocked channels data', err));
+
+				try {
+					const { pathname } = new URL(details.url);
+					switch (pathname) {
+						case '/api/v2/timeline/likes': {
+							logger.debug('ignoring likes timeline response');
+							return;
+						}
+
+						case '/api/v2/timeline/favourites': {
+							logger.debug('ignoring bookmarks timeline response');
+							return;
+						}
+					}
+				} catch (err) {
+					logger.error('failed to check timeline request URL', err);
+				}
+
 				const origAmount = data.coubs.length;
 
 				const filteredCoubs: (typeof data)['coubs'] = [];
@@ -134,3 +143,23 @@ export const registerTimelineHandlers = (ctx: Context) => {
 		},
 	});
 };
+
+function* iterAsBlockedChannels(
+	coubs: Iterable<TimelineResponseCoub>,
+): Generator<BlockedChannelData, void, never> {
+	for (const coub of coubs) {
+		if (
+			isObject(coub) &&
+			isObject(coub.channel) &&
+			typeof coub.channel.id === 'number' &&
+			typeof coub.channel.permalink === 'string' &&
+			typeof coub.channel.title === 'string'
+		) {
+			yield {
+				id: coub.channel.id,
+				title: coub.channel.title,
+				permalink: coub.channel.permalink,
+			};
+		}
+	}
+}

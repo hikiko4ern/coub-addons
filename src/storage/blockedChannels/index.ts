@@ -8,6 +8,7 @@ import { Logger } from '@/utils/logger';
 
 import { StorageBase, type StorageWatchCallback } from '../base';
 import type { StorageMeta } from '../types';
+import { areBlockedChannelEqual } from './helpers/areBlockedChannelEqual';
 import { blockedChannelsToRaw } from './helpers/blockedChannelsToRaw';
 import { iterRawBlockedChannels } from './helpers/iterRawBlockedChannels';
 import type { BlockedChannelData, RawBlockedChannels } from './types';
@@ -97,6 +98,34 @@ export class BlockedChannelsStorage extends StorageBase<
 				oldState.size + (isBlocked ? 1 : -1),
 			),
 		);
+	}
+
+	async actualizeChannelsData(channels: Iterable<BlockedChannelData>) {
+		const oldState = await this.getValue();
+		let newState: BlockedChannels | undefined;
+		const replacedIds = new Set<number>();
+
+		this.logger.debug('actualizing channels', oldState);
+
+		for (const channel of channels) {
+			if (replacedIds.has(channel.id)) {
+				continue;
+			}
+
+			const blockedChannel = oldState.get(channel.id);
+
+			if (blockedChannel && !areBlockedChannelEqual(blockedChannel, channel)) {
+				this.logger.debug('replacing blocked channel', blockedChannel, 'with', channel);
+
+				newState ||= new Map(oldState);
+				newState.set(channel.id, channel);
+				replacedIds.add(channel.id);
+			}
+		}
+
+		if (newState) {
+			await this.setParsedValue(newState);
+		}
 	}
 
 	protected async notifyWatcher(
