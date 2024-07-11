@@ -179,7 +179,7 @@ export class WebRequestExt implements Disposable {
 		...options
 	}: RewriteCompleteGraphqlOptions<T, CtxAddition>) => {
 		const fieldsRegex = ifQueriesFields?.length
-			? new RegExp(`:?(${ifQueriesFields.join('|')})[@({ ]`)
+			? new RegExp(`[:{}\\s](${ifQueriesFields.join('|')})[@({\\s]`)
 			: undefined;
 
 		this.rewriteCompleteJsonResponse<GraphqlResponse<T>>({
