@@ -49,7 +49,17 @@ export default defineConfig({
 	},
 	zip: {
 		includeSources: ['.env'],
-		excludeSources: ['target/**', 'test/**', 'utils/**'],
+		excludeSources: [
+			'target/**',
+			'test/**',
+			'utils/**',
+			'biome.json',
+			'cliff.toml',
+			'cspell.json',
+			'dprint.json',
+			'lefthook.yml',
+			'Taskfile.yml',
+		],
 	},
 	hooks: {
 		'build:manifestGenerated'(_, manifest) {
