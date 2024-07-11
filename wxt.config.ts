@@ -48,7 +48,7 @@ export default defineConfig({
 		},
 	},
 	zip: {
-		includeSources: ['.env'],
+		includeSources: ['.env', 'packages/segmenter-utils/.task/checksum/build'],
 		excludeSources: [
 			'target/**',
 			'test/**',
