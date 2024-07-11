@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.1.17] - 2024-07-11
+
+### Bug Fixes
+
+- handle more query field separators
+
+### Features
+
+- **(blocklist)** update data of blocked channels from timeline and comments responses
+- **(blocklist)** add an action to manually update channel data
+
+### Miscellaneous Tasks
+
+- **(build)** remove unnecessary files from zipped sources
+- **(build)** save the checksum of `segmenter-utils` in zipped sources
+
 ## [0.1.16] - 2024-07-10
 
 ### Features
