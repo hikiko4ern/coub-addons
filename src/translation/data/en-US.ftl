@@ -52,6 +52,8 @@ blocked-channels = Blocked channels
 blocked-channels-list = Blocked channels list
 no-blocked-channels = You seem to like all the channels ¯\_(ツ)_/¯
 no-blocked-channels-by-search = No blocked channels found
+update-channel-data =
+  .content = Update channel data
 remove-from-blocklist =
   .content = Remove from blocklist
 blocked-channels-search =
@@ -64,6 +66,8 @@ rows-per-page =
   .label = Rows per page:
 clear-blocked-channels-confirmation-title = Clearing the blocklist
 clear-blocked-channels-confirmation-description = Are you sure you want to remove all channels from the blocklist?
+channel-data-has-been-updated = Channel data has been updated
+channel-data-update-error = Failed to update channel data:<br/>{$error}
 
 ## options / blocked tags
 blocked-tags = Blocked tags

@@ -52,6 +52,8 @@ blocked-channels = Заблокированные каналы
 blocked-channels-list = Список заблокированных каналов
 no-blocked-channels = Кажется, Вам нравятся все каналы ¯\_(ツ)_/¯
 no-blocked-channels-by-search = Ничего не найдено
+update-channel-data =
+  .content = Обновить данные канала
 remove-from-blocklist =
   .content = Удалить из списка
 blocked-channels-search =
@@ -65,6 +67,8 @@ rows-per-page =
   .label = Строк на странице:
 clear-blocked-channels-confirmation-title = Очистка блок-листа
 clear-blocked-channels-confirmation-description = Вы уверены, что хотите удалить все каналы из блок-листа?
+channel-data-has-been-updated = Данные канала обновлены
+channel-data-update-error = Не удалось обновить данные канала:<br/>{$error}
 
 ## options / blocked tags
 blocked-tags = Заблокированные теги

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { type Describe, is, number, string, type } from 'superstruct';
 
-import type { Channel } from '@/types/Channel';
+import type { Channel } from '@/api/types';
 import { Logger } from '@/utils/logger';
 
 const ID = nanoid();

@@ -1,4 +1,4 @@
-import { chain, filter } from 'itertools';
+import { chain, filter, imap } from 'itertools';
 import type { Asyncify } from 'type-fest';
 import { type Unwatch, storage } from 'wxt/storage';
 
@@ -96,6 +96,23 @@ export class BlockedChannelsStorage extends StorageBase<
 					? chain(oldState.values(), [idOrChannel as BlockedChannelData])
 					: filter(oldState.values(), item => item.id !== id),
 				oldState.size + (isBlocked ? 1 : -1),
+			),
+		);
+	}
+
+	async actualizeChannelData(channel: BlockedChannelData) {
+		const oldState = await this.getValue();
+
+		this.logger.debug('actualizing channels', oldState, 'with', channel);
+
+		if (!oldState.has(channel.id)) {
+			return;
+		}
+
+		await this.setValue(
+			blockedChannelsToRaw(
+				imap(oldState.values(), item => (item.id === channel.id ? channel : item)),
+				oldState.size,
 			),
 		);
 	}

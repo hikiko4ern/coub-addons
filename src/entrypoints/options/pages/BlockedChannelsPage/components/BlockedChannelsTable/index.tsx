@@ -15,19 +15,24 @@ import type { Selection } from '@react-types/shared';
 import type { FunctionComponent } from 'preact';
 import { useCallback, useMemo, useState } from 'preact/hooks';
 
-import type { BlockedChannelData, ReadonlyBlockedChannels } from '@/storage/blockedChannels';
+import type {
+	BlockedChannelData,
+	BlockedChannelsStorage,
+	ReadonlyBlockedChannels,
+} from '@/storage/blockedChannels';
 
 import { Actions } from './components/Actions';
 import styles from './styles.module.scss';
 
 interface Props {
+	storage: BlockedChannelsStorage;
 	data: BlockedChannelData[] | ReadonlyBlockedChannels;
 	globalTotal: number;
 	isSearchApplied: boolean;
 	onRemove: (id: number) => Promise<void>;
 }
 
-interface Column extends Pick<TableColumnProps<unknown>, 'align' | 'width'> {
+interface Column extends Pick<TableColumnProps<unknown>, 'className' | 'align' | 'width'> {
 	key: string;
 	titleKey: string;
 }
@@ -38,6 +43,14 @@ const columns = [
 		titleKey: 'title',
 	},
 	{
+		className: 'text-right',
+		key: 'id',
+		titleKey: 'ID',
+		align: 'end',
+		width: 1,
+	},
+	{
+		className: 'text-center',
 		key: 'actions',
 		titleKey: 'actions',
 		align: 'center',
@@ -52,6 +65,7 @@ type ColumnKey = (typeof columns)[number]['key'];
 type RowsPerPage = (typeof rowsPerPage)[number];
 
 export const BlockedChannelsTable: FunctionComponent<Props> = ({
+	storage,
 	data,
 	globalTotal,
 	isSearchApplied,
@@ -92,21 +106,32 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 
 	const renderCell = (channel: BlockedChannelData, columnKey: ColumnKey) => {
 		switch (columnKey) {
+			case 'id':
+				return <TableCell className="text-right text-zinc-300">{channel.id}</TableCell>;
+
 			case 'title':
-				return channel.permalink ? (
-					<Link
-						href={`${import.meta.env.VITE_COUB_ORIGIN}/${channel.permalink}`}
-						size="sm"
-						isExternal
-					>
-						{channel.title}
-					</Link>
-				) : (
-					channel.title
+				return (
+					<TableCell>
+						{channel.permalink ? (
+							<Link
+								href={`${import.meta.env.VITE_COUB_ORIGIN}/${channel.permalink}`}
+								size="sm"
+								isExternal
+							>
+								{channel.title}
+							</Link>
+						) : (
+							channel.title
+						)}
+					</TableCell>
 				);
 
 			case 'actions':
-				return <Actions id={channel.id} onRemove={onRemove} />;
+				return (
+					<TableCell>
+						<Actions storage={storage} id={channel.id} onRemove={onRemove} />
+					</TableCell>
+				);
 		}
 	};
 
@@ -164,6 +189,7 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 					{column => (
 						<TableColumn
 							key={column.key}
+							className={'className' in column ? column.className : undefined}
 							align={'align' in column ? column.align : undefined}
 							width={'width' in column ? column.width : undefined}
 						>
@@ -182,7 +208,7 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 				>
 					{item => (
 						<TableRow key={item.id}>
-							{columnKey => <TableCell>{renderCell(item, columnKey as ColumnKey)}</TableCell>}
+							{columnKey => renderCell(item, columnKey as ColumnKey)}
 						</TableRow>
 					)}
 				</TableBody>

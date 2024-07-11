@@ -1,5 +1,6 @@
 import { imap } from 'itertools';
 
+import type { Channel } from '@/api/types';
 import type { CommentFieldsFragment } from '@/gql/comments/graphql';
 import { isObject } from '@/helpers/isObject';
 import type { IsChannelBlockedFn } from '@/storage/blockedChannels';
@@ -9,13 +10,11 @@ import type { ReadonlyBlocklist } from '@/storage/blocklist';
 import { Logger } from '@/utils/logger';
 import type { Context } from './ctx';
 import type { TimelineResponseCoub } from './timeline';
-import type { Channel } from './types';
 import type { RequestDetails } from './webRequestExt';
 
 interface CoubDataForTitle {
 	/** title of the coub */
 	title: string;
-
 	/** coub's author */
 	channel: Channel;
 }

@@ -1,8 +1,8 @@
+import type { Channel } from '@/api/types';
 import { isObject } from '@/helpers/isObject';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
 import { CoubExclusionReason, type CoubTitleData, type FilteredOutCoubForStats } from './coub';
 import type { Context } from './ctx';
-import type { Channel } from './types';
 
 interface TimelineResponse {
 	coubs: TimelineResponseCoub[];

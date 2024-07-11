@@ -63,6 +63,7 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 		case StorageHookState.Loaded: {
 			content = (
 				<BlockedChannelsTable
+					storage={blockedChannelsStorage}
 					data={searchResult.value || blockedChannels.data}
 					globalTotal={blockedChannels.data.size}
 					isSearchApplied={!!searchResult}
