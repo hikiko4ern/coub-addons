@@ -13,6 +13,7 @@ save = Save
 revert = Revert
 edit = Edit
 extension = Extension
+id = ID
 
 ## follow button
 

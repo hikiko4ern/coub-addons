@@ -13,6 +13,7 @@ save = Сохранить
 revert = Откатить
 edit = Редактировать
 extension = Расширение
+id = ID
 
 ## Follow button
 

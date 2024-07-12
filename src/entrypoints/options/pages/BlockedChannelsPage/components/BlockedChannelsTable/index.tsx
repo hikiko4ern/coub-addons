@@ -45,7 +45,7 @@ const columns = [
 	{
 		className: 'text-right',
 		key: 'id',
-		titleKey: 'ID',
+		titleKey: 'id',
 		align: 'end',
 		width: 1,
 	},
