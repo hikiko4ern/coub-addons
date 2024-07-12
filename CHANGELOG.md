@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.18] - 2024-07-12
+
+### Bug Fixes
+
+- **(blocklist)** do not update the blocked channel data if it has not changed
+- **(blocklist)** add translation for `ID`
+- **(blocklist)** make the `ID` readable on a light background
+- fix cleanup in `ctx.onInvalidated` on the channel page
+
+### Miscellaneous Tasks
+
+- **(build)** make a build from zipped sources reproducible
+
 ## [0.1.17] - 2024-07-11
 
 ### Bug Fixes
