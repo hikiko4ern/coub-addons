@@ -4,6 +4,7 @@ import arrayBuffer from '@coub-addons/vite-plugin-arraybuffer';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import sassDts from 'vite-plugin-sass-dts';
 import { defineConfig } from 'wxt';
 
@@ -48,8 +49,16 @@ export default defineConfig({
 		},
 	},
 	zip: {
-		includeSources: ['.env', 'packages/segmenter-utils/.task/checksum/build'],
+		includeSources: [
+			'.env',
+			'.npmrc',
+			'.nvmrc',
+			'.postcssrc.json',
+			'packages/segmenter-utils/.task/checksum/build',
+		],
 		excludeSources: [
+			'src/gql/comments/requests/**',
+			'src/gql/comments/schema.json',
 			'target/**',
 			'test/**',
 			'utils/**',
@@ -59,6 +68,8 @@ export default defineConfig({
 			'dprint.json',
 			'lefthook.yml',
 			'Taskfile.yml',
+			'vitest.config.ts',
+			'*.zip',
 		],
 	},
 	hooks: {
@@ -68,7 +79,21 @@ export default defineConfig({
 		},
 	},
 	vite: () => ({
-		plugins: [ValidateEnv(), arrayBuffer(), preact({ devToolsEnabled: false }), sassDts(), lezer()],
+		plugins: [
+			ValidateEnv(),
+			arrayBuffer(),
+			nodePolyfills({
+				include: ['buffer'],
+				globals: {
+					Buffer: false,
+					global: false,
+					process: false,
+				},
+			}),
+			preact({ devToolsEnabled: false }),
+			sassDts(),
+			lezer(),
+		],
 		css: {
 			lightningcss: {
 				targets: {
