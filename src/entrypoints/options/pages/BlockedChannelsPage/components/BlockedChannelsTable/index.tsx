@@ -107,7 +107,11 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 	const renderCell = (channel: BlockedChannelData, columnKey: ColumnKey) => {
 		switch (columnKey) {
 			case 'id':
-				return <TableCell className="text-right text-zinc-300">{channel.id}</TableCell>;
+				return (
+					<TableCell className="text-right text-zinc-500 dark:text-zinc-400">
+						{channel.id}
+					</TableCell>
+				);
 
 			case 'title':
 				return (
