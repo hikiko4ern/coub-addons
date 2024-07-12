@@ -102,10 +102,11 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	async actualizeChannelData(channel: BlockedChannelData) {
 		const oldState = await this.getValue();
+		const blockedChannel = oldState.get(channel.id);
 
-		this.logger.debug('actualizing channels', oldState, 'with', channel);
+		this.logger.debug('actualizing channel', channel.id, blockedChannel, 'with', channel);
 
-		if (!oldState.has(channel.id)) {
+		if (!blockedChannel || areBlockedChannelEqual(blockedChannel, channel)) {
 			return;
 		}
 
