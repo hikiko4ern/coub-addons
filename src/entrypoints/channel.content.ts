@@ -62,7 +62,7 @@ export default defineContentScript({
 		});
 
 		try {
-			let blockButton: HTMLElement, unsubscribe: () => void;
+			let blockButton: HTMLElement | undefined, unsubscribe: (() => void) | undefined;
 
 			const channelButtons = document.querySelector(CHANNEL_BUTTONS_SELECTOR);
 
@@ -122,9 +122,8 @@ export default defineContentScript({
 				addBlockButton(channelButtons);
 
 				ctx.onInvalidated(() => {
-					logger.warn('invalidated');
-					unsubscribe();
-					blockButton.remove();
+					unsubscribe?.();
+					blockButton?.remove();
 				});
 			} else {
 				logger.warn('there is no channel buttons node found by selector', CHANNEL_BUTTONS_SELECTOR);
