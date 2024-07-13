@@ -101,6 +101,9 @@ export default defineConfig({
 				},
 			},
 		},
+		esbuild: {
+			keepNames: true,
+		},
 		build: {
 			target: ['es2022', 'firefox101'],
 			cssMinify: 'lightningcss',
