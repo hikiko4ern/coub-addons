@@ -1,15 +1,14 @@
-import type { UnknownRecord } from 'type-fest';
+import type { SetReturnType, UnknownRecord } from 'type-fest';
 import type { WebRequest } from 'wxt/browser';
 
 import { concatArrays } from '@/helpers/concatArrays';
 import { isObject } from '@/helpers/isObject';
 import type { GraphqlRequest, GraphqlResponse } from '@/types/graphql';
+import type { MaybePromise } from '@/types/util';
 import { Logger } from '@/utils/logger';
 import type { Context } from './ctx';
 
 export type RequestDetails = WebRequest.OnBeforeRequestDetailsType;
-
-type MaybePromise<T> = T | PromiseLike<T>;
 
 type ExtraInfoSpec = Exclude<WebRequest.OnBeforeRequestOptions, 'blocking'>[];
 
@@ -22,12 +21,15 @@ interface OnBeforeRequestCtx {
 interface RewriteCompleteResponseOptions<CtxAddition extends object> {
 	filter: WebRequest.RequestFilter;
 	extraInfoSpec?: ExtraInfoSpec;
+	onBeforeRequest?: (
+		ctx: OnBeforeRequestCtx & Partial<CtxAddition>,
+	) => MaybePromise<WebRequest.BlockingResponse | undefined>;
+	isHandleRequest?: (
+		ctx: OnBeforeRequestCtx & Partial<CtxAddition>,
+	) => MaybePromise<[isHandle: false, reason: string, ...logArgs: unknown[]] | [isHandle: true]>;
 	rewrite: (
 		ctx: CompleteResponseRewriterCtx & Partial<CtxAddition>,
 	) => MaybePromise<Uint8Array | undefined>;
-	isHandleRequest?: (
-		ctx: OnBeforeRequestCtx & Partial<CtxAddition>,
-	) => [isHandle: false, reason: string, ...logArgs: unknown[]] | [isHandle: true];
 }
 
 interface CompleteResponseRewriterCtx extends OnBeforeRequestCtx {
@@ -62,11 +64,12 @@ export class WebRequestExt implements Disposable {
 	rewriteCompleteResponse = <CtxAddition extends object = Record<never, never>>({
 		filter,
 		extraInfoSpec,
-		rewrite,
+		onBeforeRequest,
 		isHandleRequest,
+		rewrite,
 	}: RewriteCompleteResponseOptions<CtxAddition>) => {
 		this.onBeforeRequest(
-			details => {
+			async details => {
 				const { requestId } = details;
 
 				let loggerPrefix = requestId;
@@ -91,12 +94,26 @@ export class WebRequestExt implements Disposable {
 				const requestCtx: OnBeforeRequestCtx = { ctx: this.#ctx, details, logger };
 
 				try {
+					let res: ReturnType<NonNullable<typeof onBeforeRequest>>;
+
+					if (
+						typeof onBeforeRequest === 'function' &&
+						(res = await onBeforeRequest(requestCtx as typeof requestCtx & CtxAddition))
+					) {
+						logger.debug('`onBeforeRequest` returned', res);
+						return res;
+					}
+				} catch (err) {
+					logger.error('`onBeforeRequest` failed', err);
+				}
+
+				try {
 					let isHandle = false,
 						ignoreReason: unknown[] | undefined;
 
 					if (
 						typeof isHandleRequest === 'function' &&
-						([isHandle, ...ignoreReason] = isHandleRequest(
+						([isHandle, ...ignoreReason] = await isHandleRequest(
 							requestCtx as typeof requestCtx & CtxAddition,
 						)) &&
 						!isHandle
@@ -185,9 +202,9 @@ export class WebRequestExt implements Disposable {
 		this.rewriteCompleteJsonResponse<GraphqlResponse<T>>({
 			...options,
 			extraInfoSpec: ['requestBody', ...(extraInfoSpec || [])],
-			isHandleRequest: ctx => {
+			isHandleRequest: async ctx => {
 				if (typeof isHandleRequest === 'function') {
-					const res = isHandleRequest(ctx);
+					const res = await isHandleRequest(ctx);
 
 					if (!res[0]) {
 						return res;
@@ -245,19 +262,23 @@ export class WebRequestExt implements Disposable {
 	};
 
 	private onBeforeRequest = (
-		handler: (details: RequestDetails) => void | WebRequest.BlockingResponseOrPromise,
+		handler: (details: RequestDetails) => MaybePromise<void | WebRequest.BlockingResponse>,
 		filter: WebRequest.RequestFilter,
 		extraInfoSpec?: WebRequest.OnBeforeRequestOptions[],
 	): void => {
+		// `onBeforeRequest` is ok with `Promise<void>`
+		const callback = handler as SetReturnType<typeof handler, WebRequest.BlockingResponseOrPromise>;
 		browser.webRequest.onBeforeRequest.addListener(
-			handler,
+			callback,
 			{
 				...filter,
 				urls: filter.urls.map(url => new URL(url, this.#ctx.origin).toString()),
 			},
 			extraInfoSpec,
 		);
-		this.#unregisterHandlers.push(() => browser.webRequest.onBeforeRequest.removeListener(handler));
+		this.#unregisterHandlers.push(() =>
+			browser.webRequest.onBeforeRequest.removeListener(callback),
+		);
 	};
 
 	[Symbol.dispose]() {

@@ -3,6 +3,19 @@ import type { StorageBase } from './base';
 import type { BlockedChannelsStorage } from './blockedChannels';
 import type { StatsStorage } from './stats';
 
+export const storageStateType = Symbol('storage#stateType');
+export const storageListenerArgs = Symbol('storage#listenerArgs');
+
+export type InferStorageState<Storage> = Storage extends { [storageStateType]?: infer State }
+	? State
+	: never;
+
+export type InferStorageListenerArgs<Storage> = Storage extends {
+	[storageListenerArgs]?: infer ListenerArgs;
+}
+	? ListenerArgs
+	: never;
+
 export interface StorageMeta {
 	v: number;
 	[index: string]: unknown;

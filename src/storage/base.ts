@@ -3,7 +3,16 @@ import type { Unwatch, WxtStorageItem } from 'wxt/storage';
 import { EventDispatcher, EventListener } from '@/events';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
-import { type StorageEvent, StorageEventTrigger, type StorageMeta } from './types';
+import {
+	type StorageEvent,
+	StorageEventTrigger,
+	type StorageMeta,
+	storageListenerArgs,
+	storageStateType,
+} from './types';
+
+// biome-ignore lint/suspicious/noExplicitAny:
+export type AnyStorageBase = StorageBase<any, any, any, any, any>;
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
 	state: ToReadonly<State>,
@@ -20,6 +29,8 @@ export abstract class StorageBase<
 {
 	protected abstract readonly logger: Logger;
 
+	readonly [storageStateType]?: NoInfer<State>;
+	readonly [storageListenerArgs]?: NoInfer<ListenerArgs>;
 	readonly #key;
 	readonly #storage;
 	readonly #source;

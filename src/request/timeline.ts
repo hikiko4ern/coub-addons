@@ -1,11 +1,23 @@
+import { match } from 'path-to-regexp';
+
 import type { Channel } from '@/api/types';
 import { isObject } from '@/helpers/isObject';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
 import { CoubExclusionReason, type CoubTitleData, type FilteredOutCoubForStats } from './coub';
 import type { Context } from './ctx';
 
-interface TimelineResponse {
+interface TimelineResponseCoubs {
+	page: number;
+	total_pages: number;
+	per_page: number;
 	coubs: TimelineResponseCoub[];
+}
+
+interface TimelineResponseStories {
+	page: number;
+	total_pages: number;
+	per_page: number;
+	stories: TimelineResponseStory[];
 }
 
 export interface TimelineResponseCoub {
@@ -22,12 +34,25 @@ export interface TimelineResponseCoub {
 	/** coub's author */
 	channel: Channel;
 	/** coub's tags */
-	tags: TimelineResponseCoubTag[];
+	tags: TimelineResponseTag[];
 	/** "media blocks" like sources or original coubs */
 	media_blocks: TimelineResponseCoubMediaBlocks;
 }
 
-interface TimelineResponseCoubTag {
+interface TimelineResponseStory {
+	/** title of the story */
+	title: string;
+	/** story's unique view link */
+	permalink: string;
+	/** story's tags */
+	tags: TimelineResponseTag[];
+	/** story's author */
+	channel: Channel;
+	/** story's post author (if reposted only) */
+	post_channel?: Channel;
+}
+
+interface TimelineResponseTag {
 	id: number;
 	/** displayed tag name */
 	title: string;
@@ -54,13 +79,68 @@ const EXCLUSION_REASON_TEXT: Record<CoubExclusionReason, string> = {
 	[CoubExclusionReason.RECOUBS_BLOCKED]: 'recoubs are blocked',
 };
 
+const matchChannelTimeline = match<{ permalink: string }>('/api/v2/timeline/channel/:permalink', {
+	sensitive: true,
+});
+
 export const registerTimelineHandlers = (ctx: Context) => {
-	ctx.webRequest.rewriteCompleteJsonResponse<TimelineResponse>({
+	ctx.webRequest.rewriteCompleteJsonResponse<
+		TimelineResponseCoubs,
+		{ detailsUrl: URL; isLikesTimeline: boolean }
+	>({
 		filter: {
 			urls: ['/api/v2/timeline', '/api/v2/timeline?*', '/api/v2/timeline/*'],
 			types: ['xmlhttprequest'],
 		},
-		rewrite: async ({ details, data, logger }) => {
+		onBeforeRequest: async reqCtx => {
+			const { ctx, logger, details } = reqCtx;
+
+			const url = (reqCtx.detailsUrl = new URL(details.url));
+			const type = url.searchParams.get('type');
+
+			if (type === 'likes') {
+				reqCtx.isLikesTimeline = true;
+				return;
+			}
+
+			const match = matchChannelTimeline(url.pathname);
+
+			if (
+				// biome-ignore lint/complexity/useOptionalChain: `match` can be `false`
+				match &&
+				match.params.permalink &&
+				(await ctx.blockedChannels.isBlockedPermalink(match.params.permalink))
+			) {
+				const page = parsePage(url.searchParams.get('page')) || 1;
+				const perPage = parsePage(url.searchParams.get('per_page')) || 10;
+				const entityKey = type === 'stories' ? 'stories' : 'coubs';
+
+				const data: TimelineResponseCoubs | TimelineResponseStories =
+					// TS bug: `{ [entityKey]: [] }` becomes
+					//         `{ [x: string]: never[] }` instead of
+					//         `{ [x: 'coubs' | 'stories']: never[] }`
+					entityKey === 'stories'
+						? {
+								page,
+								total_pages: page - 1,
+								per_page: perPage,
+								[entityKey]: [],
+							}
+						: {
+								page,
+								total_pages: page - 1,
+								per_page: perPage,
+								[entityKey]: [],
+							};
+
+				logger.debug('redirecting', details.url, 'to', data);
+
+				return {
+					redirectUrl: `data:application/json,${encodeURI(JSON.stringify(data))}`,
+				};
+			}
+		},
+		rewrite: async ({ ctx, logger, details, data, detailsUrl, isLikesTimeline }) => {
 			let isModified = false;
 
 			if (isObject(data) && Array.isArray(data.coubs)) {
@@ -69,8 +149,12 @@ export const registerTimelineHandlers = (ctx: Context) => {
 					.catch((err: unknown) => logger.error('failed to actualize blocked channels data', err));
 
 				try {
-					const { pathname } = new URL(details.url);
-					switch (pathname) {
+					if (isLikesTimeline) {
+						logger.debug('ignoring channel likes timeline response');
+						return;
+					}
+
+					switch (detailsUrl?.pathname) {
 						case '/api/v2/timeline/likes': {
 							logger.debug('ignoring likes timeline response');
 							return;
@@ -163,3 +247,12 @@ function* iterAsBlockedChannels(
 		}
 	}
 }
+
+const parsePage = (param: string | null) => {
+	if (typeof param !== 'string' || !param) {
+		return;
+	}
+
+	const value = Number.parseInt(param, 10);
+	return Number.isNaN(value) ? undefined : value;
+};

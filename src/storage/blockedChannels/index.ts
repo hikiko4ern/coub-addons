@@ -8,7 +8,7 @@ import { Logger } from '@/utils/logger';
 
 import { StorageBase, type StorageWatchCallback } from '../base';
 import type { StorageMeta } from '../types';
-import { areBlockedChannelEqual } from './helpers/areBlockedChannelEqual';
+import { areBlockedChannelsEqual } from './helpers/areBlockedChannelEqual';
 import { blockedChannelsToRaw } from './helpers/blockedChannelsToRaw';
 import { iterRawBlockedChannels } from './helpers/iterRawBlockedChannels';
 import type { BlockedChannelData, RawBlockedChannels } from './types';
@@ -34,13 +34,19 @@ export const blockedChannelsItem = storage.defineItem<RawBlockedChannels, Blocke
 	},
 );
 
-type BlockedChannels = Map</** channelId */ number, BlockedChannelData>;
+interface BlockedChannels extends Map</** channelId */ number, BlockedChannelData> {
+	permalinks: Set<NonNullable<BlockedChannelData['permalink']>>;
+}
+
 export type ReadonlyBlockedChannels = ToReadonly<BlockedChannels>;
 
 type IsBlockedListener = (isBlocked: boolean) => void;
 type ListenerArgs = [diff: ReadonlySet<number>];
 
 export type IsChannelBlockedFn = (channelId: number) => boolean;
+export type IsChannelPermalinkBlockedFn = (
+	permalink: NonNullable<BlockedChannelData['permalink']>,
+) => boolean;
 
 export class BlockedChannelsStorage extends StorageBase<
 	typeof key,
@@ -65,6 +71,11 @@ export class BlockedChannelsStorage extends StorageBase<
 	isBlocked: Asyncify<IsChannelBlockedFn> = async channelId => {
 		const state = await this.getValue();
 		return state.has(channelId);
+	};
+
+	isBlockedPermalink: Asyncify<IsChannelPermalinkBlockedFn> = async permalink => {
+		const state = await this.getValue();
+		return state.permalinks.has(permalink);
 	};
 
 	createBoundedIsBlocked = async (): Promise<IsChannelBlockedFn> => {
@@ -106,7 +117,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 		this.logger.debug('actualizing channel', channel.id, blockedChannel, 'with', channel);
 
-		if (!blockedChannel || areBlockedChannelEqual(blockedChannel, channel)) {
+		if (!blockedChannel || areBlockedChannelsEqual(blockedChannel, channel)) {
 			return;
 		}
 
@@ -132,11 +143,13 @@ export class BlockedChannelsStorage extends StorageBase<
 
 			const blockedChannel = oldState.get(channel.id);
 
-			if (blockedChannel && !areBlockedChannelEqual(blockedChannel, channel)) {
+			if (blockedChannel && !areBlockedChannelsEqual(blockedChannel, channel)) {
 				this.logger.debug('replacing blocked channel', blockedChannel, 'with', channel);
 
-				newState ||= new Map(oldState);
+				newState ||= BlockedChannelsStorage.copyValue(oldState);
 				newState.set(channel.id, channel);
+				blockedChannel.permalink && newState.permalinks.delete(blockedChannel.permalink);
+				channel.permalink && newState.permalinks.add(channel.permalink);
 				replacedIds.add(channel.id);
 			}
 		}
@@ -148,7 +161,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	protected async notifyWatcher(
 		cb: StorageWatchCallback<BlockedChannels, ListenerArgs> | undefined,
-		state: ToReadonly<BlockedChannels>,
+		state: ReadonlyBlockedChannels,
 		oldState: RawBlockedChannels | null,
 	): Promise<void> {
 		const oldChannelIds = oldState ? oldState.id : (await this.getValue()).keys();
@@ -167,11 +180,30 @@ export class BlockedChannelsStorage extends StorageBase<
 		}
 	}
 
-	protected parseRawValue(raw: RawBlockedChannels): BlockedChannels {
-		return new Map(iterRawBlockedChannels(raw));
+	protected parseRawValue(raw: ToReadonly<RawBlockedChannels>): ToReadonly<BlockedChannels> {
+		const value = BlockedChannelsStorage.newValue();
+
+		for (const blockedChannel of iterRawBlockedChannels(raw)) {
+			value.set(blockedChannel.id, blockedChannel);
+			blockedChannel.permalink && value.permalinks.add(blockedChannel.permalink);
+		}
+
+		return value;
 	}
 
 	protected toRawValue(parsed: ReadonlyBlockedChannels): RawBlockedChannels {
 		return blockedChannelsToRaw(parsed.values(), parsed.size);
+	}
+
+	private static newValue(): BlockedChannels {
+		const newValue = new Map();
+		(newValue as BlockedChannels).permalinks = new Set();
+		return newValue as BlockedChannels;
+	}
+
+	private static copyValue(value: ReadonlyBlockedChannels): BlockedChannels {
+		const newValue = new Map(value);
+		(newValue as BlockedChannels).permalinks = new Set(value.permalinks);
+		return newValue as BlockedChannels;
 	}
 }
