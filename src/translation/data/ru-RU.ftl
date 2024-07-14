@@ -80,6 +80,7 @@ blocked-coub-titles = Заблокированные названия коубо
 ## options / blocklist
 blocklist = Блок-лист
 block-recoubs = Блокировать рекоубы
+block-reposts-of-stories = Блокировать репосты историй
 hide-comments-from-blocked-channels = Скрывать комментарии от заблокированных каналов
 
 ## options / player settings
@@ -113,6 +114,7 @@ channel-is-blocked = канал заблокирован
 tag-is-blocked = тег заблокирован
 coub-title-is-blocked = коуб заблокирован по имени
 recoubs-are-blocked = рекоубы заблокированы
+reposts-are-blocked = репосты заблокированы
 
 ## options / settings
 settings = Настройки

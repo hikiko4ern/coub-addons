@@ -57,3 +57,15 @@ export interface StatsV6 {
 	filteredStories: Record<StoryExclusionReasonV6, number>;
 	filteredComments: Record<CommentExclusionReasonV6, number>;
 }
+
+// v7
+
+type CoubExclusionReasonV7 = CoubExclusionReasonV6;
+type StoryExclusionReasonV7 = StoryExclusionReasonV6 | StoryExclusionReason.REPOSTS_BLOCKED;
+type CommentExclusionReasonV7 = CommentExclusionReasonV6;
+
+export interface StatsV7 {
+	filteredCoubs: Record<CoubExclusionReasonV7, number>;
+	filteredStories: Record<StoryExclusionReasonV7, number>;
+	filteredComments: Record<CommentExclusionReasonV7, number>;
+}

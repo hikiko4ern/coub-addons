@@ -79,6 +79,7 @@ blocked-coub-titles = Blocked coub titles
 ## options / blocklist
 blocklist = Blocklist
 block-recoubs = Block recoubs
+block-reposts-of-stories = Block reposts of stories
 hide-comments-from-blocked-channels = Hide comments from blocked channels
 
 ## options / player settings
@@ -112,6 +113,7 @@ channel-is-blocked = channel is blocked
 tag-is-blocked = tag is blocked
 coub-title-is-blocked = coub is blocked by title
 recoubs-are-blocked = recoubs are blocked
+reposts-are-blocked = reposts are blocked
 
 ## options / settings
 settings = Settings

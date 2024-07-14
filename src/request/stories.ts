@@ -27,7 +27,9 @@ export interface StoriesResponseStory {
 	tags: StoriesResponseTag[];
 	/** story's author */
 	channel: Channel;
-	/** story's post author (if reposted only) */
+	/** is story reposted? */
+	is_repost: boolean;
+	/** the author of the story post (for reposts only) */
 	post_channel?: Channel;
 }
 
@@ -46,6 +48,7 @@ interface FilteredOutStory extends StoryTitleData, FilteredOutStoryForStats {
 
 const EXCLUSION_REASON_TEXT: Record<StoryExclusionReason, string> = {
 	[StoryExclusionReason.CHANNEL_BLOCKED]: 'author is blocked manually',
+	[StoryExclusionReason.REPOSTS_BLOCKED]: 'reposts are blocked',
 };
 
 export const registerStoriesHandlers = (ctx: Context) => {

@@ -119,6 +119,10 @@ class BlocklistChecker {
 			return [true, StoryExclusionReason.CHANNEL_BLOCKED];
 		}
 
+		if (this.#blocklist.isBlockRepostsOfStories && story.is_repost === true) {
+			return [true, StoryExclusionReason.REPOSTS_BLOCKED];
+		}
+
 		return [false];
 	};
 

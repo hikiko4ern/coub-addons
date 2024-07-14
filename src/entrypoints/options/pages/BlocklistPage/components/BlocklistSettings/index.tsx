@@ -16,6 +16,8 @@ const useMergeCallback = <Key extends keyof Blocklist>(storage: BlocklistStorage
 export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) => {
 	const handleIsBlockRecoubsChange = useMergeCallback(storage, 'isBlockRecoubs');
 
+	const handleIsBlockRepostsOfStoriesChange = useMergeCallback(storage, 'isBlockRepostsOfStories');
+
 	const handleIsHideCommentsFromBlockedChannelsChange = useMergeCallback(
 		storage,
 		'isHideCommentsFromBlockedChannels',
@@ -25,6 +27,13 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 		<div className="flex flex-col flex-wrap gap-4">
 			<Checkbox isSelected={state.isBlockRecoubs} onValueChange={handleIsBlockRecoubsChange}>
 				<Localized id="block-recoubs" />
+			</Checkbox>
+
+			<Checkbox
+				isSelected={state.isBlockRepostsOfStories}
+				onValueChange={handleIsBlockRepostsOfStoriesChange}
+			>
+				<Localized id="block-reposts-of-stories" />
 			</Checkbox>
 
 			<Checkbox

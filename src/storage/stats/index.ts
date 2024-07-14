@@ -14,7 +14,7 @@ import {
 	getCountedInStatsFilteredOutData,
 } from './helpers/getCountedInStatsFilteredOutData';
 import { statsMigrations } from './migrations';
-import type { StatsV6 as Stats } from './types';
+import type { StatsV7 as Stats } from './types';
 
 export interface StatsMeta extends StorageMeta {}
 
@@ -35,7 +35,7 @@ const defaultValue: Stats = {
 };
 
 export const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
-	version: 6,
+	version: 7,
 	defaultValue,
 	migrations: statsMigrations,
 });
