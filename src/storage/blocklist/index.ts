@@ -23,7 +23,7 @@ const defaultValue: Blocklist = {
 };
 
 export const blocklistItem = storage.defineItem<Blocklist, BlocklistMeta>(`local:${key}`, {
-	version: 2,
+	version: 3,
 	defaultValue,
 	migrations: blocklistMigrations,
 });
