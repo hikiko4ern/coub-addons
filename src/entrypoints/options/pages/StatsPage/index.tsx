@@ -23,6 +23,12 @@ export const StatsPage: FunctionComponent = () => {
 					/>
 
 					<FilteredOutSection
+						title={<Localized id="filtered-out-stories" />}
+						aria-label={l10n.getString('statistics-of-filtered-out-stories')}
+						data={stats.data.filteredStories}
+					/>
+
+					<FilteredOutSection
 						title={<Localized id="filtered-out-comments" />}
 						aria-label={l10n.getString('statistics-of-filtered-out-comments')}
 						data={stats.data.filteredComments}

@@ -2,8 +2,8 @@ import type { EntityCommentsQuery } from '@/gql/comments/graphql';
 import { isObject } from '@/helpers/isObject';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
 import type { Logger } from '@/utils/logger';
-import { CommentExclusionReason } from './coub';
 import type { Context } from './ctx';
+import { CommentExclusionReason } from './types/comment';
 
 interface FilteredOutComment {
 	reason: CommentExclusionReason;
@@ -19,6 +19,7 @@ const EXCLUSION_REASON_TEXT: Record<CommentExclusionReason, string> = {
 
 export const registerCommentsHandlers = (ctx: Context) => {
 	ctx.webRequest.rewriteCompleteGraphql<EntityCommentsQuery>({
+		name: 'comments handler',
 		filter: {
 			urls: [`${ctx.commentsOrigin}/graphql`],
 			types: ['xmlhttprequest'],
@@ -26,7 +27,7 @@ export const registerCommentsHandlers = (ctx: Context) => {
 		// NOTE: as of July 10, 2024, the `threadComments` request is not present in `disqus-3d9410fccc8802be8a3b.js`
 		// fyi: Coub uses Apollo Client (v3.7.10 at the time of writing; https://www.apollographql.com/docs/react)
 		ifQueriesFields: ['entityComments'],
-		rewrite: async ({ ctx, data, logger }) => {
+		rewrite: async ({ ctx, logger, details, data }) => {
 			let isModified = false;
 			const { entityComments } = data;
 
@@ -53,7 +54,7 @@ export const registerCommentsHandlers = (ctx: Context) => {
 				const filteredComments: (typeof entityComments)['comments'] = [];
 				const filteredOutComments: FilteredOutComment[] = [];
 
-				const checker = await ctx.coubHelpers.createChecker();
+				const checker = await ctx.blocklistUtils.createChecker();
 
 				for (const comment of entityComments.comments) {
 					const [isExclude, reason] = checker.isExcludeComment(comment);
@@ -89,7 +90,7 @@ export const registerCommentsHandlers = (ctx: Context) => {
 					]);
 					logger.groupEnd();
 
-					ctx.stats.countFilteredOutComments(filteredOutComments);
+					ctx.stats.countFilteredOutComments(details.url, details.originUrl, filteredOutComments);
 				}
 
 				logger.debug(

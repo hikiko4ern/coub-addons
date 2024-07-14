@@ -1,4 +1,6 @@
-import type { CommentExclusionReason, CoubExclusionReason } from '@/request/coub';
+import type { CommentExclusionReason } from '@/request/types/comment';
+import type { CoubExclusionReason } from '@/request/types/coub';
+import type { StoryExclusionReason } from '@/request/types/story';
 
 // v1
 
@@ -42,4 +44,16 @@ type CommentExclusionReasonV5 = CommentExclusionReason.CHANNEL_BLOCKED;
 export interface StatsV5 {
 	filteredCoubs: Record<CoubExclusionReasonV5, number>;
 	filteredComments: Record<CommentExclusionReasonV5, number>;
+}
+
+// v6
+
+type CoubExclusionReasonV6 = CoubExclusionReasonV5;
+type StoryExclusionReasonV6 = StoryExclusionReason.CHANNEL_BLOCKED;
+type CommentExclusionReasonV6 = CommentExclusionReasonV5;
+
+export interface StatsV6 {
+	filteredCoubs: Record<CoubExclusionReasonV6, number>;
+	filteredStories: Record<StoryExclusionReasonV6, number>;
+	filteredComments: Record<CommentExclusionReasonV6, number>;
 }

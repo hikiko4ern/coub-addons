@@ -1,92 +1,30 @@
 import { imap } from 'itertools';
 
-import type { Channel } from '@/api/types';
 import type { CommentFieldsFragment } from '@/gql/comments/graphql';
 import { isObject } from '@/helpers/isObject';
 import type { IsChannelBlockedFn } from '@/storage/blockedChannels';
 import type { IsCoubBlockedByTitle } from '@/storage/blockedCoubTitles';
 import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
 import type { ReadonlyBlocklist } from '@/storage/blocklist';
-import { Logger } from '@/utils/logger';
-import type { Context } from './ctx';
-import type { TimelineResponseCoub } from './timeline';
-import type { RequestDetails } from './webRequestExt';
 
-interface CoubDataForTitle {
-	/** title of the coub */
-	title: string;
-	/** coub's author */
-	channel: Channel;
-}
+import type { Context } from '../ctx';
+import type { StoriesResponseStory } from '../stories';
+import type { TimelineResponseCoub } from '../timeline';
+import { CommentExclusionReason } from '../types/comment';
+import { CoubExclusionReason } from '../types/coub';
+import { StoryExclusionReason } from '../types/story';
 
-export interface CoubTitleData {
-	/** title of the coub */
-	title: string;
-	/** coub's author */
-	author: string | number | undefined;
-}
-
-export enum CoubExclusionReason {
-	COUB_DISLIKED = 'coub-is-disliked',
-	CHANNEL_BLOCKED = 'channel-is-blocked',
-	TAG_BLOCKED = 'tag-is-blocked',
-	COUB_TITLE_BLOCKED = 'coub-title-is-blocked',
-	RECOUBS_BLOCKED = 'recoubs-are-blocked',
-}
-
-export enum CommentExclusionReason {
-	CHANNEL_BLOCKED = 'channel-is-blocked',
-}
-
-export interface FilteredOutCoubForStats {
-	channelPermalink: string | undefined;
-	reason: CoubExclusionReason;
-}
-
-const logger = Logger.create('CoubHelpers');
-const CHANNEL_TIMELINE_PREFIX = '/api/v2/timeline/channel/';
-
-export class CoubHelpers {
+export class BlocklistUtils {
 	readonly #ctx: Context;
 
 	constructor(ctx: Context) {
 		this.#ctx = ctx;
 	}
 
-	getCoubTitleData = ({ title, channel }: CoubDataForTitle): CoubTitleData => ({
-		title,
-		author: channel?.title || channel?.id,
-	});
-
-	getCoubPermalink = (permalink: string) => new URL(`/view/${permalink}`, this.#ctx.origin);
-
-	createChecker = async () => CoubBlocklistChecker.create(this.#ctx);
-
-	getCountedInStatsTimelineRequestCoubs = <F extends FilteredOutCoubForStats>(
-		details: RequestDetails,
-		filtered: F[],
-	): F[] => {
-		try {
-			const url = new URL(details.url);
-
-			if (url.origin === this.#ctx.origin && url.pathname.startsWith(CHANNEL_TIMELINE_PREFIX)) {
-				const channelPermalink = url.pathname.slice(CHANNEL_TIMELINE_PREFIX.length);
-
-				return filtered.filter(
-					f =>
-						f.reason !== CoubExclusionReason.CHANNEL_BLOCKED ||
-						f.channelPermalink !== channelPermalink,
-				);
-			}
-		} catch (err) {
-			logger.error('failed to check if request should be counted in stats', details, err);
-		}
-
-		return filtered;
-	};
+	createChecker = async () => BlocklistChecker.create(this.#ctx);
 }
 
-class CoubBlocklistChecker {
+class BlocklistChecker {
 	readonly #isChannelBlocked: IsChannelBlockedFn;
 	readonly #isHaveBlockedTags: IsHaveBlockedTagsFn;
 	readonly #isBlockedByTitle: IsCoubBlockedByTitle;
@@ -105,7 +43,7 @@ class CoubBlocklistChecker {
 	}
 
 	static async create(ctx: Context) {
-		return new CoubBlocklistChecker(
+		return new BlocklistChecker(
 			...(await Promise.all([
 				ctx.blockedChannels.createBoundedIsBlocked(),
 				ctx.blockedTags.createBoundedIsBlocked(),
@@ -161,6 +99,24 @@ class CoubBlocklistChecker {
 			(blockedByPattern = this.#isHaveBlockedTags(imap(coub.tags, tag => tag.title)))
 		) {
 			return [true, CoubExclusionReason.TAG_BLOCKED, blockedByPattern];
+		}
+
+		return [false];
+	};
+
+	isExcludeStory = (
+		story: StoriesResponseStory,
+	): [isExclude: true, reason: StoryExclusionReason] | [isExclude: false] => {
+		if (!isObject(story)) {
+			return [false];
+		}
+
+		if (
+			isObject(story.channel) &&
+			typeof story.channel.id === 'number' &&
+			this.#isChannelBlocked(story.channel.id)
+		) {
+			return [true, StoryExclusionReason.CHANNEL_BLOCKED];
 		}
 
 		return [false];

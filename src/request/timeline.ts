@@ -1,23 +1,21 @@
-import { match } from 'path-to-regexp';
+import { is } from 'superstruct';
 
-import type { Channel } from '@/api/types';
+import { Channel } from '@/api/types';
+import { getCoubPermalink } from '@/helpers/coub/getCoubPermalink';
+import { type CoubTitleData, getCoubTitleData } from '@/helpers/coub/getCoubTitleData';
 import { isObject } from '@/helpers/isObject';
+import { toJsonDataUri } from '@/helpers/toJsonDataUri';
+import { matchChannelTimeline } from '@/helpers/url/matchChannelTimeline';
+import { parseSearchPage } from '@/helpers/url/parseSearchPage';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
-import { CoubExclusionReason, type CoubTitleData, type FilteredOutCoubForStats } from './coub';
 import type { Context } from './ctx';
+import { CoubExclusionReason, type FilteredOutCoubForStats } from './types/coub';
 
 interface TimelineResponseCoubs {
 	page: number;
 	total_pages: number;
 	per_page: number;
 	coubs: TimelineResponseCoub[];
-}
-
-interface TimelineResponseStories {
-	page: number;
-	total_pages: number;
-	per_page: number;
-	stories: TimelineResponseStory[];
 }
 
 export interface TimelineResponseCoub {
@@ -37,19 +35,6 @@ export interface TimelineResponseCoub {
 	tags: TimelineResponseTag[];
 	/** "media blocks" like sources or original coubs */
 	media_blocks: TimelineResponseCoubMediaBlocks;
-}
-
-interface TimelineResponseStory {
-	/** title of the story */
-	title: string;
-	/** story's unique view link */
-	permalink: string;
-	/** story's tags */
-	tags: TimelineResponseTag[];
-	/** story's author */
-	channel: Channel;
-	/** story's post author (if reposted only) */
-	post_channel?: Channel;
 }
 
 interface TimelineResponseTag {
@@ -79,15 +64,12 @@ const EXCLUSION_REASON_TEXT: Record<CoubExclusionReason, string> = {
 	[CoubExclusionReason.RECOUBS_BLOCKED]: 'recoubs are blocked',
 };
 
-const matchChannelTimeline = match<{ permalink: string }>('/api/v2/timeline/channel/:permalink', {
-	sensitive: true,
-});
-
 export const registerTimelineHandlers = (ctx: Context) => {
 	ctx.webRequest.rewriteCompleteJsonResponse<
 		TimelineResponseCoubs,
 		{ detailsUrl: URL; isLikesTimeline: boolean }
 	>({
+		name: 'timeline handler',
 		filter: {
 			urls: ['/api/v2/timeline', '/api/v2/timeline?*', '/api/v2/timeline/*'],
 			types: ['xmlhttprequest'],
@@ -98,9 +80,17 @@ export const registerTimelineHandlers = (ctx: Context) => {
 			const url = (reqCtx.detailsUrl = new URL(details.url));
 			const type = url.searchParams.get('type');
 
-			if (type === 'likes') {
-				reqCtx.isLikesTimeline = true;
-				return;
+			switch (type) {
+				// don't handle the stories, `registerStoriesHandlers` will do that
+				case 'stories': {
+					logger.debug('ignoring stories request');
+					return {};
+				}
+
+				case 'likes': {
+					reqCtx.isLikesTimeline = true;
+					return;
+				}
 			}
 
 			const match = matchChannelTimeline(url.pathname);
@@ -111,33 +101,19 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				match.params.permalink &&
 				(await ctx.blockedChannels.isBlockedPermalink(match.params.permalink))
 			) {
-				const page = parsePage(url.searchParams.get('page')) || 1;
-				const perPage = parsePage(url.searchParams.get('per_page')) || 10;
-				const entityKey = type === 'stories' ? 'stories' : 'coubs';
+				const page = parseSearchPage(url.searchParams.get('page')) || 1;
+				const perPage = parseSearchPage(url.searchParams.get('per_page')) || 10;
 
-				const data: TimelineResponseCoubs | TimelineResponseStories =
-					// TS bug: `{ [entityKey]: [] }` becomes
-					//         `{ [x: string]: never[] }` instead of
-					//         `{ [x: 'coubs' | 'stories']: never[] }`
-					entityKey === 'stories'
-						? {
-								page,
-								total_pages: page - 1,
-								per_page: perPage,
-								[entityKey]: [],
-							}
-						: {
-								page,
-								total_pages: page - 1,
-								per_page: perPage,
-								[entityKey]: [],
-							};
+				const data: TimelineResponseCoubs = {
+					page,
+					total_pages: page - 1,
+					per_page: perPage,
+					coubs: [],
+				};
 
 				logger.debug('redirecting', details.url, 'to', data);
 
-				return {
-					redirectUrl: `data:application/json,${encodeURI(JSON.stringify(data))}`,
-				};
+				return { redirectUrl: toJsonDataUri(data) };
 			}
 		},
 		rewrite: async ({ ctx, logger, details, data, detailsUrl, isLikesTimeline }) => {
@@ -174,19 +150,19 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				const filteredCoubs: (typeof data)['coubs'] = [];
 				const filteredOutCoubs: FilteredOutCoub[] = [];
 
-				const checker = await ctx.coubHelpers.createChecker();
+				const checker = await ctx.blocklistUtils.createChecker();
 
 				for (const coub of data.coubs) {
 					const [isExclude, reason, blockedByPattern] = checker.isExcludeFromTimeline(coub);
 
 					if (isExclude) {
 						filteredOutCoubs.push({
-							...ctx.coubHelpers.getCoubTitleData(coub),
+							...getCoubTitleData(coub),
 							channelPermalink: coub.channel?.permalink,
 							reason,
 							tReason: EXCLUSION_REASON_TEXT[reason],
 							pattern: blockedByPattern,
-							link: ctx.coubHelpers.getCoubPermalink(coub.permalink).toString(),
+							link: getCoubPermalink(coub.permalink).toString(),
 						});
 						continue;
 					}
@@ -206,9 +182,7 @@ export const registerTimelineHandlers = (ctx: Context) => {
 					logger.tableRaw(filteredOutCoubs, ['title', 'author', 'tReason', 'pattern', 'link']);
 					logger.groupEnd();
 
-					ctx.stats.countFilteredOutCoubs(
-						ctx.coubHelpers.getCountedInStatsTimelineRequestCoubs(details, filteredOutCoubs),
-					);
+					ctx.stats.countFilteredOutCoubs(details.url, details.originUrl, filteredOutCoubs);
 				}
 
 				logger.debug(
@@ -232,13 +206,7 @@ function* iterAsBlockedChannels(
 	coubs: Iterable<TimelineResponseCoub>,
 ): Generator<BlockedChannelData, void, never> {
 	for (const coub of coubs) {
-		if (
-			isObject(coub) &&
-			isObject(coub.channel) &&
-			typeof coub.channel.id === 'number' &&
-			typeof coub.channel.permalink === 'string' &&
-			typeof coub.channel.title === 'string'
-		) {
+		if (is(coub.channel, Channel)) {
 			yield {
 				id: coub.channel.id,
 				title: coub.channel.title,
@@ -247,12 +215,3 @@ function* iterAsBlockedChannels(
 		}
 	}
 }
-
-const parsePage = (param: string | null) => {
-	if (typeof param !== 'string' || !param) {
-		return;
-	}
-
-	const value = Number.parseInt(param, 10);
-	return Number.isNaN(value) ? undefined : value;
-};

@@ -19,6 +19,7 @@ interface OnBeforeRequestCtx {
 }
 
 interface RewriteCompleteResponseOptions<CtxAddition extends object> {
+	name: string;
 	filter: WebRequest.RequestFilter;
 	extraInfoSpec?: ExtraInfoSpec;
 	onBeforeRequest?: (
@@ -62,6 +63,7 @@ export class WebRequestExt implements Disposable {
 	}
 
 	rewriteCompleteResponse = <CtxAddition extends object = Record<never, never>>({
+		name,
 		filter,
 		extraInfoSpec,
 		onBeforeRequest,
@@ -85,7 +87,7 @@ export class WebRequestExt implements Disposable {
 					} catch {
 						// noop
 					}
-					loggerPrefix = `${url} | ${loggerPrefix}`;
+					loggerPrefix = `${url} | ${name} | ${loggerPrefix}`;
 				}
 
 				const logger = Logger.create(loggerPrefix);
@@ -175,6 +177,9 @@ export class WebRequestExt implements Disposable {
 
 				try {
 					const res = JSON.parse(responseStr) as T;
+
+					ctx.logger.debug('rewriting', res);
+
 					const processedRes = await rewrite({ ...ctx, data: res });
 
 					if (typeof processedRes !== 'undefined') {

@@ -8,6 +8,7 @@ import type {} from '@/types/tsPatch';
 import { EventDispatcher, EventListener } from '@/events';
 import { registerCommentsHandlers } from '@/request/comments';
 import { Context } from '@/request/ctx';
+import { registerStoriesHandlers } from '@/request/stories';
 import { registerTimelineHandlers } from '@/request/timeline';
 import { setLocales, t } from '@/translation/js';
 import { Logger } from '@/utils/logger';
@@ -132,6 +133,7 @@ export default defineBackground(() => {
 	});
 
 	registerTimelineHandlers(ctx);
+	registerStoriesHandlers(ctx);
 	registerCommentsHandlers(ctx);
 
 	const prohibitedRouter = createRouter({

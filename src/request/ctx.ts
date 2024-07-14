@@ -4,14 +4,14 @@ import { BlockedTagsStorage } from '@/storage/blockedTags';
 import { BlocklistStorage } from '@/storage/blocklist';
 import { StatsStorage } from '@/storage/stats';
 import type { Logger } from '@/utils/logger';
-import { CoubHelpers } from './coub';
+import { BlocklistUtils } from './utils/blocklist';
 import { WebRequestExt } from './webRequestExt';
 
 export class Context implements Disposable {
 	readonly origin: string;
 	readonly commentsOrigin: string;
 	readonly webRequest: WebRequestExt;
-	readonly coubHelpers: CoubHelpers;
+	readonly blocklistUtils: BlocklistUtils;
 	readonly blockedChannels: BlockedChannelsStorage;
 	readonly blockedTags: BlockedTagsStorage;
 	readonly blockedCoubTitles: BlockedCoubTitlesStorage;
@@ -22,7 +22,7 @@ export class Context implements Disposable {
 		this.origin = import.meta.env.VITE_COUB_ORIGIN;
 		this.commentsOrigin = import.meta.env.VITE_COUB_COMMENTS_ORIGIN;
 		this.webRequest = new WebRequestExt(this);
-		this.coubHelpers = new CoubHelpers(this);
+		this.blocklistUtils = new BlocklistUtils(this);
 		this.blockedChannels = new BlockedChannelsStorage(undefined, 'bg', logger);
 		this.blockedTags = new BlockedTagsStorage(undefined, 'bg', logger);
 		this.blockedCoubTitles = new BlockedCoubTitlesStorage(undefined, 'bg', logger);
