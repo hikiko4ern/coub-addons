@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.21] - 2024-07-14
+
+### Bug Fixes
+
+- change blocklist storage latest version to `3`
+
 ## [0.1.20] - 2024-07-14
 
 ### Bug Fixes
