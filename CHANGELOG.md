@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.20] - 2024-07-14
+
+### Bug Fixes
+
+- **(blocklist)** fix transmission of blocked channels state via events
+
+### Features
+
+- **(blocklist)** hide stories from blocked channels
+- **(blocklist)** implement blocking of reposts of stories
+
 ## [0.1.19] - 2024-07-14
 
 ### Features
