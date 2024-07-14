@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.19] - 2024-07-14
+
+### Features
+
+- **(blocklist)** cancel timeline requests for blocked channels
+
+### Miscellaneous Tasks
+
+- keep names in production builds
+
 ## [0.1.18] - 2024-07-12
 
 ### Bug Fixes
