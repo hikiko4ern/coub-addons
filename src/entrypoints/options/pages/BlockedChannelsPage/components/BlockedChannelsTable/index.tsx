@@ -26,7 +26,7 @@ import styles from './styles.module.scss';
 
 interface Props {
 	storage: BlockedChannelsStorage;
-	data: BlockedChannelData[] | ReadonlyBlockedChannels;
+	data: BlockedChannelData[] | ReadonlyBlockedChannels['channels'];
 	globalTotal: number;
 	isSearchApplied: boolean;
 	onRemove: (id: number) => Promise<void>;

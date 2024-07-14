@@ -29,12 +29,12 @@ export const blockedChannelsItem = storage.defineItem<RawBlockedChannels, Blocke
 	`local:${key}`,
 	{
 		version: 1,
-		// TODO: `defaultValue` is not returned when calling `storage.getValue()` with empty storage?
 		defaultValue,
 	},
 );
 
-interface BlockedChannels extends Map</** channelId */ number, BlockedChannelData> {
+interface BlockedChannels {
+	channels: Map</** channelId */ number, BlockedChannelData>;
 	permalinks: Set<NonNullable<BlockedChannelData['permalink']>>;
 }
 
@@ -70,7 +70,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	isBlocked: Asyncify<IsChannelBlockedFn> = async channelId => {
 		const state = await this.getValue();
-		return state.has(channelId);
+		return state.channels.has(channelId);
 	};
 
 	isBlockedPermalink: Asyncify<IsChannelPermalinkBlockedFn> = async permalink => {
@@ -80,7 +80,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	createBoundedIsBlocked = async (): Promise<IsChannelBlockedFn> => {
 		const state = await this.getValue();
-		return channelId => state.has(channelId);
+		return channelId => state.channels.has(channelId);
 	};
 
 	listenIsBlocked = (channelId: number, listener: IsBlockedListener): Unwatch => {
@@ -95,7 +95,7 @@ export class BlockedChannelsStorage extends StorageBase<
 		this.logger.debug(isBlocked ? 'blocking' : 'unblocking', 'channel', idOrChannel);
 
 		const oldState = await this.getValue();
-		const oldIsBlocked = oldState.has(id);
+		const oldIsBlocked = oldState.channels.has(id);
 
 		if (isBlocked === oldIsBlocked) {
 			return;
@@ -104,16 +104,16 @@ export class BlockedChannelsStorage extends StorageBase<
 		await this.setValue(
 			blockedChannelsToRaw(
 				isBlocked
-					? chain(oldState.values(), [idOrChannel as BlockedChannelData])
-					: filter(oldState.values(), item => item.id !== id),
-				oldState.size + (isBlocked ? 1 : -1),
+					? chain(oldState.channels.values(), [idOrChannel as BlockedChannelData])
+					: filter(oldState.channels.values(), item => item.id !== id),
+				oldState.channels.size + (isBlocked ? 1 : -1),
 			),
 		);
 	}
 
 	async actualizeChannelData(channel: BlockedChannelData) {
 		const oldState = await this.getValue();
-		const blockedChannel = oldState.get(channel.id);
+		const blockedChannel = oldState.channels.get(channel.id);
 
 		this.logger.debug('actualizing channel', channel.id, blockedChannel, 'with', channel);
 
@@ -123,8 +123,8 @@ export class BlockedChannelsStorage extends StorageBase<
 
 		await this.setValue(
 			blockedChannelsToRaw(
-				imap(oldState.values(), item => (item.id === channel.id ? channel : item)),
-				oldState.size,
+				imap(oldState.channels.values(), item => (item.id === channel.id ? channel : item)),
+				oldState.channels.size,
 			),
 		);
 	}
@@ -141,13 +141,13 @@ export class BlockedChannelsStorage extends StorageBase<
 				continue;
 			}
 
-			const blockedChannel = oldState.get(channel.id);
+			const blockedChannel = oldState.channels.get(channel.id);
 
 			if (blockedChannel && !areBlockedChannelsEqual(blockedChannel, channel)) {
 				this.logger.debug('replacing blocked channel', blockedChannel, 'with', channel);
 
 				newState ||= BlockedChannelsStorage.copyValue(oldState);
-				newState.set(channel.id, channel);
+				newState.channels.set(channel.id, channel);
 				blockedChannel.permalink && newState.permalinks.delete(blockedChannel.permalink);
 				channel.permalink && newState.permalinks.add(channel.permalink);
 				replacedIds.add(channel.id);
@@ -164,8 +164,8 @@ export class BlockedChannelsStorage extends StorageBase<
 		state: ReadonlyBlockedChannels,
 		oldState: RawBlockedChannels | null,
 	): Promise<void> {
-		const oldChannelIds = oldState ? oldState.id : (await this.getValue()).keys();
-		const diff = symmetricDifference(oldChannelIds, state.keys());
+		const oldChannelIds = oldState ? oldState.id : (await this.getValue()).channels.keys();
+		const diff = symmetricDifference(oldChannelIds, state.channels.keys());
 
 		cb?.(state, diff);
 
@@ -174,7 +174,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 			if (channelListeners) {
 				for (const listener of channelListeners) {
-					listener(state.has(channelId));
+					listener(state.channels.has(channelId));
 				}
 			}
 		}
@@ -184,7 +184,7 @@ export class BlockedChannelsStorage extends StorageBase<
 		const value = BlockedChannelsStorage.newValue();
 
 		for (const blockedChannel of iterRawBlockedChannels(raw)) {
-			value.set(blockedChannel.id, blockedChannel);
+			value.channels.set(blockedChannel.id, blockedChannel);
 			blockedChannel.permalink && value.permalinks.add(blockedChannel.permalink);
 		}
 
@@ -192,18 +192,20 @@ export class BlockedChannelsStorage extends StorageBase<
 	}
 
 	protected toRawValue(parsed: ReadonlyBlockedChannels): RawBlockedChannels {
-		return blockedChannelsToRaw(parsed.values(), parsed.size);
+		return blockedChannelsToRaw(parsed.channels.values(), parsed.channels.size);
 	}
 
 	private static newValue(): BlockedChannels {
-		const newValue = new Map();
-		(newValue as BlockedChannels).permalinks = new Set();
-		return newValue as BlockedChannels;
+		return {
+			channels: new Map(),
+			permalinks: new Set(),
+		};
 	}
 
 	private static copyValue(value: ReadonlyBlockedChannels): BlockedChannels {
-		const newValue = new Map(value);
-		(newValue as BlockedChannels).permalinks = new Set(value.permalinks);
-		return newValue as BlockedChannels;
+		return {
+			channels: new Map(value.channels),
+			permalinks: new Set(value.permalinks),
+		};
 	}
 }

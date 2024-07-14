@@ -1,7 +1,7 @@
 import type { ReadonlyDeep } from 'type-fest';
 
 export type ToReadonly<T> = T extends ReadonlyMap<infer Key, infer Value>
-	? ReadonlyMap<Key, Value> & Readonly<Omit<T, keyof Map<Key, Value>>>
+	? ReadonlyMap<Key, Value>
 	: ReadonlyDeep<T>;
 
 export type GuardType<T, P> = P extends (value: unknown, ...args: unknown[]) => value is infer U

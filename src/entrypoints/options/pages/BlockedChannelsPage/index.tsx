@@ -64,8 +64,8 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 			content = (
 				<BlockedChannelsTable
 					storage={blockedChannelsStorage}
-					data={searchResult.value || blockedChannels.data}
-					globalTotal={blockedChannels.data.size}
+					data={searchResult.value || blockedChannels.data.channels}
+					globalTotal={blockedChannels.data.channels.size}
 					isSearchApplied={!!searchResult}
 					onRemove={removeFromBlocklist}
 				/>

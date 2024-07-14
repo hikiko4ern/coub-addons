@@ -21,7 +21,7 @@ export const useSearch = () => {
 					.split(/[\p{Z}\p{S}\p{P}\p{C}]+/u),
 		}));
 
-		for (const channel of state.values()) {
+		for (const channel of state.channels.values()) {
 			index.add(channel.id, stringify(channel));
 		}
 	}, []);
@@ -34,7 +34,7 @@ export const useSearch = () => {
 		}
 
 		for (const id of diff) {
-			const item = state.get(id);
+			const item = state.channels.get(id);
 
 			if (item) {
 				index.add(item.id, stringify(item));
@@ -58,7 +58,7 @@ export const useSearch = () => {
 
 		index.searchAsync(query, Number.POSITIVE_INFINITY).then(res => {
 			searchResult.value = res.reduce<BlockedChannelData[]>((arr, id) => {
-				const channel = state.get(id as number);
+				const channel = state.channels.get(id as number);
 				channel && arr.push(channel);
 				return arr;
 			}, []);
