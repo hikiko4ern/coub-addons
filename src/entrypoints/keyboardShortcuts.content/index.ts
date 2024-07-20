@@ -16,6 +16,7 @@ import {
 } from './patches/CoubBlockClientside';
 import {
 	H5P_ATTACH_EVENTS_KEY,
+	H5P_CHANGE_STATE_KEY,
 	H5P_KEY_UP_EVENT,
 	H5P_KEY_UP_HANDLERS_KEY,
 	patchHtml5Player,
@@ -133,6 +134,7 @@ export default defineContentScript({
 					h5pAttachEventsKey,
 					h5pKeyUpEvent,
 					h5pKeyUpHandlersKey,
+					h5pChangeStateKey,
 					revertHtml5PlayerPatches,
 				) => {
 					console.debug(`[${loggerPrefix}]`, 'reverting patches');
@@ -148,6 +150,7 @@ export default defineContentScript({
 						h5pAttachEventsKey,
 						h5pKeyUpEvent,
 						h5pKeyUpHandlersKey,
+						h5pChangeStateKey,
 						loggerPrefix,
 					);
 				},
@@ -161,6 +164,7 @@ export default defineContentScript({
 				H5P_ATTACH_EVENTS_KEY,
 				H5P_KEY_UP_EVENT,
 				H5P_KEY_UP_HANDLERS_KEY,
+				H5P_CHANGE_STATE_KEY,
 				revertHtml5PlayerPatches,
 			);
 

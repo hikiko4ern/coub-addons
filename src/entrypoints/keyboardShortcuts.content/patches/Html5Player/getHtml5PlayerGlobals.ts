@@ -4,6 +4,7 @@ import { getJQuery } from '../getJQuery';
 import type { GetGlobalsRes } from '../types';
 
 export interface Html5PlayerGlobals {
+	WeakMap: typeof window.WeakMap;
 	WeakRef: typeof window.WeakRef;
 	$: typeof window.$;
 	Html5Player: typeof window.Html5Player;
@@ -17,7 +18,7 @@ export const getHtml5PlayerGlobals = (logger: Logger): GetGlobalsRes<Html5Player
 	}
 
 	const $ = jqGlobal.ret;
-	const { WeakRef, Html5Player } = window.wrappedJSObject || window;
+	const { WeakMap, WeakRef, Html5Player } = window.wrappedJSObject || window;
 
 	if (typeof $ !== 'function') {
 		return { isValid: false, ret: ['jQuery is not a function:', $] };
@@ -47,5 +48,5 @@ export const getHtml5PlayerGlobals = (logger: Logger): GetGlobalsRes<Html5Player
 		logger.warn('`X.prototype.toggleFullScreen` is not a function:', proto.toggleFullScreen);
 	}
 
-	return { isValid: true, ret: { WeakRef, $, Html5Player } };
+	return { isValid: true, ret: { WeakMap, WeakRef, $, Html5Player } };
 };

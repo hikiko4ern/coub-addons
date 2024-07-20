@@ -35,6 +35,8 @@ export interface TimelineResponseCoub {
 	tags: TimelineResponseTag[];
 	/** "media blocks" like sources or original coubs */
 	media_blocks: TimelineResponseCoubMediaBlocks;
+	/** URL of the preview displayed in the timeline */
+	timeline_picture: string;
 }
 
 interface TimelineResponseTag {

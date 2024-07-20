@@ -34,9 +34,34 @@ declare global {
 		interface CoubBlockClientsidePatches {}
 
 		interface Html5Player {
-			data: Pick<TimelineResponseCoub, 'permalink'>;
+			data: TimelineResponseCoub;
 			vb: JQuery;
+			state?: string;
+			preloadDefer?: Html5PlayerPreloadDefer;
+			browserPaused?: boolean;
+			/** returns `true` if the player and document are in focus */
+			hasFocus(): boolean;
+			/**
+			 * preloads video and audio and starts (or resumes) playback
+			 *
+			 * @param force ignore user-paused playback?
+			 */
+			play(force?: boolean): void;
+			/** starts (or resumes) playback */
+			playLoop(): void;
+			/** pauses playback */
+			suspend(): void;
+			/** pauses playback and shows suggestions above the video */
+			pause(e?: Event): void;
 			attachEvents(
+				this: Html5Player & { wrappedJSObject?: Html5Player },
+				...args: unknown[]
+			): unknown;
+			/**
+			 * changes the player state
+			 * @see Html5Player.prototype.STATE for a list of possible states
+			 */
+			changeState(
 				this: Html5Player & { wrappedJSObject?: Html5Player },
 				...args: unknown[]
 			): unknown;
@@ -45,9 +70,15 @@ declare global {
 
 			prototype: {
 				attachEvents: Html5Player['attachEvents'];
+				changeState: Html5Player['changeState'];
 				toggleFullScreen: Html5Player['toggleFullScreen'];
 				toggleFavourites: Html5Player['toggleFavourites'];
 			} & Html5PlayerPatches;
+		}
+
+		interface Html5PlayerPreloadDefer {
+			play: JQueryPromise<unknown>;
+			load: JQueryPromise<unknown>;
 		}
 
 		interface Html5PlayerPatches {}
@@ -73,6 +104,7 @@ declare global {
 		// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts
 		// https://firefox-source-docs.mozilla.org/dom/scriptSecurity/xray_vision.html
 		wrappedJSObject?: Window;
+		WeakMap: typeof WeakMap;
 		WeakRef: typeof WeakRef;
 	}
 

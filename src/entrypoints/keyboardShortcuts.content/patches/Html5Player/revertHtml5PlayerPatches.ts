@@ -1,6 +1,8 @@
 import type {
 	H5P_ATTACH_EVENTS_KEY,
 	H5P_ATTACH_EVENTS_SYM,
+	H5P_CHANGE_STATE_KEY,
+	H5P_CHANGE_STATE_SYM,
 	H5P_KEY_UP_EVENT,
 	H5P_KEY_UP_HANDLERS_KEY,
 	H5P_KEY_UP_HANDLERS_SYM,
@@ -10,6 +12,7 @@ export function revertHtml5PlayerPatches(
 	attachEventsKey: typeof H5P_ATTACH_EVENTS_KEY,
 	keyUpEvent: typeof H5P_KEY_UP_EVENT,
 	keyUpHandlersKey: typeof H5P_KEY_UP_HANDLERS_KEY,
+	changeStateKey: typeof H5P_CHANGE_STATE_KEY,
 	loggerPrefix = '',
 	logger: Pick<Console, 'debug' | 'error'> = console,
 	proto?: typeof window.Html5Player.prototype,
@@ -51,6 +54,21 @@ export function revertHtml5PlayerPatches(
 	}
 
 	try {
+		const changeStateSym: typeof H5P_CHANGE_STATE_SYM = Symbol.for(
+			changeStateKey,
+		) as typeof H5P_CHANGE_STATE_SYM;
+
+		const origChangeState = proto[changeStateSym];
+
+		if (origChangeState) {
+			proto.changeState = origChangeState;
+			delete proto[changeStateSym];
+		}
+	} catch (err) {
+		log('error', 'failed to revert `changeState` patch:', err);
+	}
+
+	try {
 		const keyUpHandlersSym: typeof H5P_KEY_UP_HANDLERS_SYM = Symbol.for(
 			keyUpHandlersKey,
 		) as typeof H5P_KEY_UP_HANDLERS_SYM;
@@ -83,5 +101,17 @@ export function revertHtml5PlayerPatches(
 		}
 	} catch (err) {
 		log('error', 'failed to remove', keyUpEvent, 'handlers:', err);
+	}
+
+	try {
+		if (typeof navigator.mediaSession !== 'undefined') {
+			navigator.mediaSession.playbackState = 'none';
+			navigator.mediaSession.metadata = null;
+			navigator.mediaSession.setActionHandler('play', null);
+			navigator.mediaSession.setActionHandler('pause', null);
+			navigator.mediaSession.setActionHandler('stop', null);
+		}
+	} catch (err) {
+		log('error', 'failed to reset MediaSession:', err);
 	}
 }
