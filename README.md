@@ -55,11 +55,13 @@ Web Extension, добавляющий дополнительный функци�
 Требуются глобально установленные:
 
 - [Node.js][node.js][^1] со включенным [Corepack]
-- [Rust] (MSRV: `1.73.0`)
-- `wasm-opt` из [Binaryen] (опционально, используется для оптимизации WASM из [`segmenter-utils`][segmenter-utils])
+- [Rust] (MSRV: `1.73.0`) с `wasm32-unknown-unknown` и глобально установленным [`cargo-run-bin`][cargo-run-bin]
+
+  **NOTE:** для воспроизводимых сборок необходимо использовать `toolchain`, указанный в файле [rust-toolchain.toml](./rust-toolchain.toml) ([`rustup`](https://www.rust-lang.org/tools/install) при сборке должен будет автоматически его установить)
 
 1. устанавливаем зависимости
    ```sh
+   cargo install --locked cargo-run-bin # только если не был установлен ранее
    pnpm i -P
    ```
 
@@ -141,7 +143,7 @@ NOTE: контрольные суммы архивов не совпадут и�
 [node.js]: https://nodejs.org
 [corepack]: https://github.com/nodejs/corepack
 [rust]: https://www.rust-lang.org
-[binaryen]: https://github.com/WebAssembly/binaryen
+[cargo-run-bin]: https://crates.io/crates/cargo-run-bin
 [segmenter-utils]: ./packages/segmenter-utils/README.md
 [just]: https://github.com/casey/just
 [firefox-temp-install]: https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/

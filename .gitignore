@@ -30,6 +30,7 @@ vitest.config.ts.*.mjs
 blockedChannels.json
 
 # caches
+.bin
 .task
 .cspellcache
 *.tsbuildinfo

@@ -7,7 +7,7 @@ tasks:
     aliases: [su:watch]
     desc: builds `segmenter-utils` in watch mode
     cmds:
-      - cargo watch -w packages/segmenter-utils/src -w packages/segmenter-utils/Cargo.toml -w packages/segmenter-utils/Taskfile.yml -w Cargo.lock -w Cargo.toml -s "pnpm su exec task build MODE=dev"
+      - cargo watch -w packages/segmenter-utils/src -w packages/segmenter-utils/Cargo.toml -w packages/segmenter-utils/Taskfile.yml -w Cargo.lock -w Cargo.toml -w pnpm-lock.yaml -w rust-toolchain.toml -s "pnpm su exec task build MODE=debug"
     preconditions:
       - sh: cargo watch -V
         msg: '`cargo-watch` is required (https://lib.rs/crates/cargo-watch)'

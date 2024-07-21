@@ -10,8 +10,8 @@
 	},
 	"dependencies": {
 		"@go-task/cli": "^3.38.0",
-		"rimraf": "^6.0.0",
-		"wasm-pack": "^0.13.0"
+		"binaryen": "^118.0.0",
+		"rimraf": "^6.0.0"
 	},
 	"devDependencies": {
 		"vitest": "^2.0.1"
