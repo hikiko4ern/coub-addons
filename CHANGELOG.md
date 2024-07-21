@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.1.22] - 2024-07-21
+
+### Features
+
+- **(media-session)** implement basic integration with Media Session API
+
+### Miscellaneous Tasks
+
+- **(build,segmenter-utils)** simplify reproducible builds when building from scratch
+
+### Revert
+
+- keep names in production builds
+
 ## [0.1.21] - 2024-07-14
 
 ### Bug Fixes
