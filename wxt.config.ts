@@ -4,6 +4,7 @@ import arrayBuffer from '@coub-addons/vite-plugin-arraybuffer';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
+import { normalizePath } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import sassDts from 'vite-plugin-sass-dts';
 import { defineConfig } from 'wxt';
@@ -95,6 +96,34 @@ export default defineConfig({
 			preact({ devToolsEnabled: false }),
 			sassDts(),
 			lezer(),
+			(() => {
+				const emptyFileName = '\0coub-addons__exclude';
+				const reactAriaIntlStringsRe = /\/@react-aria\/[^/]+\/dist\/intlStrings\./;
+				const reactAriaIntlModuleRe = /[a-z]{2,}-[a-z]{2,}\./i;
+				const reactAriaLocalesToKeepRe = /(ru-RU|en-US)/;
+
+				return {
+					enforce: 'pre',
+					resolveId(source, importer) {
+						let normalizedSource: string;
+
+						if (
+							source === emptyFileName ||
+							(importer &&
+								reactAriaIntlStringsRe.test(normalizePath(importer)) &&
+								reactAriaIntlModuleRe.test((normalizedSource = normalizePath(source))) &&
+								!reactAriaLocalesToKeepRe.test(normalizedSource))
+						) {
+							return emptyFileName;
+						}
+
+						return null;
+					},
+					load(id) {
+						return id === emptyFileName ? 'export default {}' : null;
+					},
+				} as const;
+			})(),
 		],
 		css: {
 			lightningcss: {
