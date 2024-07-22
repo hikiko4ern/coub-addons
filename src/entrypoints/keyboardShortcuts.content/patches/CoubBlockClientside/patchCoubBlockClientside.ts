@@ -1,12 +1,12 @@
 import type { ArrayValues } from 'type-fest';
 
+import { isObject } from '@/helpers/isObject';
+import type { RevertPatch } from '@/helpers/patch/applyPatches';
+import { prependJqListener } from '@/helpers/prependJqListener';
 import { isHotkeyPressed } from '@/hotkey/isHotkeyPressed';
 import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
-import type { RevertPatch } from '../../types';
 
-import { isObject } from '@/helpers/isObject';
-import { prependJqListener } from '@/helpers/prependJqListener';
 import {
 	CBC_GET_VIEWER_BLOCK_KEY,
 	CBC_GET_VIEWER_BLOCK_SYM,

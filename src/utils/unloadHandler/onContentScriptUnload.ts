@@ -17,6 +17,7 @@ const logger = Logger.create('onContentScriptUnload', { devUniqueId: ID });
 // in other browsers we should rely on `port.onDisconnect`
 // (in Firefox it doesn't work because of https://bugzilla.mozilla.org/show_bug.cgi?id=1223425)
 export const onContentScriptUnload = async <Args extends unknown[] = never[]>(
+	classSuffix: string,
 	handler: (...args: Args) => void,
 	...args: Args
 ) => {
@@ -37,7 +38,9 @@ export const onContentScriptUnload = async <Args extends unknown[] = never[]>(
 	(document.body || document.documentElement).appendChild(script);
 
 	return () => {
-		for (const span of document.querySelectorAll(`.${CSS.escape(unloadStylesClass)}`)) {
+		for (const span of document.querySelectorAll(
+			`.${CSS.escape(`${unloadStylesClass}__${classSuffix}`)}`,
+		)) {
 			span.remove();
 		}
 	};

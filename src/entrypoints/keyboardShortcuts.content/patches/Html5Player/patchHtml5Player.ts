@@ -1,8 +1,8 @@
 import type { ArrayValues } from 'type-fest';
 
+import type { RevertPatch } from '@/helpers/patch/applyPatches';
 import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
-import type { RevertPatch } from '../../types';
 
 import { actualizeMediaSessionFromHtml5Player } from './actualizeMediaSessionFromHtml5Player';
 import { addKeyUpHandlerToHtml5Player } from './addKeyUpHandlerToHtml5Player';

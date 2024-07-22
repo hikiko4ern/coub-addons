@@ -55,7 +55,7 @@ const tryGetEventListeners = (
 	eventKey: string,
 ): JQueryEvent[] | undefined => {
 	try {
-		const maybeEvents = node.data('events')[eventKey];
+		const maybeEvents = node.data('events')?.[eventKey];
 		return Array.isArray(maybeEvents) ? maybeEvents : undefined;
 	} catch (err) {
 		logger

@@ -3,6 +3,7 @@ import type { Writable } from 'type-fest';
 import type {} from 'typed-query-selector';
 
 import { EventDispatcher } from '@/events';
+import { applyPatches } from '@/helpers/patch/applyPatches';
 import { PlayerSettingsStorage, type ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import { Logger } from '@/utils/logger';
 import { onContentScriptUnload } from '@/utils/unloadHandler/onContentScriptUnload';
@@ -22,7 +23,8 @@ import {
 	patchHtml5Player,
 	revertHtml5PlayerPatches,
 } from './patches/Html5Player';
-import type { RevertPatch } from './types';
+
+const UNLOAD_HANDLERS_SUFFIX = 'keyboardShortcuts';
 
 export default defineContentScript({
 	matches: [`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/*`],
@@ -43,7 +45,7 @@ export default defineContentScript({
 		const logger = Logger.create('keyboard shortcuts cs', { devUniqueId: ID });
 
 		try {
-			await removeOldUnloadHandlers();
+			await removeOldUnloadHandlers(UNLOAD_HANDLERS_SUFFIX);
 		} catch (err) {
 			logger.error('failed to remove unload handlers:', err);
 		}
@@ -61,68 +63,18 @@ export default defineContentScript({
 
 			const waivedWindow = window.wrappedJSObject || window;
 
-			const patchers = {
-				CoubBlockClientside: patchCoubBlockClientside,
-				Html5Player: patchHtml5Player,
-			} as const;
-
-			const patches = Object.entries(patchers).reduce<(RevertPatch | undefined)[]>(
-				(patches, [_key, patch]) => {
-					const key = _key as keyof typeof patchers;
-					const index = patches.push(undefined) - 1;
-
-					const apply = () => {
-						const maybeRevert = patch(logger, mutablePlayerSettings);
-
-						if (typeof maybeRevert === 'function') {
-							patches[index] = maybeRevert;
-						} else {
-							logger.error(`failed to patch ${key}:`, ...maybeRevert);
-						}
-					};
-
-					// class is already loaded, apply patch immediately
-					if (waivedWindow[key]) {
-						apply();
-					}
-					// class is not loaded, wait
-					else {
-						logger.debug('waiting for', key, 'initialization...');
-
-						Reflect.defineProperty(waivedWindow, key, {
-							configurable: true,
-							enumerable: true,
-							get: exportFunction(() => {}, window),
-							set: exportFunction(v => {
-								logger.debug(key, 'is initialized, patching...');
-
-								Reflect.defineProperty(waivedWindow, key, {
-									configurable: true,
-									enumerable: true,
-									writable: true,
-									value: v,
-								});
-
-								apply();
-							}, window),
-						});
-
-						patches[index] = () => {
-							Reflect.defineProperty(waivedWindow, key, {
-								configurable: true,
-								enumerable: true,
-								writable: true,
-								value: undefined,
-							});
-						};
-					}
-
-					return patches;
+			const patches = applyPatches(
+				logger,
+				waivedWindow,
+				{
+					CoubBlockClientside: patchCoubBlockClientside,
+					Html5Player: patchHtml5Player,
 				},
-				[],
+				mutablePlayerSettings,
 			);
 
 			const removeUnloadHandler = await onContentScriptUnload(
+				UNLOAD_HANDLERS_SUFFIX,
 				(
 					loggerPrefix,
 					// CoubBlockClientside
