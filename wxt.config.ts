@@ -19,7 +19,9 @@ export default defineConfig({
 		'@/options': 'src/entrypoints/options',
 	},
 	manifest: {
-		name: 'Coub addons',
+		name: '__MSG_extName__',
+		description: '__MSG_extDescription__',
+		default_locale: 'en',
 		permissions: [
 			'storage',
 			'unlimitedStorage',

@@ -30,18 +30,7 @@ copy-tag = Copy tag
 block-tag = Block tag
 
 ## options / error
-error-boundary-exception = Well, something's broken. You can <recover>{$attempt ->
-  [1] Try to recover again
-  [2] Try to recover again.
-  [3] Try to recover again..
-  [4] Try to recover again...
-  [5] ...
-  [6] Why do you keep trying?
-  [7] Do you really think it's going to work after trying so many times?
-  [8] Okay, you can keep pressing that button
-  [9] I'll leave you alone with that button
-  *[other] Try to recover
-}</recover> if you're lucky.
+error-boundary-exception = Well, something's broken. You can <recover>Try to recover</recover> if you're lucky enough.
 
 ## options / phrases blocklist
 revert-changes = Revert changes
