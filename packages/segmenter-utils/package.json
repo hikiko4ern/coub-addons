@@ -3,10 +3,27 @@
 	"description": "Intl.Segmenter utils based on ICU4X",
 	"version": "0.1.0",
 	"type": "module",
-	"main": "src/index.ts",
+	"exports": {
+		".": {
+			"import": "./lib/segmenter_utils_rs.js",
+			"require": "./lib/segmenter_utils_rs.js",
+			"types": "./lib/segmenter_utils_rs.d.ts"
+		},
+		"./wasm": {
+			"import": "./lib/segmenter_utils_rs_bg.wasm",
+			"require": "./lib/segmenter_utils_rs_bg.wasm",
+			"types": "./lib/segmenter_utils_rs_bg.wasm.d.ts"
+		},
+		"./sync": {
+			"import": "./src/sync.ts",
+			"require": "./src/sync.ts",
+			"types": "./src/sync.ts"
+		}
+	},
 	"scripts": {
 		"postinstall": "task",
-		"clean": "rimraf lib"
+		"clean": "rimraf lib",
+		"test": "vitest"
 	},
 	"dependencies": {
 		"@go-task/cli": "^3.38.0",

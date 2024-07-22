@@ -4,27 +4,36 @@ import { expect, it } from 'vitest';
 
 import { getMatchedPhrase } from '@/storage/phrasesBlocklist/helpers/getMatchedPhrase';
 import { phrasesToTree } from '@/storage/phrasesBlocklist/helpers/phrasesTree';
+import { segmenterUtils } from './segmenterUtils';
 
 it('simple', () => {
-	const tree = phrasesToTree(['wowwd', 'hewwo wowwd!', 'wowwd hewwo', 'hewwo', 'worldo?']);
+	const tree = phrasesToTree(segmenterUtils, [
+		'wowwd',
+		'hewwo wowwd!',
+		'wowwd hewwo',
+		'hewwo',
+		'worldo?',
+	]);
 
 	// will match phrase `hewwo`
-	expect(getMatchedPhrase(tree, ['hello', 'hewwo'])).toBeTruthy();
+	expect(getMatchedPhrase(segmenterUtils, tree, ['hello', 'hewwo'])).toBeTruthy();
 
 	// will match phrase `hewwo wowwd!`
-	expect(getMatchedPhrase(tree, ['---hewwo wowwd!'])).toBeTruthy();
+	expect(getMatchedPhrase(segmenterUtils, tree, ['---hewwo wowwd!'])).toBeTruthy();
 
 	// will match phrase `wowwd`
-	expect(getMatchedPhrase(tree, ['---hewwo wowwd?'])).toBeTruthy();
+	expect(getMatchedPhrase(segmenterUtils, tree, ['---hewwo wowwd?'])).toBeTruthy();
 
 	// will match phrase `worldo?`
-	expect(getMatchedPhrase(tree, ['hello worldo?'])).toBeTruthy();
+	expect(getMatchedPhrase(segmenterUtils, tree, ['hello worldo?'])).toBeTruthy();
 
 	// will NOT match phrase `worldo?`
-	expect(getMatchedPhrase(tree, ['hello worldo!'])).toBeFalsy();
+	expect(getMatchedPhrase(segmenterUtils, tree, ['hello worldo!'])).toBeFalsy();
 });
 
 it('in between', () => {
-	const tree = phrasesToTree(['свою смерть']);
-	expect(getMatchedPhrase(tree, ['еретики примите свою смерть достойно'])).toBeTruthy();
+	const tree = phrasesToTree(segmenterUtils, ['свою смерть']);
+	expect(
+		getMatchedPhrase(segmenterUtils, tree, ['еретики примите свою смерть достойно']),
+	).toBeTruthy();
 });

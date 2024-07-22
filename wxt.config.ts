@@ -1,6 +1,7 @@
 import 'dotenv-flow/config';
 
-import arrayBuffer from '@coub-addons/vite-plugin-arraybuffer';
+import { copyFile } from 'node:fs/promises';
+import path from 'node:path';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
@@ -8,6 +9,14 @@ import { normalizePath } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import sassDts from 'vite-plugin-sass-dts';
 import { defineConfig } from 'wxt';
+
+const SEGMENTER_UTILS_ASSET = 'segmenter-utils.wasm';
+
+declare module 'wxt/browser' {
+	export interface WxtRuntime {
+		getURL(path: typeof SEGMENTER_UTILS_ASSET): string;
+	}
+}
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -80,11 +89,16 @@ export default defineConfig({
 			// biome-ignore lint/style/noNonNullAssertion: `options_ui` is always presented since we have an `options` entrypoint
 			manifest.options_ui!.open_in_tab = true;
 		},
+		async 'build:done'(wxt) {
+			await copyFile(
+				require.resolve('@coub-addons/segmenter-utils/wasm'),
+				path.resolve(wxt.config.outDir, SEGMENTER_UTILS_ASSET),
+			);
+		},
 	},
 	vite: () => ({
 		plugins: [
 			ValidateEnv(),
-			arrayBuffer(),
 			nodePolyfills({
 				include: ['buffer'],
 				globals: {

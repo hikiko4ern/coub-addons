@@ -2,10 +2,12 @@ import type { Logger } from '@/utils/logger';
 import type { PhrasesBlocklist, RawPhrasesBlocklist } from '..';
 
 import { phrasesToTree } from './phrasesTree';
+import type { SegmenterUtils } from './segmenterUtils';
 import { tryRegexFromLine } from './tryRegexFromLine';
 
 export const parsePhrasesBlocklist = (
 	logger: Logger,
+	utils: SegmenterUtils,
 	raw: RawPhrasesBlocklist,
 ): PhrasesBlocklist => {
 	const lines = raw.split('\n');
@@ -37,7 +39,7 @@ export const parsePhrasesBlocklist = (
 
 	return {
 		raw,
-		phrases: phrasesToTree(phrases),
+		phrases: phrasesToTree(utils, phrases),
 		regexps,
 	};
 };

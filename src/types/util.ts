@@ -14,4 +14,4 @@ export type Value<T> = T extends ReadonlySet<infer U>
 		? U
 		: T;
 
-export type MaybePromise<T> = T | PromiseLike<T>;
+export type MaybePromise<T> = T | Promise<T>;

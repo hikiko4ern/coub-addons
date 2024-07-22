@@ -38,7 +38,7 @@ export abstract class StorageBase<
 	readonly #watchers = new Set<StorageWatchCallback<State, ListenerArgs>>();
 	readonly #unwatch: Unwatch;
 	readonly #eventListener: EventListener;
-	#statePromise: Promise<ToReadonly<State>> | undefined;
+	protected statePromise: Promise<ToReadonly<State>> | undefined;
 	#state!: ToReadonly<State>;
 
 	constructor(
@@ -81,14 +81,14 @@ export abstract class StorageBase<
 	}
 
 	initialize() {
-		return (this.#statePromise = this.#storage
+		return (this.statePromise = this.#storage
 			.getValue()
 			.then(res => {
 				const state = (this.#state = this.parseRawValue(res as ToReadonly<RawState>));
 				this.logger.debug('initialized with state', state, 'from raw', res);
 				return state;
 			})
-			.finally(() => (this.#statePromise = undefined)));
+			.finally(() => (this.statePromise = undefined)));
 	}
 
 	async reinitialize() {
@@ -98,8 +98,8 @@ export abstract class StorageBase<
 	}
 
 	getValue() {
-		if (this.#statePromise) {
-			return this.#statePromise;
+		if (this.statePromise) {
+			return this.statePromise;
 		}
 
 		return this.#state;

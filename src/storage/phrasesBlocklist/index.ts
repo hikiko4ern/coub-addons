@@ -2,11 +2,13 @@ import type { Asyncify } from 'type-fest';
 
 import type { ToReadonly } from '@/types/util';
 
+import { isPromise } from '@/helpers/isPromise';
 import { StorageBase } from '../base';
 import type { FnWithState, StorageMeta } from '../types';
 import { getMatchedPhrase } from './helpers/getMatchedPhrase';
 import { parsePhrasesBlocklist } from './helpers/parsePhrasesBlocklist';
 import { addPhraseToTree } from './helpers/phrasesTree';
+import { type SegmenterUtils, loadSegmenterUtils } from './helpers/segmenterUtils';
 import type { PhrasesBlocklist, RawPhrasesBlocklist } from './types';
 
 export type { PhrasesBlocklist, RawPhrasesBlocklist } from './types';
@@ -18,12 +20,32 @@ export type ReadonlyPhrasesBlocklist = ToReadonly<PhrasesBlocklist>;
 /** if one of values is blocked, returns the pattern by which it is blocked */
 export type IsBlockedFn = (value: string | Iterable<string>) => string | undefined;
 
+let segmenterUtils: SegmenterUtils;
+
 export abstract class PhrasesBlocklistStorage<Key extends string> extends StorageBase<
 	Key,
 	PhrasesBlocklist,
 	PhrasesBlocklistMeta,
 	RawPhrasesBlocklist
 > {
+	initialize() {
+		return (this.statePromise = this.loadUtilsThenInitialize());
+	}
+
+	private loadUtilsThenInitialize() {
+		if (!segmenterUtils) {
+			const utilsPromise = loadSegmenterUtils();
+
+			if (isPromise(utilsPromise)) {
+				return utilsPromise.then(res => ((segmenterUtils = res), super.initialize()));
+			}
+
+			segmenterUtils = utilsPromise;
+		}
+
+		return super.initialize();
+	}
+
 	isBlocked: Asyncify<IsBlockedFn> = async value => this.#isBlocked(await this.getValue(), value);
 
 	createBoundedIsBlocked = async (): Promise<IsBlockedFn> => {
@@ -38,7 +60,7 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 			this.setParsedValue({
 				...state,
 				raw: state.raw.endsWith('\n') ? state.raw + value : `${state.raw}\n${value}`,
-				phrases: addPhraseToTree(state.phrases, value),
+				phrases: addPhraseToTree(segmenterUtils, state.phrases, value),
 			});
 	};
 
@@ -47,7 +69,7 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 	// TODO: optimize
 	#isBlocked: FnWithState<PhrasesBlocklist, IsBlockedFn> = (state, value) => {
 		const valuesArr: string[] = typeof value === 'string' ? [value] : Array.from(value);
-		const blockedByPhrase = getMatchedPhrase(state.phrases, valuesArr);
+		const blockedByPhrase = getMatchedPhrase(segmenterUtils, state.phrases, valuesArr);
 
 		if (typeof blockedByPhrase !== 'undefined') {
 			return blockedByPhrase;
@@ -63,7 +85,7 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 	};
 
 	protected parseRawValue(raw: RawPhrasesBlocklist): PhrasesBlocklist {
-		return parsePhrasesBlocklist(this.logger, raw);
+		return parsePhrasesBlocklist(this.logger, segmenterUtils, raw);
 	}
 
 	protected toRawValue(parsed: ReadonlyPhrasesBlocklist): RawPhrasesBlocklist {

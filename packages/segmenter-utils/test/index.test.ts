@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 
-import { getFirstWord, segmentWords } from '../src';
+import { getFirstWord, segmentWords } from '../src/sync';
 
 it('first word', () => {
 	expect(getFirstWord('')).toBe(undefined);
