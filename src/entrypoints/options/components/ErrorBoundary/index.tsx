@@ -1,9 +1,8 @@
 import { Localized } from '@fluent/react';
 import { Button } from '@nextui-org/button';
-import { type Signal, useSignal } from '@preact/signals';
 import cx from 'clsx';
 import type { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useErrorBoundary } from 'preact/hooks';
+import { useErrorBoundary } from 'preact/hooks';
 
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { logger } from '@/options/constants';
@@ -14,12 +13,6 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 	const [error, resetError] = useErrorBoundary((error, { componentStack }) =>
 		logger.error(error, { componentStack }),
 	);
-	const attempt = useSignal(0);
-
-	const tryToRecover = useCallback(() => {
-		resetError();
-		attempt.value += 1;
-	}, [resetError]);
 
 	if (error) {
 		return (
@@ -28,7 +21,6 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 					<p>
 						<Localized
 							id="error-boundary-exception"
-							vars={{ attempt: attempt.value }}
 							elems={{
 								recover: (
 									<Button
@@ -39,7 +31,7 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 										color="success"
 										size="sm"
 										variant="light"
-										onPress={tryToRecover}
+										onPress={resetError}
 									/>
 								),
 							}}
@@ -51,18 +43,6 @@ export const ErrorBoundary: FunctionComponent = ({ children }) => {
 			</div>
 		);
 	}
-
-	return <ErrorBoundaryContent attempt={attempt}>{children}</ErrorBoundaryContent>;
-};
-
-interface ContentProps {
-	attempt: Signal<number>;
-}
-
-const ErrorBoundaryContent: FunctionComponent<ContentProps> = ({ attempt, children }) => {
-	useEffect(() => {
-		attempt.value = 0;
-	}, []);
 
 	return <>{children}</>;
 };
