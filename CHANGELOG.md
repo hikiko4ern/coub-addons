@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.1.23] - 2024-07-22
+
+### Features
+
+- **(jst)** return the publication date to popular and community timelines
+
+### Miscellaneous Tasks
+
+- remove `clipboardWrite` permission
+- localize extension name and description
+
 ## [0.1.22] - 2024-07-21
 
 ### Features
