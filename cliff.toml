@@ -5,6 +5,18 @@
 header = "# Changelog\n"
 # spell-checker: disable
 body = """
+{% macro commit_refs(commit) %}\
+	{% set ref_links = [] -%}\
+	{% for footer in commit.footers %}\
+		{% set int_value = footer.value | int(default=-1) %}\
+		{% if (footer.value is matching("^\\d+$")) and (int_value > 0) and (footer.token in ["close", "closes", "closed", "fix", "fixes", "fixed", "resolve", "resolves", "resolved"]) %}\
+			{% set encoded_value = int_value | as_str | urlencode_strict %}\
+			{% set_global ref_links = ref_links | concat(with=("[#" ~ int_value ~ "](https://github.com/" ~ remote.github.owner ~ "/" ~ remote.github.repo ~ "/issues/" ~ encoded_value ~ ")")) %}\
+		{% endif %}\
+	{% endfor %}\
+	{% if ref_links %} ({{ ref_links | unique | join(sep=", ") }}){% endif -%}
+{% endmacro commit_refs %}\
+\
 {% raw %}\n{% endraw %}\
 {% if version %}\
     ## [{{ version | trim_start_matches(pat="v") }}] - {{ timestamp | date(format="%Y-%m-%d") }}
@@ -21,9 +33,11 @@ body = """
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits %}
+				{% set related_issues = commit.footers | filter(attribute="token", value="closes") | map(attribute="value") | unique -%}\
         - {% if commit.breaking %}**\\[breaking\\]** {% endif -%}
 					{% if commit.scope %}**({{commit.scope}})** {% endif -%}
-					{{ commit.message }}
+					{{ commit.message }}\
+					{{ self::commit_refs(commit=commit) }}
     {%- endfor -%}
     {% raw %}\n{% endraw %}\
 {% endfor %}\
@@ -38,17 +52,18 @@ split_commits = false
 commit_parsers = [
 	# ignore
 	{ sha = "393a2bbf704825d51c2659e14d42e1d71ed9e325", skip = true },
+	{ sha = "da3317643bfd416a13f516458f052a5fd10da8e3", skip = true },
 
 	# groups
+	{ message = "chore\\((build|changelog|dev|release|utils|internal)\\)", skip = true },
 	{ message = "^fix", group = "<!-- 1 -->Bug Fixes" },
 	{ message = "^feat", group = "<!-- 2 -->Features" },
-	{ message = "^doc", group = "Documentation" },
+	{ message = "^docs", skip = true },
 	{ message = "^perf", group = "Performance" },
 	{ message = "^refactor", group = "Refactor" },
 	{ message = "^style", group = "Styling" },
 	{ message = "^test", group = "Testing" },
 	{ message = "^chore\\(deps.*\\)", skip = true },
-	{ message = "^chore\\(release\\)", skip = true },
 	{ message = "^chore", group = "Miscellaneous Tasks" },
 	{ body = ".*security", group = "<!-- 0 -->Security" },
 ]
@@ -64,3 +79,7 @@ sort_commits = "oldest"
 [bump]
 features_always_bump_minor = false
 breaking_always_bump_major = false
+
+[remote.github]
+owner = "hikiko4ern"
+repo = "coub-addons"
