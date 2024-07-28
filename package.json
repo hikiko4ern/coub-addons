@@ -1,7 +1,7 @@
 {
 	"name": "coub-addons",
 	"description": "Coub.com additional features",
-	"version": "0.1.23",
+	"version": "0.1.24",
 	"type": "module",
 	"scripts": {
 		"prepare": "lefthook install || true",
