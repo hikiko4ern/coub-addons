@@ -64,6 +64,7 @@ Here are some helpful commands:
 - `pnpm test` - runs the tests once
 - `pnpm test:watch` - runs tests in watch mode
 - `pnpm su:watch` - starts a dev build of [`segmenter-utils`][segmenter-utils] in watch mode
+- `pnpm test-build-reproducibility` - checks if build is reproducible (this is required to pass an <abbr title="addons.mozilla.org">AMO</abbr> review)
 
 #### GraphQL <!-- omit in toc -->
 
