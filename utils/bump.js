@@ -1,4 +1,4 @@
-import { $ } from 'execa';
+import { execa } from 'execa';
 import { runGitCliff } from 'git-cliff';
 
 import pkg from '../package.json' with { type: 'json' };
@@ -12,6 +12,11 @@ if (pkg.version === newVersion) {
 	console.info(`version ${pkg.version} is already actual`);
 } else {
 	console.info(`bumping from ${pkg.version} to ${newVersion}`);
+
 	const msg = `chore(release): ${newVersionTag}`;
-	await $`pnpm version --sign-git-tag -m ${msg} ${newVersion}`;
+
+	await execa({
+		stdout: 'inherit',
+		stderr: 'inherit',
+	})`pnpm version --sign-git-tag -m ${msg} ${newVersion}`;
 }

@@ -63,6 +63,7 @@ export default defineConfig({
 	zip: {
 		includeSources: [
 			'.env',
+			'.env.production',
 			'.npmrc',
 			'.nvmrc',
 			'.postcssrc.json',
