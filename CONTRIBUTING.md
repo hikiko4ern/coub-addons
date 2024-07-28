@@ -5,6 +5,7 @@
 - [Development](#development)
   - [Development of an extension](#development-of-an-extension)
   - [Available commands](#available-commands)
+  - [How to test auto-updating](#how-to-test-auto-updating)
 - [Releasing updates](#releasing-updates)
 
 ## Conventional Commits
@@ -85,6 +86,44 @@ To generate `N` fake channels for the `blockedChannels` storage:
    Wrote 1,000 channels to blockedChannels.json
    ```
 2. open the extension settings and import the backup from the created `blockedChannels.json` file
+
+### How to test auto-updating
+
+1. set up a local server that serves files from the `docs` directory
+
+   This server must work over **HTTPS**, but even self-signed certificates will work. I have a server listening on `localhost:8080`, but if you have a different host - replace it in the following steps.
+
+2. create `.env.local` with the contents:
+   ```sh
+   VITE_GECKO_UPDATE_URL=https://localhost:8080/updates.json
+   ```
+
+3. disable certificate validation in `about:config` by creating a settings:
+   ```sh
+   extensions.install.requireBuiltInCerts = false
+   extensions.update.requireBuiltInCerts = false
+   ```
+
+4. build a ZIP with the new version of the extension, change its extension from `.zip` to `.xpi` and copy it to `docs` so that the new version is in `docs/coub-addons-x.x.x-firefox.xpi`
+
+   Here and below `x.x.x` is used instead of the extension version, don't forget to replace it with the real one.
+
+5. add the new version to [`docs/updates.json`](./docs/updates.json) in the `updates` field:
+   ```jsonc
+   {
+   	"updates": [
+   		// ... other updates ...
+   		{
+   			"version": "x.x.x",
+   			"update_link": "https://localhost:8080/coub-addons-x.x.x-firefox.xpi"
+   		}
+   	]
+   }
+   ```
+
+6. open `about:addons`, click on the gear and select `Check for Updates` to force check for updates
+
+If something doesn't work, see [Testing Automatic Updating](https://extensionworkshop.com/documentation/manage/updating-your-extension/#testing-automatic-updating).
 
 ## Releasing updates
 

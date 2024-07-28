@@ -17,6 +17,7 @@
 		"**/LICENSE-*",
 		"**/CHANGELOG.md",
 		"**/src/gql",
+		"**/docs/release-notes",
 		"**/packages/@nextui-org/react-rsc-utils",
 		"**/blockedChannels.json"
 	],

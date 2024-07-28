@@ -5,6 +5,7 @@
 			"**/*.json",
 			"**/*.scss.d.ts",
 			"**/src/gql/**",
+			"**/docs/release-notes/**",
 			"**/packages/@nextui-org/react-rsc-utils/**",
 			"**/packages/*/lib/**"
 		]

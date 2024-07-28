@@ -48,6 +48,7 @@ export default defineConfig({
 		browser_specific_settings: {
 			gecko: {
 				id: process.env.VITE_GECKO_ID,
+				update_url: process.env.VITE_GECKO_UPDATE_URL,
 				strict_min_version: '101.0',
 			},
 		},
@@ -74,6 +75,7 @@ export default defineConfig({
 		excludeSources: [
 			'src/gql/comments/requests/**',
 			'src/gql/comments/schema.json',
+			'docs/**',
 			'target/**',
 			'test/**',
 			'utils/**',
