@@ -70,6 +70,8 @@ blocklist = Blocklist
 block-recoubs = Block recoubs
 block-reposts-of-stories = Block reposts of stories
 hide-comments-from-blocked-channels = Hide comments from blocked channels
+grant-permissions = Grant permissions
+permissions-must-be-granted-for-this-functionality-to-work = Permissions must be granted for this functionality to work
 
 ## options / player settings
 player = Player

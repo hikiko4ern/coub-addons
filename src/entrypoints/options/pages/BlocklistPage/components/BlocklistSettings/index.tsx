@@ -1,8 +1,14 @@
 import { Localized } from '@fluent/react';
+import { Button } from '@nextui-org/button';
 import { Checkbox } from '@nextui-org/checkbox';
+import cx from 'clsx';
 import type { FunctionComponent } from 'preact';
-import { useCallback } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
+import { toast } from 'react-toastify';
+import type { Permissions } from 'wxt/browser';
 
+import { logger } from '@/options/constants';
+import { COMMENTS_GRAPHQL_HOST, COMMENTS_GRAPHQL_PERMISSIONS } from '@/permissions/constants';
 import type { Blocklist, BlocklistStorage, ReadonlyBlocklist } from '@/storage/blocklist';
 
 interface Props {
@@ -10,10 +16,61 @@ interface Props {
 	state: ReadonlyBlocklist;
 }
 
-const useMergeCallback = <Key extends keyof Blocklist>(storage: BlocklistStorage, key: Key) =>
-	useCallback((value: Blocklist[Key]) => storage.mergeWith({ [key]: value }), [storage, key]);
+const useMergeCallback = <Key extends keyof Blocklist>(
+	storage: BlocklistStorage,
+	key: Key,
+	onChange?: (value: Blocklist[Key]) => void,
+) => {
+	const onChangeRef = useWatchingRef(onChange);
+
+	return useCallback(
+		(value: Blocklist[Key]) => {
+			storage.mergeWith({ [key]: value });
+			onChangeRef.current?.(value);
+		},
+		[storage, key],
+	);
+};
 
 export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) => {
+	const [haveAccessToComments, setHaveAccessToComments] = useState<boolean>();
+
+	useEffect(() => {
+		browser.permissions.contains(COMMENTS_GRAPHQL_PERMISSIONS).then(setHaveAccessToComments);
+
+		const handler = (type: 'added' | 'removed', permissions: Permissions.Permissions) => {
+			logger.debug(type, 'permissions', permissions);
+
+			if (permissions.origins?.includes(COMMENTS_GRAPHQL_HOST)) {
+				setHaveAccessToComments(type === 'added');
+			}
+		};
+
+		const addedHandler = (permissions: Permissions.Permissions) => handler('added', permissions);
+		const removedHandler = (permissions: Permissions.Permissions) =>
+			handler('removed', permissions);
+
+		browser.permissions.onAdded.addListener(addedHandler);
+		browser.permissions.onRemoved.addListener(removedHandler);
+
+		return () => {
+			browser.permissions.onRemoved.removeListener(removedHandler);
+			browser.permissions.onAdded.removeListener(addedHandler);
+		};
+	}, []);
+
+	const requestAccessToComments = useCallback(() => {
+		browser.permissions
+			.request(COMMENTS_GRAPHQL_PERMISSIONS)
+			.then(isGranted =>
+				isGranted
+					? setHaveAccessToComments(true)
+					: toast.warn(
+							<Localized id="permissions-must-be-granted-for-this-functionality-to-work" />,
+						),
+			);
+	}, []);
+
 	const handleIsBlockRecoubsChange = useMergeCallback(storage, 'isBlockRecoubs');
 
 	const handleIsBlockRepostsOfStoriesChange = useMergeCallback(storage, 'isBlockRepostsOfStories');
@@ -21,6 +78,9 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 	const handleIsHideCommentsFromBlockedChannelsChange = useMergeCallback(
 		storage,
 		'isHideCommentsFromBlockedChannels',
+		isHide => {
+			isHide && !haveAccessToComments && requestAccessToComments();
+		},
 	);
 
 	return (
@@ -36,12 +96,24 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 				<Localized id="block-reposts-of-stories" />
 			</Checkbox>
 
-			<Checkbox
-				isSelected={state.isHideCommentsFromBlockedChannels}
-				onValueChange={handleIsHideCommentsFromBlockedChannelsChange}
+			<div
+				className={cx('flex gap-2', {
+					'min-h-8': haveAccessToComments === false,
+				})}
 			>
-				<Localized id="hide-comments-from-blocked-channels" />
-			</Checkbox>
+				<Checkbox
+					isSelected={state.isHideCommentsFromBlockedChannels}
+					onValueChange={handleIsHideCommentsFromBlockedChannelsChange}
+				>
+					<Localized id="hide-comments-from-blocked-channels" />
+				</Checkbox>
+
+				{state.isHideCommentsFromBlockedChannels && haveAccessToComments === false && (
+					<Button color="warning" variant="flat" size="sm" onPress={requestAccessToComments}>
+						<Localized id="grant-permissions" />
+					</Button>
+				)}
+			</div>
 		</div>
 	);
 };

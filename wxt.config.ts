@@ -10,6 +10,8 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import sassDts from 'vite-plugin-sass-dts';
 import { defineConfig } from 'wxt';
 
+import { COMMENTS_GRAPHQL_HOST } from './src/permissions/constants';
+
 const SEGMENTER_UTILS_ASSET = 'segmenter-utils.wasm';
 
 declare module 'wxt/browser' {
@@ -40,8 +42,8 @@ export default defineConfig({
 			'webRequestFilterResponse',
 			'menus',
 			`${process.env.VITE_COUB_ORIGIN}/*`,
-			`${process.env.VITE_COUB_COMMENTS_ORIGIN}/graphql`,
 		],
+		optional_permissions: [COMMENTS_GRAPHQL_HOST],
 		browser_action: {},
 		browser_specific_settings: {
 			gecko: {

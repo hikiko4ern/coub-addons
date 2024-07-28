@@ -71,6 +71,8 @@ blocklist = Блок-лист
 block-recoubs = Блокировать рекоубы
 block-reposts-of-stories = Блокировать репосты историй
 hide-comments-from-blocked-channels = Скрывать комментарии от заблокированных каналов
+grant-permissions = Предоставить разрешения
+permissions-must-be-granted-for-this-functionality-to-work = Для работы этого функционала необходимо предоставить разрешения
 
 ## options / player settings
 player = Плеер
