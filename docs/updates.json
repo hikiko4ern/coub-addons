@@ -1,7 +1,13 @@
 {
 	"addons": {
 		"coub-addons@hk4": {
-			"updates": []
+			"updates": [
+				{
+					"version": "0.1.24",
+					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.24/coub-addons-0.1.24-firefox.xpi",
+					"update_info_url": "https://hikiko4ern.github.io/coub-addons/release-notes/0.1.24.html"
+				}
+			]
 		}
 	}
 }
