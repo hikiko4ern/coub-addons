@@ -5,7 +5,7 @@ import { EventDispatcher } from '@/events';
 import { Logger } from '@/utils/logger';
 
 interface UnloadScript extends HTMLScriptElement {
-	readonly dataset: { unloadClass: string };
+	readonly dataset: { type: string; unloadClass: string };
 	checkIfAlive: () => void;
 }
 
@@ -17,7 +17,7 @@ const logger = Logger.create('onContentScriptUnload', { devUniqueId: ID });
 // in other browsers we should rely on `port.onDisconnect`
 // (in Firefox it doesn't work because of https://bugzilla.mozilla.org/show_bug.cgi?id=1223425)
 export const onContentScriptUnload = async <Args extends unknown[] = never[]>(
-	classSuffix: string,
+	type: string,
 	handler: (...args: Args) => void,
 	...args: Args
 ) => {
@@ -30,6 +30,7 @@ export const onContentScriptUnload = async <Args extends unknown[] = never[]>(
 
 	const script = document.createElement('script') as UnloadScript;
 
+	script.dataset.type = type;
 	script.dataset.unloadClass = unloadStylesClass;
 	script.textContent = stringifyFn(unloadScript).replace('__HANDLER__', stringifyFn(handler, args));
 
@@ -38,9 +39,7 @@ export const onContentScriptUnload = async <Args extends unknown[] = never[]>(
 	(document.body || document.documentElement).appendChild(script);
 
 	return () => {
-		for (const span of document.querySelectorAll(
-			`.${CSS.escape(`${unloadStylesClass}__${classSuffix}`)}`,
-		)) {
+		for (const span of document.querySelectorAll(`.${CSS.escape(unloadStylesClass)}`)) {
 			span.remove();
 		}
 	};
@@ -63,6 +62,7 @@ function unloadScript() {
 	const span = document.createElement('span');
 
 	span.className = unloadClass;
+	span.dataset.type = script.dataset.type;
 	span.style.opacity = '1';
 	span.style.transitionProperty = 'opacity';
 	span.style.transitionDelay = '100ms';

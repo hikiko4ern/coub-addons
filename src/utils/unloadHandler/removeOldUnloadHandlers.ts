@@ -5,21 +5,23 @@ import { EventDispatcher } from '@/events';
 const ID = nanoid();
 const logger = Logger.create('removeOldUnloadHandlers', { devUniqueId: ID });
 
-export const removeOldUnloadHandlers = async (classSuffix: string) => {
+export const removeOldUnloadHandlers = async (type: string) => {
 	const classes = await EventDispatcher.getUnloadStylesClassWithPrefix();
 
 	if (classes) {
 		const [unloadStylesClassPrefix, unloadStylesClass] = classes;
-		const actualClass = `${unloadStylesClassPrefix}__${classSuffix}`;
 
-		logger.debug('removing old', classSuffix, 'handlers', {
+		const oldHandlers = document.querySelectorAll(
+			`[class^="${CSS.escape(unloadStylesClassPrefix)}"][data-type="${type}"]:not(.${CSS.escape(unloadStylesClass)})`,
+		);
+
+		logger.debug('removing old', type, 'handlers', {
 			prefix: unloadStylesClassPrefix,
-			actualClass,
+			newClass: unloadStylesClass,
+			handlers: oldHandlers,
 		});
 
-		for (const span of document.querySelectorAll(
-			`[class^="${CSS.escape(actualClass)}"]:not(.${CSS.escape(unloadStylesClass)})`,
-		)) {
+		for (const span of oldHandlers) {
 			span.remove();
 		}
 	}
