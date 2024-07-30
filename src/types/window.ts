@@ -1,6 +1,7 @@
 import type jQuery from 'jquery';
 import type { ConditionalKeys, OmitIndexSignature } from 'type-fest';
 
+import type { Channel } from '@/api/types';
 import type { TimelineResponseCoub } from '@/request/timeline';
 import type { JstTemplateName } from './jst';
 
@@ -18,6 +19,11 @@ declare global {
 			id: number;
 			title: string;
 			permalink: string;
+		}
+
+		interface AbsoluteDropdown {
+			el: JQuery;
+			content: JQuery;
 		}
 
 		interface CoubBlockClientside {
@@ -90,6 +96,28 @@ declare global {
 					TOGGLE_DISLIKE: string;
 				};
 			}
+
+			interface ChannelDropdown {
+				data?: ChannelDropdownData;
+				dropdown?: AbsoluteDropdown;
+				setDropdownContent(
+					this: ChannelDropdown & { wrappedJSObject?: ChannelDropdown },
+					...args: unknown[]
+				): JQuery;
+
+				prototype: {
+					setDropdownContent: ChannelDropdown['setDropdownContent'];
+				} & ChannelDropdownPatches;
+			}
+
+			interface ChannelDropdownData {
+				get(key: 'fullChannelData'): Channel | null;
+				get(key: string): unknown;
+			}
+
+			const ChannelDropdown: ChannelDropdown;
+
+			interface ChannelDropdownPatches {}
 		}
 
 		interface JST extends KnownJstTemplates, UnknownJstTemplates, JstPatches {}
@@ -122,7 +150,7 @@ declare global {
 	}
 
 	// Gecko's Xray-specific functions
-	var cloneInto: <T>(value: T, ctx: unknown) => T;
+	var cloneInto: <T>(value: T, ctx: unknown, options?: { cloneFunctions?: boolean }) => T;
 	// biome-ignore lint/suspicious/noExplicitAny:
 	var exportFunction: <T extends (...args: any[]) => any, Ctx>(
 		fn: T,

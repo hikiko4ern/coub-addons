@@ -1,23 +1,36 @@
+import { nanoid } from 'nanoid';
 import type {} from 'typed-query-selector';
 
-import { nanoid } from 'nanoid';
-
+import { isObject } from '@/helpers/isObject';
+import { applyPatches } from '@/helpers/patch/applyPatches';
 import { createAddChannelBlockButton } from '@/js/createAddChannelBlockButton';
 import { Logger } from '@/utils/logger';
+import { onContentScriptUnload } from '@/utils/unloadHandler/onContentScriptUnload';
+import { removeOldUnloadHandlers } from '@/utils/unloadHandler/removeOldUnloadHandlers';
+
+import { CD_ADDED_NODES_KEY, CD_ADDED_NODES_SYM } from './constants';
+import { addBlockButtonToChannelDropdown } from './helpers/addBlockButtonToChannelDropdown';
+import {
+	CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_KEY,
+	patchWidgets,
+	revertWidgetsPatches,
+} from './patches/widgets';
+import type { ChannelDropdownAddedNodes } from './types';
 
 import './styles.scss';
 
 const PREFIX = `${browser.runtime.id}__block__`;
-// `:not(.channel-menu-dropdown)` excludes dropdown of the current user's profile
-const DROPDOWN_SELECTOR =
-	'.dropdown:not(.channel-menu-dropdown):not(.header__create-dropdown)' as const;
-const CHANNEL_DROPDOWN_CONTENT_SELECTOR = '.channel--box-card' as const;
-const CHANNEL_FOLLOW_BUTTON_SELECTOR = 'div.channel-follow-button' as const;
-const CHANNEL_ID_ATTR = 'data-channel-id' as const;
-const CHANNEL_TITLE_SELECTOR = '.channel__title' as const;
-const CHANNEL_LINK_SELECTOR = '.channel__title > a' as const;
+const UNLOAD_HANDLERS_SUFFIX = 'channelDropdown';
 
-const isElement = (node: Node): node is Element => node.nodeType === node.ELEMENT_NODE;
+const CHANNEL_DROPDOWN_CONTENT_SELECTOR = '.channel--box-card' as const;
+
+type Patches = {
+	[key in typeof CD_ADDED_NODES_SYM]?: ChannelDropdownAddedNodes;
+};
+
+declare global {
+	interface Window extends Patches {}
+}
 
 export default defineContentScript({
 	matches: [`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/*`],
@@ -32,171 +45,170 @@ export default defineContentScript({
 		`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/rules`,
 		`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/dmca`,
 	],
+	runAt: 'document_start',
 	async main(ctx) {
 		const ID = nanoid();
-		const logger = Logger.create('channels dropdown cs', { devUniqueId: ID });
-
-		const addChannelBlockButton = createAddChannelBlockButton({
-			source: 'channel dropdown',
-			logger,
-			buttonId: ID,
-			buttonIdPrefix: PREFIX,
-			followButtonSelector: '.follow-btn',
-			followButtonActualButtonSelector: ':where(.follow-button__container, .follow-btn) > button',
-			followButtonContainerSelector:
-				'.follow-button__container, .follow-btn:not([data-channel-id])',
-			followButtonTextSelector: '.text',
-			followButtonTextDummySelector: '.text-dummy',
-			followButtonTextDummyClassName: 'text-dummy',
-		});
+		const logger = Logger.create('channel dropdown cs', { devUniqueId: ID });
 
 		try {
-			const nodeToObserve = document.body;
-			const addedNodes = new Map<Element, () => void>();
+			await removeOldUnloadHandlers(UNLOAD_HANDLERS_SUFFIX);
+		} catch (err) {
+			logger.error('failed to remove unload handlers:', err);
+		}
 
-			const handleMutations: MutationCallback = async mutations => {
-				for (const mutation of mutations) {
-					if (mutation.removedNodes.length) {
-						for (const [node, unregister] of addedNodes) {
-							if (!node.isConnected) {
-								unregister();
-								addedNodes.delete(node);
-							}
-						}
-					}
+		const waivedWindow = window.wrappedJSObject || window;
 
-					if (mutation.addedNodes.length) {
-						for (const addedNode of mutation.addedNodes) {
-							// for (const channelDropdownContent of document.getElementsByClassName(
-							//   'channel--box-card',
-							// )) {
-							// logger.debug(addedNode);
-							if (isElement(addedNode) && addedNode.matches(DROPDOWN_SELECTOR)) {
-								const channelDropdownContent = addedNode.querySelector(
-									CHANNEL_DROPDOWN_CONTENT_SELECTOR,
-								);
+		try {
+			const addChannelBlockButton = createAddChannelBlockButton({
+				source: 'channel dropdown',
+				logger,
+				buttonId: ID,
+				buttonIdPrefix: PREFIX,
+				followButtonSelector: '.follow-btn',
+				followButtonActualButtonSelector: ':where(.follow-button__container, .follow-btn) > button',
+				followButtonContainerSelector:
+					'.follow-button__container, .follow-btn:not([data-channel-id])',
+				followButtonTextSelector: '.text',
+				followButtonTextDummySelector: '.text-dummy',
+				followButtonTextDummyClassName: 'text-dummy',
+			});
 
-								if (!channelDropdownContent) {
-									logger.warn(
-										'channel dropdown content was not found with selector',
-										CHANNEL_DROPDOWN_CONTENT_SELECTOR,
-										'in node',
-										addedNode,
-									);
-									continue;
-								}
+			const oldAddedNodes = waivedWindow[CD_ADDED_NODES_SYM];
+			const addedNodes: ChannelDropdownAddedNodes = (waivedWindow[CD_ADDED_NODES_SYM] = cloneInto(
+				[],
+				waivedWindow,
+			));
 
-								logger.debug(
-									'trying to get channel ID from attr',
-									CHANNEL_ID_ATTR,
-									'from node',
-									channelDropdownContent,
-								);
+			const handleDocumentReadyStateChanged = () => {
+				if (document.readyState === 'complete') {
+					const channelDropdownsContents = document.querySelectorAll(
+						CHANNEL_DROPDOWN_CONTENT_SELECTOR,
+					);
 
-								const channelIdAttr = channelDropdownContent.getAttribute(CHANNEL_ID_ATTR);
-								const channelId = channelIdAttr && Number.parseInt(channelIdAttr, 10);
+					logger.debug('readyState changed to', document.readyState, channelDropdownsContents);
 
-								if (!Number.isInteger(channelId)) {
-									logger.warn('value', channelIdAttr, 'is not a valid channel ID');
-									continue;
-								}
-
-								const nodeWithChannelTitle =
-									channelDropdownContent.querySelector(CHANNEL_TITLE_SELECTOR);
-
-								if (!nodeWithChannelTitle) {
-									logger.info(
-										'there is no node with channel title found by selector',
-										CHANNEL_TITLE_SELECTOR,
-										'in node',
-										channelDropdownContent,
-									);
-									continue;
-								}
-
-								const channelTitle =
-									'innerText' in nodeWithChannelTitle &&
-									typeof nodeWithChannelTitle.innerText === 'string'
-										? nodeWithChannelTitle.innerText
-										: nodeWithChannelTitle.textContent;
-
-								if (channelTitle === null) {
-									logger.warn(
-										'`innerText` of the channel title node',
-										nodeWithChannelTitle,
-										"isn't a string",
-										channelTitle,
-									);
-									continue;
-								}
-
-								let channelPermalink: string | undefined;
-
-								try {
-									const node = channelDropdownContent.querySelector(CHANNEL_LINK_SELECTOR);
-									if (node) {
-										channelPermalink = new URL(node.href).pathname.slice(1);
-									} else {
-										logger.warn(
-											'there is no node with channel link found by selector',
-											CHANNEL_LINK_SELECTOR,
-											'in node',
-											channelDropdownContent,
-										);
-									}
-								} catch (err) {
-									logger.error('failed to get channel permalink:', err);
-								}
-
-								const channelFollowButton = channelDropdownContent.querySelector(
-									CHANNEL_FOLLOW_BUTTON_SELECTOR,
-								);
-
-								if (!channelFollowButton) {
-									logger.warn(
-										'"Follow" button wrapper was not found with selector',
-										CHANNEL_FOLLOW_BUTTON_SELECTOR,
-										'in node',
-										channelDropdownContent,
-									);
-									continue;
-								}
-
-								addChannelBlockButton({
-									target: channelFollowButton,
-									channel: {
-										id: channelId,
-										title: channelTitle,
-										permalink: channelPermalink,
-									},
-									onAdded(blockButton, unsubscribe) {
-										addedNodes.set(blockButton, () => {
-											logger.debug('removing channel', channelId, 'listener');
-											unsubscribe();
-										});
-									},
-								});
-							}
-						}
+					for (const channelDropdownContent of channelDropdownsContents) {
+						addBlockButtonToChannelDropdown(
+							logger,
+							addedNodes,
+							addChannelBlockButton,
+							channelDropdownContent,
+						);
 					}
 				}
 			};
 
-			const observer = new MutationObserver(handleMutations);
-			observer.observe(nodeToObserve, { childList: true });
+			document.addEventListener('readystatechange', handleDocumentReadyStateChanged);
 
-			logger.debug('waiting for mutations of', nodeToObserve);
+			{
+				let isCloseGroup = false;
+
+				try {
+					if (Array.isArray(oldAddedNodes) && oldAddedNodes.length > 0) {
+						logger.groupCollapsed('reinitializing `addedNodes`');
+						isCloseGroup = true;
+
+						for (const [i, entry] of oldAddedNodes.entries()) {
+							try {
+								const unregister = entry[2]?.deref();
+								unregister?.();
+							} catch (err) {
+								// it's ok... sometimes
+								if (!(err instanceof Error) || !err.message.includes('dead object')) {
+									logger.error(i, 'failed to unregister', err);
+								}
+							}
+
+							try {
+								const node = entry[1]?.deref();
+								node?.remove();
+							} catch (err) {
+								logger.error(i, 'failed to remove node', err);
+							}
+
+							let isCloseGroup = false;
+
+							try {
+								const channelDropdownContent = entry[0]?.deref();
+
+								if (channelDropdownContent) {
+									logger.groupCollapsed(i, 'reinitializing', channelDropdownContent);
+									isCloseGroup = true;
+
+									addBlockButtonToChannelDropdown(
+										logger,
+										addedNodes,
+										addChannelBlockButton,
+										channelDropdownContent,
+									);
+								}
+							} catch (err) {
+								logger.error(i, 'failed to reinitialize', err);
+							} finally {
+								isCloseGroup && logger.groupEnd();
+							}
+						}
+					}
+				} catch (err) {
+					logger.error('failed to reinitialize `addedNodes`', err);
+				} finally {
+					isCloseGroup && logger.groupEnd();
+				}
+			}
+
+			const patches = applyPatches(
+				logger,
+				waivedWindow,
+				{
+					widgets: patchWidgets,
+				},
+				waivedWindow,
+				addedNodes,
+				addChannelBlockButton,
+			);
+
+			const removeUnloadHandler = await onContentScriptUnload(
+				UNLOAD_HANDLERS_SUFFIX,
+				(
+					loggerPrefix,
+					// helpers
+					isObject,
+					// window
+					addedNodesKey,
+					// widgets
+					channelDropdownSetDropdownContentOrigKey,
+					revertWidgetsPatches,
+				) => {
+					console.debug(`[${loggerPrefix}]`, 'reverting patches');
+
+					revertWidgetsPatches(
+						isObject,
+						addedNodesKey,
+						channelDropdownSetDropdownContentOrigKey,
+						loggerPrefix,
+					);
+				},
+				logger.prefix,
+				// helpers
+				isObject,
+				// window
+				CD_ADDED_NODES_KEY,
+				// widgets
+				CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_KEY,
+				revertWidgetsPatches,
+			);
 
 			ctx.onInvalidated(() => {
-				observer.disconnect();
+				document.removeEventListener('readystatechange', handleDocumentReadyStateChanged);
 
-				for (const [node, unregister] of addedNodes) {
-					unregister();
-					node.remove();
+				removeUnloadHandler?.();
+
+				for (const revert of patches) {
+					revert?.();
 				}
 			});
 		} catch (err) {
-			logger.error(err);
+			logger.error('failed to apply patches:', err);
 		}
 	},
 });

@@ -97,4 +97,6 @@ const patchTimelineList = (
 	};
 
 	exportFunction(patchedTemplate, waivedWindow.JST, { defineAs: name });
+
+	logger.debug('patched successfully');
 };

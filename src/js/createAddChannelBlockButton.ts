@@ -2,7 +2,7 @@ import type { Unwatch } from 'wxt/storage';
 
 import { EventDispatcher } from '@/events';
 import { type BlockedChannelData, BlockedChannelsStorage } from '@/storage/blockedChannels';
-import { l10n } from '@/translation/dom';
+import { initializeLocalesFromWindowIfNeeded, l10n } from '@/translation/dom';
 import type { Logger } from '@/utils/logger';
 
 interface CreateOptions {
@@ -88,11 +88,12 @@ export const createAddChannelBlockButton = ({
 				text.parentElement?.appendChild(textDummy);
 			}
 
+			initializeLocalesFromWindowIfNeeded();
+
 			const blockedChannels = await blockedChannelsPromise;
 			let isBlocked = await blockedChannels.isBlocked(channel.id),
 				isHovered = false;
 
-			logger.debug('[followButtonContainer]', blockButton, followButtonContainer?.classList);
 			if (followButtonContainer) {
 				if (
 					followButtonContainer.parentElement &&
@@ -131,17 +132,24 @@ export const createAddChannelBlockButton = ({
 			l10n.setAttributes(textDummy, 'unblock', {});
 			updateTextContent();
 
-			blockButton.addEventListener('click', () =>
-				blockedChannels.setIsBlocked(channel, !isBlocked),
+			blockButton.addEventListener(
+				'click',
+				exportFunction(() => blockedChannels.setIsBlocked(channel, !isBlocked), blockButton),
 			);
-			blockButton.addEventListener('mouseenter', () => {
-				isHovered = true;
-				updateTextContent();
-			});
-			blockButton.addEventListener('mouseleave', () => {
-				isHovered = false;
-				updateTextContent();
-			});
+			blockButton.addEventListener(
+				'mouseenter',
+				exportFunction(() => {
+					isHovered = true;
+					updateTextContent();
+				}, blockButton),
+			);
+			blockButton.addEventListener(
+				'mouseleave',
+				exportFunction(() => {
+					isHovered = false;
+					updateTextContent();
+				}, blockButton),
+			);
 		}
 
 		const prevBlockButtonsIter = target
