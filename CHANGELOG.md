@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.25] - 2024-08-01
+
+### Bug Fixes
+
+- **(channel-dropdown)** add a block button via the `ChannelDropdown` patch instead of `MutationObserver` ([#11](https://github.com/hikiko4ern/coub-addons/issues/11))
+- fix random invalidation of content scripts immediately after loading
+
 ## [0.1.24] - 2024-07-28
 
 ### Bug Fixes
