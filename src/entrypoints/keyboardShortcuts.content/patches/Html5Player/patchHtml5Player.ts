@@ -155,7 +155,7 @@ export function patchHtml5Player(
 			const msLogger = logger.getChildLogger('MediaSession');
 
 			{
-				const player = getActiveCoubHtml5Player($, msLogger, proto);
+				const player = getActiveCoubHtml5Player($, msLogger, proto, true);
 				player && actualizeMediaSessionFromHtml5Player(msLogger, player);
 			}
 

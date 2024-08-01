@@ -6,6 +6,7 @@ export const getActiveCoubHtml5Player = (
 	$: typeof window.$,
 	logger: Logger,
 	proto: coub.Html5Player['prototype'],
+	isJustInitialized?: boolean,
 ) => {
 	const activeCoubViewer = selectActiveCoubViewer($);
 
@@ -18,7 +19,12 @@ export const getActiveCoubHtml5Player = (
 	const player = playersMap?.get(activeCoubViewer[0])?.deref();
 
 	if (!player) {
-		logger.error('player for', activeCoubViewer, 'not found in', playersMap);
+		(isJustInitialized ? logger.warn : logger.error)(
+			'player for',
+			activeCoubViewer,
+			'not found in',
+			playersMap,
+		);
 		return;
 	}
 
