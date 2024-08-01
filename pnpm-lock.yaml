@@ -14,7 +14,7 @@ patchedDependencies:
     hash: bqratyxeov7464bkbghx7fe6wu
     path: patches/preact@10.22.1.patch
   wxt@0.18.14:
-    hash: kxacxywra3bm3auppy4pxok6ya
+    hash: ma5vniegr5627jbhpi7loonioq
     path: patches/wxt@0.18.14.patch
 
 importers:
@@ -254,7 +254,7 @@ importers:
         version: 3.3.1(preact@10.22.1(patch_hash=bqratyxeov7464bkbghx7fe6wu))
       wxt:
         specifier: ^0.18.14
-        version: 0.18.14(patch_hash=kxacxywra3bm3auppy4pxok6ya)(@types/node@20.14.10)(lightningcss@1.25.1)(rollup@4.18.1)(sass@1.77.7)
+        version: 0.18.14(patch_hash=ma5vniegr5627jbhpi7loonioq)(@types/node@20.14.10)(lightningcss@1.25.1)(rollup@4.18.1)(sass@1.77.7)
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -13328,7 +13328,7 @@ snapshots:
 
   ws@8.18.0: {}
 
-  wxt@0.18.14(patch_hash=kxacxywra3bm3auppy4pxok6ya)(@types/node@20.14.10)(lightningcss@1.25.1)(rollup@4.18.1)(sass@1.77.7):
+  wxt@0.18.14(patch_hash=ma5vniegr5627jbhpi7loonioq)(@types/node@20.14.10)(lightningcss@1.25.1)(rollup@4.18.1)(sass@1.77.7):
     dependencies:
       '@aklinker1/rollup-plugin-visualizer': 5.12.0(rollup@4.18.1)
       '@types/webextension-polyfill': 0.10.7
