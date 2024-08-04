@@ -13,7 +13,7 @@ Minimum supported browser versions:
 >
 > - works only on Firefox-based browsers and may not work in other browsers\
 >   for example, request filtering is now built on [`webRequest.filterResponseData`](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/filterResponseData) and will not work in Chromium-based browsers and Safari, which do not implement this API
-> - is not published in stores and is not signed, so it requires disabled signature verification for permanent installation (in Firefox this is the `xpinstall.signatures.required` setting)
+> - is not published in stores and can only be installed from releases (auto-updates are supported)
 > - occasionally there may be backwards incompatible changes that require **manual** migration of settings (_although this has never happened before, and I hope it never will, but do backups, backups are great_)
 >
 > If everything you've read doesn't discourage you from trying it, download the [latest release][latest-release].
