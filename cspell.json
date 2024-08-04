@@ -104,6 +104,7 @@
 		"rehype",
 		"rlib",
 		"superstruct",
+		"streamsearch",
 		"tailwindcss",
 		"Taskfile",
 		"tempy",

@@ -14,10 +14,10 @@ tasks:
     vars:
       MODE: '{{default "release" .MODE}}'
       LAST_MODE:
-        sh: if grep -q 'corrupt heap' lib/segmenter_utils_rs.js; then echo debug; else echo release; fi
+        sh: node ./utils/getLastMode.js
     cmds:
       - cargo build --lib --target wasm32-unknown-unknown {{if ne .MODE "debug"}}--{{.MODE}}{{end}}
-      - mkdir -p lib
+      - pnpm create-dirs
       - cargo bin wasm-bindgen "../../target/wasm32-unknown-unknown/{{.MODE}}/segmenter_utils_rs.wasm" --out-dir lib --typescript --target web {{if eq .MODE "debug"}}--debug{{end}}
       - if test {{.MODE}} = release; then pnpm wasm-opt -O4 lib/segmenter_utils_rs_bg.wasm -o lib/segmenter_utils_rs_bg.wasm; else echo skipping optimizations; fi
     sources:
@@ -28,6 +28,7 @@ tasks:
       - Taskfile.yml
       - Cargo.toml
       - src/**/*
+      - utils/getLastMode.js
     generates:
       - lib/segmenter_utils_rs_bg.wasm
     status:
