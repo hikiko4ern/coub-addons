@@ -36,7 +36,11 @@
 		"@types/streamsearch": "^1.1.2",
 		"vitest": "^2.0.1"
 	},
-	"repository": "https://github.com/hikiko4ern/coub-addons.git",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hikiko4ern/coub-addons.git",
+		"directory": "packages/segmenter-utils"
+	},
 	"author": "hikiko4ern",
 	"license": "Unlicense",
 	"private": true

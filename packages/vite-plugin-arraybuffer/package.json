@@ -8,7 +8,11 @@
 		"base64-arraybuffer": "^1",
 		"vite": "^5"
 	},
-	"repository": "https://github.com/hikiko4ern/coub-addons.git",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hikiko4ern/coub-addons.git",
+		"directory": "packages/vite-plugin-arraybuffer"
+	},
 	"author": "hikiko4ern",
 	"license": "Unlicense",
 	"private": true

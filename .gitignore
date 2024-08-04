@@ -28,8 +28,9 @@ vitest.config.ts.*.mjs
 # local files
 .env*.local
 .env.submit
-blockedChannels.json
-docs/*.xpi
+/blockedChannels.json
+/docs/*.xpi
+/test-extension
 
 # caches
 .bin

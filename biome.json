@@ -169,7 +169,7 @@
 			}
 		},
 		{
-			"include": ["utils/**"],
+			"include": ["utils/**", "**/packages/publish-extension/**"],
 			"linter": {
 				"rules": {
 					"suspicious": {

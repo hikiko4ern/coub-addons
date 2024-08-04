@@ -1,0 +1,24 @@
+{
+	"name": "@coub-addons/publish-extension",
+	"description": "helpers for publishing extension",
+	"version": "0.1.0",
+	"type": "module",
+	"main": "src/index.ts",
+	"dependencies": {
+		"jsonwebtoken": "^9.0.2",
+		"listr2": "^8.2.4",
+		"picocolors": "^1.0.1",
+		"superstruct": "^2.0.2"
+	},
+	"devDependencies": {
+		"@types/jsonwebtoken": "^9.0.6"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/hikiko4ern/coub-addons.git",
+		"directory": "packages/publish-extension"
+	},
+	"author": "hikiko4ern",
+	"license": "Unlicense",
+	"private": true
+}

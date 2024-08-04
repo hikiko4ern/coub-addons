@@ -27,6 +27,7 @@
 		"gql:fetch-schema": "tsx -r dotenv-flow/config ./utils/fetchGqlSchema.ts",
 		"gql:gen": "graphql-codegen --config ./utils/gqlCodegen.ts",
 		"su": "pnpm --filter=\"@coub-addons/segmenter-utils\"",
+		"pex": "pnpm --filter=\"@coub-addons/publish-extension\"",
 		"su:watch": "cargo bin cargo-watch -w packages/segmenter-utils/src -w packages/segmenter-utils/Cargo.toml -w packages/segmenter-utils/Taskfile.yml -w Cargo.lock -w Cargo.toml -w pnpm-lock.yaml -w rust-toolchain.toml -s \"pnpm su exec task build MODE=debug\""
 	},
 	"dependencies": {
@@ -111,6 +112,7 @@
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.8.3",
+		"@coub-addons/publish-extension": "workspace:^",
 		"@cspell/dict-ru_ru": "^2.2.1",
 		"@faker-js/faker": "^8.4.1",
 		"@go-task/cli": "^3.38.0",
@@ -118,6 +120,9 @@
 		"@graphql-codegen/cli": "^5.0.2",
 		"@graphql-codegen/typescript": "^4.0.9",
 		"@graphql-codegen/typescript-operations": "^4.2.3",
+		"@shikijs/cli": "^1.12.1",
+		"@types/hast": "^3.0.4",
+		"@types/mdast": "^4.0.4",
 		"cspell": "^8.10.4",
 		"dprint": "^0.47.1",
 		"execa": "^9.3.0",
@@ -129,13 +134,19 @@
 		"jszip": "^3.10.1",
 		"lefthook": "^1.7.1",
 		"listr2": "^8.2.4",
+		"mdast-comment-marker": "^3.0.0",
 		"mdast-util-from-markdown": "^2.0.1",
+		"mdast-util-gfm": "^3.0.0",
 		"mdast-util-to-hast": "^13.2.0",
+		"mdast-zone": "^6.1.0",
+		"micromark-extension-gfm": "^3.0.0",
 		"prettier": "^3.3.2",
 		"rehype-minify-whitespace": "^6.0.0",
+		"shiki": "^1.12.1",
 		"tempy": "^3.1.0",
 		"tsx": "^4.16.2",
 		"unist-util-remove": "^4.0.0",
+		"unist-util-visit": "^5.0.0",
 		"vitest": "^2.0.1"
 	},
 	"pnpm": {

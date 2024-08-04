@@ -14,7 +14,7 @@ import { name, version } from '../package.json' with { type: 'json' };
 
 const ROOT_PATH = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const OUTPUT_DIR = path.join(ROOT_PATH, '.output');
-const EXT_ZIP_FILE_NAME = `coub-addons-${version}-firefox.zip`;
+const EXT_ZIP_FILE_NAME = `${name}-${version}-firefox.zip`;
 
 const BUILD_COMMAND = 'pnpm run release-build';
 
@@ -29,7 +29,7 @@ temporaryDirectoryTask(
 		console.log();
 
 		const extZipPath = path.join(OUTPUT_DIR, EXT_ZIP_FILE_NAME),
-			sourcesZipPath = path.join(OUTPUT_DIR, `coub-addons-${version}-sources.zip`);
+			sourcesZipPath = path.join(OUTPUT_DIR, `${name}-${version}-sources.zip`);
 
 		const exec = (
 			task: ListrTaskWrapper<Ctx, typeof DefaultRenderer, typeof SimpleRenderer>,

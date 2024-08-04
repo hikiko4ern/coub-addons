@@ -1,6 +1,11 @@
+/** @file generates release notes for auto-updates */
+
+// @ts-check
+
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { codeToANSI } from '@shikijs/cli';
 import { runGitCliff } from 'git-cliff';
 import { toHtml } from 'hast-util-to-html';
 import { h } from 'hastscript';
@@ -42,7 +47,7 @@ const htmlPath = path.join(RELEASE_NOTES_DIR, `${version}.html`);
 
 console.log('Writing to', path.relative(ROOT_PATH, htmlPath));
 console.log();
-console.log(html);
+console.log(await codeToANSI(html, 'html', 'ayu-dark'));
 
 await fs.mkdir(RELEASE_NOTES_DIR, { recursive: true });
 await fs.writeFile(htmlPath, `${html}\n`, { encoding: 'utf8' });
