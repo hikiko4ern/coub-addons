@@ -2,7 +2,11 @@
 
 [English](./README.md) · [Русский](./README.ru.md)
 
-Web Extension, which adds additional functionality to [Coub.com]
+<!-- short-description start -->
+
+Web Extension, which adds additional functionality to [Coub.com](https://coub.com)
+
+<!-- short-description end -->
 
 Minimum supported browser versions:
 
@@ -20,6 +24,8 @@ Minimum supported browser versions:
 
 ## Features
 
+<!-- features start -->
+
 - hiding disliked coubs
 - hiding coubs, stories and comments from blocked channels
 - hiding coubs by title and tags containing specified phrases or matching regular expressions
@@ -32,6 +38,7 @@ Minimum supported browser versions:
 - preventing playback speed change when <kbd>W</kbd>/<kbd>S</kbd> is pressed
 - additional hotkeys:
   <!-- spell-checker: ignore islike ookmark ullscreen -->
+  <!-- shortcuts-table -->
   | action                    | default hotkey                       |
   | :------------------------ | :----------------------------------- |
   | put/remove dislike        | <kbd>D</kbd> (<ins>D</ins>islike)    |
@@ -39,7 +46,13 @@ Minimum supported browser versions:
   | toggle fullscreen mode    | <kbd>F</kbd> (<ins>F</ins>ullscreen) |
   | copy link to coub         | —                                    |
 
-If some functionality doesn't work (especially if the extension has just been installed/updated), try refreshing the page - some of the functionality works by injecting into Coub's code and requires patches to be applied when the page loads.
+<!-- features end -->
+
+<!-- reload-warn start -->
+
+After installing the extension (and sometimes updating it) you need to refresh [Coub.com](https://coub.com) pages - some of the functionality works by injecting into Coub's code and requires patches to be applied when the page loads.
+
+<!-- reload-warn end -->
 
 <!-- dprint-ignore -->
 > [!TIP]
@@ -48,9 +61,8 @@ If some functionality doesn't work (especially if the extension has just been in
 >
 >   so, if you open the `Anime` community and dislike the first coub, it will not be hidden immediately, but only when you re-request that page of the list (for example, after refreshing the page or after going to another page and returning to the community)
 >
-> - in some situations may generate states that the logic of [Coub.com] itself does not take into account (example - hikiko4ern/coub-addons#5)
+> - in some situations may generate states that the logic of [Coub.com](https://coub.com) itself does not take into account (example - hikiko4ern/coub-addons#5)
 
 <!-- links -->
 
-[coub.com]: https://coub.com
 [latest-release]: https://github.com/hikiko4ern/coub-addons/releases/latest
