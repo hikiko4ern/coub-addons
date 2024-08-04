@@ -101,59 +101,69 @@ export default defineConfig({
 			);
 		},
 	},
-	vite: () => ({
-		plugins: [
-			ValidateEnv(),
-			nodePolyfills({
-				include: ['buffer'],
-				globals: {
-					Buffer: false,
-					global: false,
-					process: false,
-				},
-			}),
-			preact({ devToolsEnabled: false }),
-			sassDts(),
-			lezer(),
-			(() => {
-				const emptyFileName = '\0coub-addons__exclude';
-				const reactAriaIntlStringsRe = /\/@react-aria\/[^/]+\/dist\/intlStrings\./;
-				const reactAriaIntlModuleRe = /[a-z]{2,}-[a-z]{2,}\./i;
-				const reactAriaLocalesToKeepRe = /(ru-RU|en-US)/;
+	vite: () => {
+		// @ts-expect-error
+		// FIXME: wxt in #865 added some browsers' global, and they break `vite-plugin-node-polyfills`,
+		// making it think it's running in the browser (see https://github.com/wxt-dev/wxt/pull/865)
+		// biome-ignore lint/performance/noDelete:
+		delete globalThis.document;
 
-				return {
-					enforce: 'pre',
-					resolveId(source, importer) {
-						let normalizedSource: string;
-
-						if (
-							source === emptyFileName ||
-							(importer &&
-								reactAriaIntlStringsRe.test(normalizePath(importer)) &&
-								reactAriaIntlModuleRe.test((normalizedSource = normalizePath(source))) &&
-								!reactAriaLocalesToKeepRe.test(normalizedSource))
-						) {
-							return emptyFileName;
-						}
-
-						return null;
+		return {
+			plugins: [
+				ValidateEnv(),
+				nodePolyfills({
+					include: ['buffer'],
+					globals: {
+						Buffer: false,
+						global: false,
+						process: false,
 					},
-					load(id) {
-						return id === emptyFileName ? 'export default {}' : null;
+				}),
+				preact({ devToolsEnabled: false }),
+				sassDts(),
+				lezer(),
+				(() => {
+					const emptyFileName = '\0coub-addons__exclude';
+					const reactAriaIntlStringsRe = /\/@react-aria\/[^/]+\/dist\/intlStrings\./;
+					const reactAriaIntlModuleRe = /[a-z]{2,}-[a-z]{2,}\./i;
+					const reactAriaLocalesToKeepRe = /(ru-RU|en-US)/;
+
+					return {
+						enforce: 'pre',
+						resolveId(source, importer) {
+							let normalizedSource: string;
+
+							if (
+								source === emptyFileName ||
+								(importer &&
+									reactAriaIntlStringsRe.test(normalizePath(importer)) &&
+									reactAriaIntlModuleRe.test((normalizedSource = normalizePath(source))) &&
+									!reactAriaLocalesToKeepRe.test(normalizedSource))
+							) {
+								return emptyFileName;
+							}
+
+							return null;
+						},
+						load(id) {
+							return id === emptyFileName ? 'export default {}' : null;
+						},
+					} as const;
+				})(),
+			],
+
+			css: {
+				lightningcss: {
+					targets: {
+						firefox: 101 << 16,
 					},
-				} as const;
-			})(),
-		],
-		css: {
-			lightningcss: {
-				targets: {
-					firefox: 101 << 16,
 				},
 			},
-		},
-		build: {
-			target: ['es2022', 'firefox101'],
-			cssMinify: 'lightningcss',
-		},
-	}),
+
+			build: {
+				target: ['es2022', 'firefox101'],
+				cssMinify: 'lightningcss',
+			},
+		};
+	},
 });
