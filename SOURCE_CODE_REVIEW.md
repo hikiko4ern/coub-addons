@@ -1,6 +1,6 @@
 # Firefox Source Code Review
 
-The extension requires globally installed `grep` and [Node.js][node.js] with [Corepack][corepack] enabled. The version of Node.js used is specified in [`.nvmrc`](./.nvmrc).
+The extension requires globally installed [Node.js][node.js] with [Corepack][corepack] enabled. The version of Node.js used is specified in [`.nvmrc`](./.nvmrc).
 
 To build the extension or zip it:
 
