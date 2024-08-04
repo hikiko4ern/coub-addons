@@ -1,0 +1,32 @@
+diff --git a/dist/core/zip.mjs b/dist/core/zip.mjs
+index 2bf68e8e38a179f261536a204d82dc1be3745d02..723d5217cefa7f59791207df3c571d256b20233e 100644
+--- a/dist/core/zip.mjs
++++ b/dist/core/zip.mjs
+@@ -57,14 +57,19 @@ export async function zip(config) {
+ }
+ async function zipDir(directory, outputPath, options) {
+   const archive = new JSZip();
+-  const files = (await glob("**/*", {
+-    cwd: directory,
+-    // Ignore node_modules, otherwise this glob step takes forever
+-    ignore: ["**/node_modules"],
+-    onlyFiles: true
+-    // TODO: Fix #738
+-    // dot: true,
+-  })).filter((relativePath) => {
++  const files = (await glob(
++    [
++      "**/*",
++      /* workaround for https://github.com/wxt-dev/wxt/issues/604 */
++      ...options?.include || []
++    ],
++    {
++      cwd: directory,
++      // Ignore node_modules, otherwise this glob step takes forever
++      ignore: ["**/node_modules"],
++      onlyFiles: true
++    }
++  )).filter((relativePath) => {
+     return options?.include?.some((pattern) => minimatch(relativePath, pattern)) || !options?.exclude?.some((pattern) => minimatch(relativePath, pattern));
+   });
+   const filesToZip = [
