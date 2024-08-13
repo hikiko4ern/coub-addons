@@ -6,9 +6,8 @@ import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
 import { normalizePath } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import sassDts from 'vite-plugin-sass-dts';
-import { defineConfig } from 'wxt';
+import { type WxtViteConfig, defineConfig } from 'wxt';
 
 import { COMMENTS_GRAPHQL_HOST } from './src/permissions/constants';
 
@@ -101,24 +100,23 @@ export default defineConfig({
 			);
 		},
 	},
-	vite: () => {
-		// @ts-expect-error
-		// FIXME: wxt in #865 added some browsers' global, and they break `vite-plugin-node-polyfills`,
-		// making it think it's running in the browser (see https://github.com/wxt-dev/wxt/pull/865)
-		// biome-ignore lint/performance/noDelete:
-		delete globalThis.document;
+	vite: () =>
+		({
+			build: {
+				target: ['es2022', 'firefox101'],
+				cssMinify: 'lightningcss',
+			},
 
-		return {
+			css: {
+				lightningcss: {
+					targets: {
+						firefox: 101 << 16,
+					},
+				},
+			},
+
 			plugins: [
 				ValidateEnv(),
-				nodePolyfills({
-					include: ['buffer'],
-					globals: {
-						Buffer: false,
-						global: false,
-						process: false,
-					},
-				}),
 				preact({ devToolsEnabled: false }),
 				sassDts(),
 				lezer(),
@@ -151,19 +149,5 @@ export default defineConfig({
 					} as const;
 				})(),
 			],
-
-			css: {
-				lightningcss: {
-					targets: {
-						firefox: 101 << 16,
-					},
-				},
-			},
-
-			build: {
-				target: ['es2022', 'firefox101'],
-				cssMinify: 'lightningcss',
-			},
-		};
-	},
+		}) satisfies WxtViteConfig,
 });

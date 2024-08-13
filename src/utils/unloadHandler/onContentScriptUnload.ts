@@ -1,8 +1,8 @@
 import { nanoid } from 'nanoid';
-import serializeJavascript from 'serialize-javascript';
 
 import { EventDispatcher } from '@/events';
 import { Logger } from '@/utils/logger';
+import { type SerializableArg, serializeArgs } from './serializeArgs';
 
 interface UnloadScript extends HTMLScriptElement {
 	readonly dataset: { type: string; unloadClass: string };
@@ -16,7 +16,7 @@ const logger = Logger.create('onContentScriptUnload', { devUniqueId: ID });
 //
 // in other browsers we should rely on `port.onDisconnect`
 // (in Firefox it doesn't work because of https://bugzilla.mozilla.org/show_bug.cgi?id=1223425)
-export const onContentScriptUnload = async <Args extends unknown[] = never[]>(
+export const onContentScriptUnload = async <Args extends SerializableArg[] = never[]>(
 	type: string,
 	handler: (...args: Args) => void,
 	...args: Args
@@ -82,9 +82,11 @@ function unloadScript() {
 	(document.body || document.documentElement).appendChild(span);
 }
 
-const stringifyFn = <Args extends unknown[]>(fn: (...args: Args) => unknown, args?: Args) => {
-	const strArgs =
-		Array.isArray(args) && args.length > 1 ? serializeJavascript(args).slice(1, -1) : '';
+const stringifyFn = <Args extends SerializableArg[]>(
+	fn: (...args: Args) => unknown,
+	args?: Args,
+) => {
+	const strArgs = Array.isArray(args) && args.length > 0 ? serializeArgs(args) : '';
 
 	return `(${fn})(${strArgs})`;
 };
