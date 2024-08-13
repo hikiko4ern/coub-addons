@@ -16,12 +16,12 @@ crate-type = ["cdylib", "rlib"]
 console_error_panic_hook = { version = "0.1.7", optional = true }
 icu_segmenter = "1.5.0"
 itertools = { version = "0.13.0", default-features = false }
-js-sys = "0.3.69"
-serde = { version = "1.0.204", features = ["derive"] }
+js-sys = "0.3.70"
+serde = { version = "1.0.207", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 tsify = { version = "0.4.5", default-features = false, features = ["js"] }
-wasm-bindgen = "0.2.92"
-web-sys = { version = "0.3.69", optional = true }
+wasm-bindgen = "0.2.93"
+web-sys = { version = "0.3.70", optional = true }
 
 [features]
 default = ["console_panic_hook"]
