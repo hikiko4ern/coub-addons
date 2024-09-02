@@ -72,8 +72,7 @@
 		"@preact/signals": "^1.3.0",
 		"@react-types/shared": "^3.23.1",
 		"@types/jquery": "^1.10.45",
-		"@types/node": "^20.14.15",
-		"@types/serialize-javascript": "^5.0.4",
+		"@types/node": "^20.16.3",
 		"@uiw/codemirror-theme-aura": "^4.23.0",
 		"base64-arraybuffer": "^1.0.2",
 		"clsx": "^2.1.1",
@@ -148,10 +147,11 @@
 	"pnpm": {
 		"overrides": {
 			"@nextui-org/react-rsc-utils": "packages/@nextui-org/react-rsc-utils",
+			"@types/node": "^20.16.3",
 			"vite": "^5.4.0"
 		}
 	},
-	"packageManager": "pnpm@9.7.0",
+	"packageManager": "pnpm@9.9.0+sha512.60c18acd138bff695d339be6ad13f7e936eea6745660d4cc4a776d5247c540d0edee1a563695c183a66eb917ef88f2b4feb1fc25f32a7adcadc7aaf3438e99c1",
 	"repository": "https://github.com/hikiko4ern/coub-addons.git",
 	"author": "hikiko4ern",
 	"license": "Unlicense",

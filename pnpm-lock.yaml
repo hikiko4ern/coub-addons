@@ -6,6 +6,7 @@ settings:
 
 overrides:
   '@nextui-org/react-rsc-utils': packages/@nextui-org/react-rsc-utils
+  '@types/node': ^20.16.3
   vite: ^5.4.0
 
 importers:
@@ -59,7 +60,7 @@ importers:
         version: 2.1.5(react@18.3.1)
       '@julr/vite-plugin-validate-env':
         specifier: ^1.1.1
-        version: 1.1.1(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8))(zod@3.23.8)
+        version: 1.1.1(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8))(zod@3.23.8)
       '@lezer/generator':
         specifier: ^1.7.1
         version: 1.7.1
@@ -125,7 +126,7 @@ importers:
         version: 2.0.30(@nextui-org/system@2.0.15(@nextui-org/theme@2.1.18(tailwindcss@3.4.9))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.9)))(@nextui-org/theme@2.1.18(tailwindcss@3.4.9))(framer-motion@11.3.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tailwind-variants@0.2.1(tailwindcss@3.4.9))
       '@preact/preset-vite':
         specifier: ^2.9.0
-        version: 2.9.0(@babel/core@7.24.7)(preact@10.23.2)(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8))
+        version: 2.9.0(@babel/core@7.24.7)(preact@10.23.2)(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8))
       '@preact/signals':
         specifier: ^1.3.0
         version: 1.3.0(preact@10.23.2)
@@ -136,11 +137,8 @@ importers:
         specifier: ^1.10.45
         version: 1.10.45
       '@types/node':
-        specifier: ^20.14.15
-        version: 20.14.15
-      '@types/serialize-javascript':
-        specifier: ^5.0.4
-        version: 5.0.4
+        specifier: ^20.16.3
+        version: 20.16.3
       '@uiw/codemirror-theme-aura':
         specifier: ^4.23.0
         version: 4.23.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)
@@ -224,16 +222,16 @@ importers:
         version: 10.0.2(react@18.3.1)
       vite:
         specifier: ^5.4.0
-        version: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+        version: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
       vite-plugin-sass-dts:
         specifier: ^1.3.25
-        version: 1.3.25(postcss@8.4.41)(prettier@3.3.3)(sass@1.77.8)(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8))
+        version: 1.3.25(postcss@8.4.41)(prettier@3.3.3)(sass@1.77.8)(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8))
       wouter-preact:
         specifier: ^3.3.1
         version: 3.3.1(preact@10.23.2)
       wxt:
         specifier: ^0.19.5
-        version: 0.19.5(@types/node@20.14.15)(lightningcss@1.26.0)(rollup@4.18.1)(sass@1.77.8)
+        version: 0.19.5(@types/node@20.16.3)(lightningcss@1.26.0)(rollup@4.18.1)(sass@1.77.8)
     devDependencies:
       '@biomejs/biome':
         specifier: ^1.8.3
@@ -252,7 +250,7 @@ importers:
         version: 5.0.3(graphql@16.9.0)
       '@graphql-codegen/cli':
         specifier: ^5.0.2
-        version: 5.0.2(@types/node@20.14.15)(graphql@16.9.0)(typescript@5.5.4)
+        version: 5.0.2(@types/node@20.16.3)(graphql@16.9.0)(typescript@5.5.4)
       '@graphql-codegen/typescript':
         specifier: ^4.0.9
         version: 4.0.9(graphql@16.9.0)
@@ -288,7 +286,7 @@ importers:
         version: 16.9.0
       graphql-config:
         specifier: ^5.1.0
-        version: 5.1.0(@types/node@20.14.15)(graphql@16.9.0)(typescript@5.5.4)
+        version: 5.1.0(@types/node@20.16.3)(graphql@16.9.0)(typescript@5.5.4)
       hast-util-to-html:
         specifier: ^9.0.1
         version: 9.0.1
@@ -345,7 +343,7 @@ importers:
         version: 5.0.0
       vitest:
         specifier: ^2.0.5
-        version: 2.0.5(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+        version: 2.0.5(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
 
   packages/publish-extension:
     dependencies:
@@ -386,7 +384,7 @@ importers:
         version: 1.1.2
       vitest:
         specifier: ^2.0.5
-        version: 2.0.5(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+        version: 2.0.5(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
 
   packages/vite-plugin-arraybuffer:
     dependencies:
@@ -395,7 +393,7 @@ importers:
         version: 1.0.2
       vite:
         specifier: ^5.4.0
-        version: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+        version: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
 
 packages:
 
@@ -2468,11 +2466,8 @@ packages:
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
 
-  '@types/node@20.14.15':
-    resolution: {integrity: sha512-Fz1xDMCF/B00/tYSVMlmK7hVeLh7jE5f3B7X1/hmV0MJBwE27KlS7EvD/Yp+z1lm8mVhwV5w+n8jOZG8AfTlKw==}
-
-  '@types/serialize-javascript@5.0.4':
-    resolution: {integrity: sha512-Z2R7UKFuNWCP8eoa2o9e5rkD3hmWxx/1L0CYz0k2BZzGh0PhEVMp9kfGiqEml/0IglwNERXZ2hwNzIrSz/KHTA==}
+  '@types/node@20.16.3':
+    resolution: {integrity: sha512-/wdGiWRkMOm53gAsSyFMXFZHbVg7C6CbkrzHNpaHoYfsUWPg7m6ZRKtvQjgvQ9i8WT540a3ydRlRQbxjY30XxQ==}
 
   '@types/streamsearch@1.1.2':
     resolution: {integrity: sha512-DenNvRzdJecQukQbZ1xTA8ptsBIGSSZ4LIlU2X0/cOrSXhYYj3Luv3WbA9FDHr6qSLSEs75/aNzOLAh6sOOHzw==}
@@ -4492,7 +4487,7 @@ packages:
     resolution: {integrity: sha512-2BNGOimxEz5hmjUG2FwoxCt5HN7BXdaWyFqEwxPTrJzVdABtrL4TiHTcsWSFAxPQ/tOnEaQEJh3qWq71QRMY+w==}
     engines: {node: '>=13'}
     peerDependencies:
-      '@types/node': '>=13'
+      '@types/node': ^20.16.3
     peerDependenciesMeta:
       '@types/node':
         optional: true
@@ -5565,8 +5560,8 @@ packages:
   tailwind-merge@1.14.0:
     resolution: {integrity: sha512-3mFKyCo/MBcgyOTlrY8T7odzZFx+w+qKSMAmdFzRvqBfLlSigU6TZnlFHK0lkMwj9Bj8OYU+9yW9lmGuS0QEnQ==}
 
-  tailwind-merge@2.4.0:
-    resolution: {integrity: sha512-49AwoOQNKdqKPd9CViyH5wJoSKsCDjUlzL8DxuGp3P1FsGY36NJDAa18jLZcaHAUUuTj+JB8IAo8zWgBNvBF7A==}
+  tailwind-merge@2.5.2:
+    resolution: {integrity: sha512-kjEBm+pvD+6eAwzJL2Bi+02/9LFLal1Gs61+QB7HvTfQQ0aXwC5LGT8PEt1gS0CWKktKe6ysPTAy3cBC5MeiIg==}
 
   tailwind-variants@0.1.20:
     resolution: {integrity: sha512-AMh7x313t/V+eTySKB0Dal08RHY7ggYK0MSn/ad8wKWOrDUIzyiWNayRUm2PIJ4VRkvRnfNuyRuKbLV3EN+ewQ==}
@@ -5726,8 +5721,8 @@ packages:
   unconfig@0.3.13:
     resolution: {integrity: sha512-N9Ph5NC4+sqtcOjPfHrRcHekBCadCXWTBzp2VYYbySOHW0PfD9XLCeXshTXjkPYwLrBr9AtSeU0CZmkYECJhng==}
 
-  undici-types@5.26.5:
-    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
   unimport@3.9.1:
     resolution: {integrity: sha512-4gtacoNH6YPx2Aa5Xfyrf8pU2RdXjWUACb/eF7bH1AcZtqs+6ijbNB0M3BPENbtVjnCcg8tw9UJ1jQGbCzKA6g==}
@@ -5888,7 +5883,7 @@ packages:
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
     peerDependencies:
-      '@types/node': ^18.0.0 || >=20.0.0
+      '@types/node': ^20.16.3
       less: '*'
       lightningcss: ^1.21.0
       sass: '*'
@@ -5920,7 +5915,7 @@ packages:
     hasBin: true
     peerDependencies:
       '@edge-runtime/vm': '*'
-      '@types/node': ^18.0.0 || >=20.0.0
+      '@types/node': ^20.16.3
       '@vitest/browser': 2.0.5
       '@vitest/ui': 2.0.5
       happy-dom: '*'
@@ -7062,7 +7057,7 @@ snapshots:
       graphql: 16.9.0
       tslib: 2.6.3
 
-  '@graphql-codegen/cli@5.0.2(@types/node@20.14.15)(graphql@16.9.0)(typescript@5.5.4)':
+  '@graphql-codegen/cli@5.0.2(@types/node@20.16.3)(graphql@16.9.0)(typescript@5.5.4)':
     dependencies:
       '@babel/generator': 7.24.7
       '@babel/template': 7.24.7
@@ -7073,12 +7068,12 @@ snapshots:
       '@graphql-tools/apollo-engine-loader': 8.0.1(graphql@16.9.0)
       '@graphql-tools/code-file-loader': 8.1.2(graphql@16.9.0)
       '@graphql-tools/git-loader': 8.0.6(graphql@16.9.0)
-      '@graphql-tools/github-loader': 8.0.1(@types/node@20.14.15)(graphql@16.9.0)
+      '@graphql-tools/github-loader': 8.0.1(@types/node@20.16.3)(graphql@16.9.0)
       '@graphql-tools/graphql-file-loader': 8.0.1(graphql@16.9.0)
       '@graphql-tools/json-file-loader': 8.0.1(graphql@16.9.0)
       '@graphql-tools/load': 8.0.2(graphql@16.9.0)
-      '@graphql-tools/prisma-loader': 8.0.4(@types/node@20.14.15)(graphql@16.9.0)
-      '@graphql-tools/url-loader': 8.0.2(@types/node@20.14.15)(graphql@16.9.0)
+      '@graphql-tools/prisma-loader': 8.0.4(@types/node@20.16.3)(graphql@16.9.0)
+      '@graphql-tools/url-loader': 8.0.2(@types/node@20.16.3)(graphql@16.9.0)
       '@graphql-tools/utils': 10.3.1(graphql@16.9.0)
       '@whatwg-node/fetch': 0.8.8
       chalk: 4.1.2
@@ -7086,7 +7081,7 @@ snapshots:
       debounce: 1.2.1
       detect-indent: 6.1.0
       graphql: 16.9.0
-      graphql-config: 5.1.0(@types/node@20.14.15)(graphql@16.9.0)(typescript@5.5.4)
+      graphql-config: 5.1.0(@types/node@20.16.3)(graphql@16.9.0)(typescript@5.5.4)
       inquirer: 8.2.6
       is-glob: 4.0.3
       jiti: 1.21.6
@@ -7278,14 +7273,14 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@graphql-tools/executor-http@1.1.2(@types/node@20.14.15)(graphql@16.9.0)':
+  '@graphql-tools/executor-http@1.1.2(@types/node@20.16.3)(graphql@16.9.0)':
     dependencies:
       '@graphql-tools/utils': 10.3.1(graphql@16.9.0)
       '@repeaterjs/repeater': 3.0.6
       '@whatwg-node/fetch': 0.9.18
       extract-files: 11.0.0
       graphql: 16.9.0
-      meros: 1.3.0(@types/node@20.14.15)
+      meros: 1.3.0(@types/node@20.16.3)
       tslib: 2.6.3
       value-or-promise: 1.0.12
     transitivePeerDependencies:
@@ -7324,10 +7319,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@graphql-tools/github-loader@8.0.1(@types/node@20.14.15)(graphql@16.9.0)':
+  '@graphql-tools/github-loader@8.0.1(@types/node@20.16.3)(graphql@16.9.0)':
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
-      '@graphql-tools/executor-http': 1.1.2(@types/node@20.14.15)(graphql@16.9.0)
+      '@graphql-tools/executor-http': 1.1.2(@types/node@20.16.3)(graphql@16.9.0)
       '@graphql-tools/graphql-tag-pluck': 8.3.1(graphql@16.9.0)
       '@graphql-tools/utils': 10.3.1(graphql@16.9.0)
       '@whatwg-node/fetch': 0.9.18
@@ -7395,9 +7390,9 @@ snapshots:
       graphql: 16.9.0
       tslib: 2.6.3
 
-  '@graphql-tools/prisma-loader@8.0.4(@types/node@20.14.15)(graphql@16.9.0)':
+  '@graphql-tools/prisma-loader@8.0.4(@types/node@20.16.3)(graphql@16.9.0)':
     dependencies:
-      '@graphql-tools/url-loader': 8.0.2(@types/node@20.14.15)(graphql@16.9.0)
+      '@graphql-tools/url-loader': 8.0.2(@types/node@20.16.3)(graphql@16.9.0)
       '@graphql-tools/utils': 10.3.1(graphql@16.9.0)
       '@types/js-yaml': 4.0.9
       '@whatwg-node/fetch': 0.9.18
@@ -7439,12 +7434,12 @@ snapshots:
       tslib: 2.6.3
       value-or-promise: 1.0.12
 
-  '@graphql-tools/url-loader@8.0.2(@types/node@20.14.15)(graphql@16.9.0)':
+  '@graphql-tools/url-loader@8.0.2(@types/node@20.16.3)(graphql@16.9.0)':
     dependencies:
       '@ardatan/sync-fetch': 0.0.1
       '@graphql-tools/delegate': 10.0.13(graphql@16.9.0)
       '@graphql-tools/executor-graphql-ws': 1.2.0(graphql@16.9.0)
-      '@graphql-tools/executor-http': 1.1.2(@types/node@20.14.15)(graphql@16.9.0)
+      '@graphql-tools/executor-http': 1.1.2(@types/node@20.16.3)(graphql@16.9.0)
       '@graphql-tools/executor-legacy-ws': 1.1.0(graphql@16.9.0)
       '@graphql-tools/utils': 10.3.1(graphql@16.9.0)
       '@graphql-tools/wrap': 10.0.5(graphql@16.9.0)
@@ -7529,12 +7524,12 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  '@julr/vite-plugin-validate-env@1.1.1(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8))(zod@3.23.8)':
+  '@julr/vite-plugin-validate-env@1.1.1(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8))(zod@3.23.8)':
     dependencies:
       '@poppinss/cliui': 6.4.1
       '@poppinss/validator-lite': 1.0.3
       unconfig: 0.3.13
-      vite: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+      vite: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
     optionalDependencies:
       zod: 3.23.8
 
@@ -8225,13 +8220,13 @@ snapshots:
     dependencies:
       validator: 13.12.0
 
-  '@preact/preset-vite@2.9.0(@babel/core@7.24.7)(preact@10.23.2)(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8))':
+  '@preact/preset-vite@2.9.0(@babel/core@7.24.7)(preact@10.23.2)(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8))':
     dependencies:
       '@babel/code-frame': 7.24.7
       '@babel/core': 7.24.7
       '@babel/plugin-transform-react-jsx': 7.24.7(@babel/core@7.24.7)
       '@babel/plugin-transform-react-jsx-development': 7.24.7(@babel/core@7.24.7)
-      '@prefresh/vite': 2.4.6(preact@10.23.2)(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8))
+      '@prefresh/vite': 2.4.6(preact@10.23.2)(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8))
       '@rollup/pluginutils': 4.2.1
       babel-plugin-transform-hook-names: 1.0.2(@babel/core@7.24.7)
       debug: 4.3.5
@@ -8241,7 +8236,7 @@ snapshots:
       resolve: 1.22.8
       source-map: 0.7.4
       stack-trace: 1.0.0-pre2
-      vite: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+      vite: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
     transitivePeerDependencies:
       - preact
       - supports-color
@@ -8261,7 +8256,7 @@ snapshots:
 
   '@prefresh/utils@1.2.0': {}
 
-  '@prefresh/vite@2.4.6(preact@10.23.2)(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8))':
+  '@prefresh/vite@2.4.6(preact@10.23.2)(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8))':
     dependencies:
       '@babel/core': 7.24.7
       '@prefresh/babel-plugin': 0.5.1
@@ -8269,7 +8264,7 @@ snapshots:
       '@prefresh/utils': 1.2.0
       '@rollup/pluginutils': 4.2.1
       preact: 10.23.2
-      vite: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+      vite: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
     transitivePeerDependencies:
       - supports-color
 
@@ -8821,7 +8816,7 @@ snapshots:
 
   '@types/jsonwebtoken@9.0.6':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
 
   '@types/mdast@4.0.4':
     dependencies:
@@ -8831,15 +8826,13 @@ snapshots:
 
   '@types/ms@0.7.34': {}
 
-  '@types/node@20.14.15':
+  '@types/node@20.16.3':
     dependencies:
-      undici-types: 5.26.5
-
-  '@types/serialize-javascript@5.0.4': {}
+      undici-types: 6.19.8
 
   '@types/streamsearch@1.1.2':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
 
   '@types/unist@3.0.2': {}
 
@@ -8847,11 +8840,11 @@ snapshots:
 
   '@types/ws@8.5.10':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
 
   '@types/yauzl@2.10.3':
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
     optional: true
 
   '@uiw/codemirror-theme-aura@4.23.0(@codemirror/language@6.10.2)(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)':
@@ -9304,7 +9297,7 @@ snapshots:
 
   chrome-launcher@1.1.0:
     dependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 2.0.1
@@ -10222,13 +10215,13 @@ snapshots:
 
   graceful-readlink@1.0.1: {}
 
-  graphql-config@5.1.0(@types/node@20.14.15)(graphql@16.9.0)(typescript@5.5.4):
+  graphql-config@5.1.0(@types/node@20.16.3)(graphql@16.9.0)(typescript@5.5.4):
     dependencies:
       '@graphql-tools/graphql-file-loader': 8.0.1(graphql@16.9.0)
       '@graphql-tools/json-file-loader': 8.0.1(graphql@16.9.0)
       '@graphql-tools/load': 8.0.2(graphql@16.9.0)
       '@graphql-tools/merge': 9.0.4(graphql@16.9.0)
-      '@graphql-tools/url-loader': 8.0.2(@types/node@20.14.15)(graphql@16.9.0)
+      '@graphql-tools/url-loader': 8.0.2(@types/node@20.16.3)(graphql@16.9.0)
       '@graphql-tools/utils': 10.3.1(graphql@16.9.0)
       cosmiconfig: 8.3.6(typescript@5.5.4)
       graphql: 16.9.0
@@ -11105,9 +11098,9 @@ snapshots:
 
   merge2@1.4.1: {}
 
-  meros@1.3.0(@types/node@20.14.15):
+  meros@1.3.0(@types/node@20.16.3):
     optionalDependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
 
   micromark-core-commonmark@2.0.1:
     dependencies:
@@ -12284,7 +12277,7 @@ snapshots:
 
   tailwind-merge@1.14.0: {}
 
-  tailwind-merge@2.4.0: {}
+  tailwind-merge@2.5.2: {}
 
   tailwind-variants@0.1.20(tailwindcss@3.4.9):
     dependencies:
@@ -12293,7 +12286,7 @@ snapshots:
 
   tailwind-variants@0.2.1(tailwindcss@3.4.9):
     dependencies:
-      tailwind-merge: 2.4.0
+      tailwind-merge: 2.5.2
       tailwindcss: 3.4.9
 
   tailwindcss@3.4.9:
@@ -12436,7 +12429,7 @@ snapshots:
       defu: 6.1.4
       jiti: 1.21.6
 
-  undici-types@5.26.5: {}
+  undici-types@6.19.8: {}
 
   unimport@3.9.1(rollup@4.18.1):
     dependencies:
@@ -12593,13 +12586,13 @@ snapshots:
       unist-util-stringify-position: 4.0.0
       vfile-message: 4.0.2
 
-  vite-node@2.0.5(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8):
+  vite-node@2.0.5(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8):
     dependencies:
       cac: 6.7.14
       debug: 4.3.5
       pathe: 1.1.2
       tinyrainbow: 1.2.0
-      vite: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+      vite: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -12611,26 +12604,26 @@ snapshots:
       - supports-color
       - terser
 
-  vite-plugin-sass-dts@1.3.25(postcss@8.4.41)(prettier@3.3.3)(sass@1.77.8)(vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)):
+  vite-plugin-sass-dts@1.3.25(postcss@8.4.41)(prettier@3.3.3)(sass@1.77.8)(vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)):
     dependencies:
       postcss: 8.4.41
       postcss-js: 4.0.1(postcss@8.4.41)
       prettier: 3.3.3
       sass: 1.77.8
-      vite: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+      vite: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
 
-  vite@5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8):
+  vite@5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8):
     dependencies:
       esbuild: 0.21.5
       postcss: 8.4.41
       rollup: 4.18.1
     optionalDependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
       fsevents: 2.3.3
       lightningcss: 1.26.0
       sass: 1.77.8
 
-  vitest@2.0.5(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8):
+  vitest@2.0.5(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8):
     dependencies:
       '@ampproject/remapping': 2.3.0
       '@vitest/expect': 2.0.5
@@ -12648,11 +12641,11 @@ snapshots:
       tinybench: 2.8.0
       tinypool: 1.0.0
       tinyrainbow: 1.2.0
-      vite: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
-      vite-node: 2.0.5(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+      vite: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
+      vite-node: 2.0.5(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
       why-is-node-running: 2.3.0
     optionalDependencies:
-      '@types/node': 20.14.15
+      '@types/node': 20.16.3
     transitivePeerDependencies:
       - less
       - lightningcss
@@ -12801,7 +12794,7 @@ snapshots:
 
   ws@8.18.0: {}
 
-  wxt@0.19.5(@types/node@20.14.15)(lightningcss@1.26.0)(rollup@4.18.1)(sass@1.77.8):
+  wxt@0.19.5(@types/node@20.16.3)(lightningcss@1.26.0)(rollup@4.18.1)(sass@1.77.8):
     dependencies:
       '@aklinker1/rollup-plugin-visualizer': 5.12.0(rollup@4.18.1)
       '@types/webextension-polyfill': 0.10.7
@@ -12841,8 +12834,8 @@ snapshots:
       prompts: 2.4.2
       publish-browser-extension: 2.1.3
       unimport: 3.9.1(rollup@4.18.1)
-      vite: 5.4.0(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
-      vite-node: 2.0.5(@types/node@20.14.15)(lightningcss@1.26.0)(sass@1.77.8)
+      vite: 5.4.0(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
+      vite-node: 2.0.5(@types/node@20.16.3)(lightningcss@1.26.0)(sass@1.77.8)
       web-ext-run: 0.2.1
       webextension-polyfill: 0.12.0
     transitivePeerDependencies:
