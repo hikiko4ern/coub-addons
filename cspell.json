@@ -143,7 +143,6 @@
 		"/cspell.json",
 		"/pnpm-lock.yaml",
 		"/src/gql",
-		"/patches",
-		"/packages/@nextui-org/react-rsc-utils"
+		"/patches"
 	]
 }

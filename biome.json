@@ -1,12 +1,11 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.8.3/schema.json",
+	"$schema": "https://biomejs.dev/schemas/1.9.3/schema.json",
 	"files": {
 		"ignore": [
 			"**/*.json",
 			"**/*.scss.d.ts",
 			"**/src/gql/**",
 			"**/docs/release-notes/**",
-			"**/packages/@nextui-org/react-rsc-utils/**",
 			"**/packages/*/lib/**"
 		]
 	},
@@ -152,7 +151,6 @@
 				"useNamespaceKeyword": "warn"
 			},
 			"nursery": {
-				"noDuplicateJsonKeys": "warn",
 				"useSortedClasses": "warn"
 			}
 		}

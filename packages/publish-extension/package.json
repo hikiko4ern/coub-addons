@@ -6,12 +6,12 @@
 	"main": "src/index.ts",
 	"dependencies": {
 		"jsonwebtoken": "^9.0.2",
-		"listr2": "^8.2.4",
-		"picocolors": "^1.0.1",
+		"listr2": "^8.2.5",
+		"picocolors": "^1.1.0",
 		"superstruct": "^2.0.2"
 	},
 	"devDependencies": {
-		"@types/jsonwebtoken": "^9.0.6"
+		"@types/jsonwebtoken": "^9.0.7"
 	},
 	"repository": {
 		"type": "git",

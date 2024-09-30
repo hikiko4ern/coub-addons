@@ -14,7 +14,6 @@
 	"exclude": [
 		"./vitest.config.ts.*.mjs",
 		"./.output",
-		"./packages/@nextui-org/react-rsc-utils",
 		"./packages/*/lib"
 	]
 }

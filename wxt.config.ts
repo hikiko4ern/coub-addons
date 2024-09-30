@@ -113,6 +113,11 @@ export default defineConfig({
 						firefox: 101 << 16,
 					},
 				},
+				preprocessorOptions: {
+					scss: {
+						api: 'modern-compiler',
+					},
+				},
 			},
 
 			plugins: [

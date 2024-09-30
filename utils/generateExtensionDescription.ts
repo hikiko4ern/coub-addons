@@ -3,7 +3,7 @@
 import type { Nodes as HastNodes } from 'hast';
 import { toHtml } from 'hast-util-to-html';
 import { h } from 'hastscript';
-import type { List, ListItem, Table } from 'mdast';
+import type { List, ListItem } from 'mdast';
 import { commentMarker } from 'mdast-comment-marker';
 import {
 	type Options as MdastUtilFromMarkdownOptions,
@@ -45,9 +45,16 @@ export function generateExtensionDescription(content: string) {
 
 				while (next.done === false) {
 					const [, value] = next.value;
+					const marker = commentMarker(value);
 
-					if (commentMarker(value)?.name === 'shortcuts-table') {
-						const [i, table]: [number, Table] = (next = it.next()).value;
+					if (marker?.name === 'shortcuts-table') {
+						next = it.next();
+
+						if (next.done || next.value[1].type !== 'table') {
+							throw new Error(`expected table after ${JSON.stringify(marker)} marker`);
+						}
+
+						const [i, table] = next.value;
 
 						const shortcuts: List = {
 							type: 'list',
