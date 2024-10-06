@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.26] - 2024-10-06
+
+### Features
+
+- **(settings)** allow importing backups with merging with the current state
+
 ## [0.1.25] - 2024-08-01
 
 ### Bug Fixes
@@ -23,10 +29,6 @@
 - include only used `react-aria` locales
 - remove an unused attempt counter from the `ErrorBoundary`
 
-### Refactor
-
-- deduplicate and asynchronously load `segmenter-utils` WASM
-
 ## [0.1.23] - 2024-07-22
 
 ### Features
@@ -43,10 +45,6 @@
 ### Features
 
 - **(media-session)** implement basic integration with Media Session API ([#9](https://github.com/hikiko4ern/coub-addons/issues/9))
-
-### Miscellaneous Tasks
-
-- **(build,segmenter-utils)** simplify reproducible builds when building from scratch
 
 ### Revert
 
@@ -116,10 +114,6 @@
 
 - **(blocklist)** implement hiding comments from blocked channels
 
-### Refactor
-
-- store hotkey modifiers as a number instead of an array
-
 ## [0.1.14] - 2024-05-06
 
 ### Bug Fixes
@@ -174,10 +168,6 @@
 ### Miscellaneous Tasks
 
 - **(settings)** change the statistics icon from pie to bars
-
-### Refactor
-
-- import auto-imported modules
 
 ## [0.1.9] - 2024-04-06
 
