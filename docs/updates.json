@@ -11,6 +11,11 @@
 					"version": "0.1.25",
 					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.25/coub-addons-0.1.25-firefox.xpi",
 					"update_info_url": "https://hikiko4ern.github.io/coub-addons/release-notes/0.1.25.html"
+				},
+				{
+					"version": "0.1.26",
+					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.26/coub-addons-0.1.26-firefox.xpi",
+					"update_info_url": "https://hikiko4ern.github.io/coub-addons/release-notes/0.1.26.html"
 				}
 			]
 		}
