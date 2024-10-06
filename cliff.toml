@@ -55,15 +55,14 @@ commit_parsers = [
 	{ sha = "da3317643bfd416a13f516458f052a5fd10da8e3", skip = true },
 
 	# groups
-	{ message = "chore\\((build|changelog|dev|release|utils|internal)\\)", skip = true },
+	{ message = "chore\\((build|changelog|dev|deps|release|utils|internal)(\\)|,)", skip = true },
 	{ message = "^fix", group = "<!-- 1 -->Bug Fixes" },
 	{ message = "^feat", group = "<!-- 2 -->Features" },
-	{ message = "^docs", skip = true },
+	{ message = "^docs", group = "Documentation", skip = true },
 	{ message = "^perf", group = "Performance" },
-	{ message = "^refactor", group = "Refactor" },
+	{ message = "^refactor", group = "Refactor", skip = true },
 	{ message = "^style", group = "Styling" },
 	{ message = "^test", group = "Testing" },
-	{ message = "^chore\\(deps.*\\)", skip = true },
 	{ message = "^chore", group = "Miscellaneous Tasks" },
 	{ body = ".*security", group = "<!-- 0 -->Security" },
 ]
