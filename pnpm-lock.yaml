@@ -39,6 +39,9 @@ importers:
       '@coub-addons/vite-plugin-arraybuffer':
         specifier: workspace:^
         version: link:packages/vite-plugin-arraybuffer
+      '@coub-addons/wxt-svg-icon':
+        specifier: workspace:^
+        version: link:packages/wxt-svg-icon
       '@fluent/bundle':
         specifier: ^0.18.0
         version: 0.18.0
@@ -393,6 +396,28 @@ importers:
       vite:
         specifier: ^5.4.8
         version: 5.4.8(@types/node@20.16.10)(lightningcss@1.27.0)(sass-embedded@1.79.4)(sass@1.79.4)
+
+  packages/wxt-svg-icon:
+    dependencies:
+      unist-util-visit:
+        specifier: ^5.0.0
+        version: 5.0.0
+      wxt:
+        specifier: ^0.19
+        version: 0.19.11(@types/node@20.16.10)(lightningcss@1.27.0)(rollup@4.22.5)(sass-embedded@1.79.4)(sass@1.79.4)(webpack-sources@3.2.3)
+      xast-util-from-xml:
+        specifier: ^4.0.0
+        version: 4.0.0
+      xast-util-to-xml:
+        specifier: ^4.0.0
+        version: 4.0.0
+    devDependencies:
+      '@types/node':
+        specifier: ^20.16.10
+        version: 20.16.10
+      '@types/xast':
+        specifier: ^2.0.4
+        version: 2.0.4
 
 packages:
 
@@ -2327,6 +2352,10 @@ packages:
   '@repeaterjs/repeater@3.0.6':
     resolution: {integrity: sha512-Javneu5lsuhwNCryN+pXH93VPQ8g0dBX7wItHFgYiwQmzE1sVdg5tWHiOgHywzL2W21XQopa7IwIEnNbmeUJYA==}
 
+  '@rgrove/parse-xml@4.1.0':
+    resolution: {integrity: sha512-pBiltENdy8SfI0AeR1e5TRpS9/9Gl0eiOEt6ful2jQfzsgvZYWqsKiBWaOCLdocQuk0wS7KOHI37n0C1pnKqTw==}
+    engines: {node: '>=14.0.0'}
+
   '@rollup/pluginutils@4.2.1':
     resolution: {integrity: sha512-iKnFXr7NkdZAIHiIWE+BX5ULi/ucVFYWD6TbAV+rZctiRTY2PL6tsIKhoIOaoskiWAkgu+VsbXgUVDNLHf+InQ==}
     engines: {node: '>= 8.0.0'}
@@ -2516,6 +2545,9 @@ packages:
 
   '@types/ws@8.5.10':
     resolution: {integrity: sha512-vmQSUcfalpIq0R9q7uTo2lXs6eGIpt9wtnLdMv9LVpIjCA/+ufZRozlVoVelIYixx1ugCBKDhn89vnsEGOCx9A==}
+
+  '@types/xast@2.0.4':
+    resolution: {integrity: sha512-6Q6HWhHXR5EEKcxgF5YBW5XPAAtCi/GgyCWHx6wR7dZTXF5rv2B2fm0hgpSscJqaVDVm6n1DAVbsM8RSM5PlMw==}
 
   '@types/yauzl@2.10.3':
     resolution: {integrity: sha512-oJoftv0LSuaDZE3Le4DbKX+KS9G36NzOeSap90UIK0yMA/NhKJhqlSGtNDORNRaIbQfzjXDrQa0ytJ6mNRGz/Q==}
@@ -6069,6 +6101,9 @@ packages:
   varint@6.0.0:
     resolution: {integrity: sha512-cXEIW6cfr15lFv563k4GuVuW/fiwjknytD37jIOLSdSWuOI6WnO/oKwmP2FQTU2l01LP8/M5TSAJpzUaGe3uWg==}
 
+  vfile-location@5.0.3:
+    resolution: {integrity: sha512-5yXvWDEgqeiYiBe1lbxYF7UMAIm/IcopxMHrMQDq3nvKcjPKIhZklUKL+AE7J7uApI4kwe2snsK+eI6UTj9EHg==}
+
   vfile-message@4.0.2:
     resolution: {integrity: sha512-jRDZ1IMLttGj41KcZvlrYAaI3CfqpLpfpf+Mfig13viT6NKvRzWZ+lXz0Y5D60w6uJIBAOGq9mSHf0gktF0duw==}
 
@@ -6260,6 +6295,12 @@ packages:
   wxt@0.19.11:
     resolution: {integrity: sha512-5SthX6H4jwM33VQQtNgLqZc7EzGV5ksz69omnI2kHYv22HfmVl4z7L1o0fgkl9XLyWyIz58nwf4YvQXGJWN5ig==}
     hasBin: true
+
+  xast-util-from-xml@4.0.0:
+    resolution: {integrity: sha512-Pwj6Bw5XARduMeTWpeEfmfgT8/Ma3oiMI4bBIRzCd7GH26A/dn3x7jDc2BHBCQxxdQniTh0MjVUYbjaj4Ljb+Q==}
+
+  xast-util-to-xml@4.0.0:
+    resolution: {integrity: sha512-r1euIWS5yZJUNpfN+ReE4m7Vld2iytaOPJtuXVuRQacRZwqRN1MAb+dv0aGLrdXOZrpGLyvUFf1Upyrb3R5qBg==}
 
   xdg-basedir@5.1.0:
     resolution: {integrity: sha512-GCPAHLvrIH13+c0SuacwvRYj2SxJXQ4kaVTT5xgL3kPrz56XxkF21IGhjSE1+W0aw7gpBWRGXLCPnPby6lSpmQ==}
@@ -8893,6 +8934,8 @@ snapshots:
 
   '@repeaterjs/repeater@3.0.6': {}
 
+  '@rgrove/parse-xml@4.1.0': {}
+
   '@rollup/pluginutils@4.2.1':
     dependencies:
       estree-walker: 2.0.2
@@ -9062,6 +9105,10 @@ snapshots:
   '@types/ws@8.5.10':
     dependencies:
       '@types/node': 20.16.10
+
+  '@types/xast@2.0.4':
+    dependencies:
+      '@types/unist': 3.0.2
 
   '@types/yauzl@2.10.3':
     dependencies:
@@ -12892,6 +12939,11 @@ snapshots:
 
   varint@6.0.0: {}
 
+  vfile-location@5.0.3:
+    dependencies:
+      '@types/unist': 3.0.2
+      vfile: 6.0.2
+
   vfile-message@4.0.2:
     dependencies:
       '@types/unist': 3.0.2
@@ -13173,6 +13225,19 @@ snapshots:
       - terser
       - utf-8-validate
       - webpack-sources
+
+  xast-util-from-xml@4.0.0:
+    dependencies:
+      '@rgrove/parse-xml': 4.1.0
+      '@types/xast': 2.0.4
+      vfile-location: 5.0.3
+      vfile-message: 4.0.2
+
+  xast-util-to-xml@4.0.0:
+    dependencies:
+      '@types/xast': 2.0.4
+      ccount: 2.0.1
+      stringify-entities: 4.0.4
 
   xdg-basedir@5.1.0: {}
 

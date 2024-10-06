@@ -2,6 +2,7 @@ import 'dotenv-flow/config';
 
 import { copyFile } from 'node:fs/promises';
 import path from 'node:path';
+import type {} from '@coub-addons/wxt-svg-icon';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
@@ -21,6 +22,7 @@ declare module 'wxt/browser' {
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
+	modules: ['@coub-addons/wxt-svg-icon'],
 	srcDir: 'src',
 	alias: {
 		// libs
@@ -54,13 +56,6 @@ export default defineConfig({
 		// don't forget to reload the extension after changing the hash!
 		content_security_policy:
 			"script-src 'self' 'wasm-unsafe-eval' 'sha256-tommjNcTFgpLYmOWXGx1CR0O2Eh5jNbwvUsWT6+GO4Q='; object-src 'self'",
-		icons: {
-			16: '/icon.svg',
-			32: '/icon.svg',
-			48: '/icon.svg',
-			96: '/icon.svg',
-			128: '/icon.svg',
-		},
 	},
 	zip: {
 		includeSources: [
@@ -89,9 +84,13 @@ export default defineConfig({
 		],
 	},
 	hooks: {
-		'build:manifestGenerated'(_, manifest) {
+		'build:manifestGenerated'(wxt, manifest) {
 			// biome-ignore lint/style/noNonNullAssertion: `options_ui` is always presented since we have an `options` entrypoint
 			manifest.options_ui!.open_in_tab = true;
+
+			if (wxt.config.browser !== 'firefox') {
+				delete manifest.browser_specific_settings;
+			}
 		},
 		async 'build:done'(wxt) {
 			await copyFile(

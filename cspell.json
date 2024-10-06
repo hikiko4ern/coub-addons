@@ -33,6 +33,7 @@
 		"coub",
 		"coubs",
 		"disqus",
+		"grayscaled",
 		"JST",
 		"jwt",
 		"pipefail",
@@ -124,7 +125,9 @@
 		"Vec",
 		"wasm_bindgen",
 		"Wouter",
+		"wsi",
 		"wxt",
+		"xast",
 		"XMLHttpRequest",
 		"xpinstall"
 	],

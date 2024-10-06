@@ -28,6 +28,7 @@
 		"gql:gen": "graphql-codegen --config ./utils/gqlCodegen.ts",
 		"su": "pnpm --filter=\"@coub-addons/segmenter-utils\"",
 		"pex": "pnpm --filter=\"@coub-addons/publish-extension\"",
+		"wsi": "pnpm --filter=\"@coub-addons/wxt-svg-icon\"",
 		"su:watch": "cargo bin cargo-watch -w packages/segmenter-utils/src -w packages/segmenter-utils/Cargo.toml -w packages/segmenter-utils/Taskfile.yml -w Cargo.lock -w Cargo.toml -w pnpm-lock.yaml -w rust-toolchain.toml -s \"pnpm su exec task build MODE=debug\""
 	},
 	"dependencies": {
@@ -40,6 +41,7 @@
 		"@codemirror/view": "^6.34.1",
 		"@coub-addons/segmenter-utils": "workspace:^",
 		"@coub-addons/vite-plugin-arraybuffer": "workspace:^",
+		"@coub-addons/wxt-svg-icon": "workspace:^",
 		"@fluent/bundle": "^0.18.0",
 		"@fluent/dom": "^0.10.0",
 		"@fluent/langneg": "^0.7.0",
