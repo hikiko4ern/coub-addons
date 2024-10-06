@@ -72,6 +72,7 @@ export default defineConfig({
 			'docs/**',
 			'target/**',
 			'test/**',
+			'test-extension/**',
 			'utils/**',
 			'biome.json',
 			'cliff.toml',
