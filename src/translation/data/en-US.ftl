@@ -109,16 +109,6 @@ reposts-are-blocked = reposts are blocked
 ## options / settings
 settings = Settings
 backups = Backups
-import-backup = Import backup
-export-backup = Export backup
-backup-creation-error = Failed to create backup:<br/>{$error}
-backup-restoration-error = Failed to import backup:<br/>{$error}
-backup-migrations-failed = Migrations for {$keys} failed: {$error}
-backup-imported-successfully = Backup imported successfully
-backup-imported-successfully-but-reinitialization-failed = The backup was successfully imported, but the state could not be updated. The extension will be automatically reloaded.
-import-backup-confirmation-header = Are you sure?
-import-backup-confirmation-message = All your existing data will be overwritten by the backup. Continue?
-file-content-is-not-a-valid-backup = The contents of the file are not a valid backup
 extension-settings-tooltip = These settings only affect the extension itself. Content added to Coub.com will try to match the Coub.com settings
 theme-setting =
   .label = Theme
@@ -130,3 +120,32 @@ locale-setting =
 locale-setting-system = System
 locale-setting-ru-RU = Русский
 locale-setting-en-US = English
+### options / settings / export
+export-backup = Export backup
+backup-creation-error = Failed to create backup:<br/>{$error}
+file-content-is-not-a-valid-backup = The contents of the file are not a valid backup
+### options / settings / import
+import-backup = Import backup
+import-backup-confirmation-header = Are you sure?
+import-backup-confirmation-message = All your existing data will be overwritten by the backup. Continue?
+### options / settings / import-merge
+import-merge-backup = Import backup and merge with current settings
+import-merge-backup-confirmation-message = Your existing data will be merged with backup. Continue?
+storages-versions-are-different = Some storage versions do not match backup versions.<br/>
+  Combining repositories with different versions is not currently supported. You can:<br/>
+  - import with overwrite;<br/>
+  - update the extension on the device where the backup was made, export a new backup and import the new one.<br/>
+  <br/>
+  Details:<br/>
+  <pre>{$error}</pre>
+backup-merges-failed = Failed to merge the current state with the backup:<br/>{$error}
+storage-version-is-not-equal-to-backup = the current version of `{$key}` (v{$currentVersion}) does not match the backup version (v{$backupVersion})
+storage-current-state-is-older-than-backup = the current version of `{$key}` (v{$currentVersion}) is older than the backup (v{$backupVersion})
+storage-is-missing-migrations = no migrations are declared for `{$key}`
+storage-is-missing-migration-version = no migration is declared for `{$key}` for version {$version}
+storage-merge-failed = failed to merge `{$key}` with the backup: {$error}
+### options / settings / import status
+backup-restoration-error = Failed to import backup:<br/><pre>{$error}</pre>
+backup-migrations-failed = Migrations for {$keys} failed: {$error}
+backup-imported-successfully = Backup imported successfully
+backup-imported-successfully-but-reinitialization-failed = The backup was successfully imported, but the state could not be updated. The extension will be automatically reloaded.

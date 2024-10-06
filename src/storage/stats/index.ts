@@ -34,7 +34,7 @@ const defaultValue: Stats = {
 	) as Stats['filteredComments'],
 };
 
-export const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
+const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
 	version: 7,
 	defaultValue,
 	migrations: statsMigrations,
@@ -42,11 +42,14 @@ export const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
 
 export class StatsStorage extends StorageBase<typeof key, Stats, StatsMeta> {
 	static readonly KEY = key;
+	static readonly META_KEY = `${key}$` as const;
+	static readonly STORAGE = statsItem;
+	static readonly MIGRATIONS = statsMigrations;
 	protected readonly logger: Logger;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, new.target.KEY, statsItem);
+		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 

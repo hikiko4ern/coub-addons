@@ -1,7 +1,10 @@
 import { name } from '../../../../../../package.json';
 
 import { Localized, useLocalization } from '@fluent/react';
-import { Button } from '@nextui-org/button';
+import DocumentArrowDownIcon from '@heroicons/react/24/solid/DocumentArrowDownIcon';
+import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
+import DocumentPlusIcon from '@heroicons/react/24/solid/DocumentPlusIcon';
+import { Button, ButtonGroup } from '@nextui-org/button';
 import {
 	Modal,
 	ModalBody,
@@ -19,22 +22,26 @@ import { CardSection } from '@/options/components/CardSection';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import {
 	type Backup,
-	StorageMigrationsFailed,
+	type ImportBackupData,
+	TranslatableError,
 	createBackup,
 	restoreBackup,
 } from '@/storage/backup';
-import { FluentList } from '@/translation/intl';
 
 const pad = (value: number) => value.toString().padStart(2, '0');
 
 export const ImportExport: FunctionComponent = () => {
-	const inputRef = useRef<HTMLInputElement>(null);
-	const restoreRef = useRef<Backup>();
+	const restoreRef = useRef<ImportBackupData>();
 	const isLoading = useSignal(false);
 	const isRestoring = useSignal(false);
 	const { l10n } = useLocalization();
 	const lazyStorages = useLazyStorages();
-	const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
+	const {
+		isOpen: isImportConfirmationOpen,
+		onOpenChange: onImportConfirmationChange,
+		onOpen: openImportConfirmation,
+		onClose: closeImportConfirmation,
+	} = useDisclosure();
 
 	const createAndDownloadBackup = useCallback(async () => {
 		try {
@@ -53,15 +60,9 @@ export const ImportExport: FunctionComponent = () => {
 			URL.revokeObjectURL(url);
 		} catch (err) {
 			toast.error(
-				<>
-					<Localized
-						id="backup-creation-error"
-						elems={{ br: <br /> }}
-						vars={{ error: String(err) }}
-					>
-						<span />
-					</Localized>
-				</>,
+				<Localized id="backup-creation-error" elems={{ br: <br /> }} vars={{ error: String(err) }}>
+					<span />
+				</Localized>,
 			);
 		}
 	}, []);
@@ -74,7 +75,7 @@ export const ImportExport: FunctionComponent = () => {
 			try {
 				await restoreBackup(restoreRef.current);
 
-				onClose();
+				closeImportConfirmation();
 
 				try {
 					await Promise.all([
@@ -94,24 +95,22 @@ export const ImportExport: FunctionComponent = () => {
 					});
 				}
 			} catch (err) {
+				const translatedError =
+					err instanceof TranslatableError ? err.translate(l10n) : String(err);
+
 				toast.error(
-					<>
+					typeof translatedError === 'string' ? (
 						<Localized
 							id="backup-restoration-error"
-							elems={{ br: <br /> }}
-							vars={{
-								error:
-									err instanceof StorageMigrationsFailed
-										? l10n.getString('backup-migrations-failed', {
-												keys: new FluentList(err.keys, { type: 'conjunction' }),
-												error: err.cause.errors.join(', '),
-											})
-										: String(err),
-							}}
+							elems={{ br: <br />, pre: <span className="whitespace-pre-line" /> }}
+							vars={{ error: translatedError }}
 						>
 							<span />
 						</Localized>
-					</>,
+					) : (
+						translatedError
+					),
+					{ autoClose: false },
 				);
 			} finally {
 				isLoading.value = false;
@@ -127,46 +126,62 @@ export const ImportExport: FunctionComponent = () => {
 		if (file) {
 			try {
 				const text = await file.text();
-				const data = JSON.parse(text);
+				const data = JSON.parse(text) as Backup;
 
 				input.value = '';
-				restoreRef.current = data;
+				restoreRef.current = {
+					data,
+					isMerge: input.dataset.merge === 'true',
+				};
 
-				return onOpen();
+				return openImportConfirmation();
 			} catch {}
 
 			toast.error(<Localized id="file-content-is-not-a-valid-backup" />);
 		}
 	}, []);
 
+	const renderImportBackupButton = (
+		title: string,
+		Icon: typeof DocumentArrowDownIcon,
+		isMerge?: boolean,
+	) => (
+		<Button
+			as="label"
+			title={title}
+			isLoading={isLoading.value && !isRestoring.value}
+			isDisabled={isLoading.value}
+		>
+			<Icon className="w-6" />
+
+			<input
+				className="absolute h-0 w-0 opacity-0"
+				type="file"
+				accept="application/json"
+				data-merge={isMerge}
+				onChange={handleChange}
+			/>
+		</Button>
+	);
+
 	return (
 		<CardSection bodyClassName="flex min-w-60 flex-col gap-4" title={<Localized id="backups" />}>
-			<Button
-				color="primary"
-				isLoading={isLoading.value && !isRestoring.value}
-				isDisabled={isLoading.value}
-				onPress={createAndDownloadBackup}
-			>
-				<Localized id="export-backup" />
-			</Button>
+			<ButtonGroup className="relative">
+				<Button
+					color="primary"
+					title={l10n.getString('export-backup')}
+					isLoading={isLoading.value && !isRestoring.value}
+					isDisabled={isLoading.value}
+					onPress={createAndDownloadBackup}
+				>
+					<DocumentArrowUpIcon className="w-6" />
+				</Button>
 
-			<Button
-				className="relative"
-				as="label"
-				isLoading={isLoading.value && !isRestoring.value}
-				isDisabled={isLoading.value}
-			>
-				<Localized id="import-backup" />
+				{renderImportBackupButton(l10n.getString('import-backup'), DocumentArrowDownIcon)}
 
-				<input
-					ref={inputRef}
-					className="absolute h-0 w-0 opacity-0"
-					type="file"
-					accept="application/json"
-					onChange={handleChange}
-				/>
+				{renderImportBackupButton(l10n.getString('import-merge-backup'), DocumentPlusIcon, true)}
 
-				<Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+				<Modal isOpen={isImportConfirmationOpen} onOpenChange={onImportConfirmationChange}>
 					<ModalContent>
 						{onClose => (
 							<>
@@ -175,7 +190,13 @@ export const ImportExport: FunctionComponent = () => {
 								</ModalHeader>
 
 								<ModalBody>
-									<Localized id="import-backup-confirmation-message" />
+									<Localized
+										id={
+											restoreRef.current?.isMerge === true
+												? 'import-merge-backup-confirmation-message'
+												: 'import-backup-confirmation-message'
+										}
+									/>
 								</ModalBody>
 
 								<ModalFooter>
@@ -195,7 +216,7 @@ export const ImportExport: FunctionComponent = () => {
 						)}
 					</ModalContent>
 				</Modal>
-			</Button>
+			</ButtonGroup>
 		</CardSection>
 	);
 };

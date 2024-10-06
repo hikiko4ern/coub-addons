@@ -11,6 +11,7 @@ import type { StorageMeta } from '../types';
 import { areBlockedChannelsEqual } from './helpers/areBlockedChannelEqual';
 import { blockedChannelsToRaw } from './helpers/blockedChannelsToRaw';
 import { iterRawBlockedChannels } from './helpers/iterRawBlockedChannels';
+import { mergeBlockedChannels } from './helpers/mergeBlockedChannels';
 import type { BlockedChannelData, RawBlockedChannels } from './types';
 
 export type { BlockedChannelData, RawBlockedChannels } from './types';
@@ -19,17 +20,17 @@ export interface BlockedChannelsMeta extends StorageMeta {}
 
 const key = 'blockedChannels' as const;
 
-const defaultValue: RawBlockedChannels = {
+const fallbackValue: RawBlockedChannels = {
 	id: [],
 	title: [],
 	permalink: [],
 };
 
-export const blockedChannelsItem = storage.defineItem<RawBlockedChannels, BlockedChannelsMeta>(
+const blockedChannelsItem = storage.defineItem<RawBlockedChannels, BlockedChannelsMeta>(
 	`local:${key}`,
 	{
 		version: 1,
-		defaultValue,
+		fallback: fallbackValue,
 	},
 );
 
@@ -57,13 +58,16 @@ export class BlockedChannelsStorage extends StorageBase<
 > {
 	static readonly KEY = key;
 	static readonly META_KEY = `${key}$` as const;
+	static readonly STORAGE = blockedChannelsItem;
+	static readonly MIGRATIONS = undefined;
+	static readonly merge = mergeBlockedChannels;
 	protected readonly logger: Logger;
 
 	readonly #isBlockedListeners: Record</** channelId */ number, Set<IsBlockedListener>> = {};
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, new.target.KEY, blockedChannelsItem);
+		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

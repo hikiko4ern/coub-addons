@@ -110,16 +110,6 @@ reposts-are-blocked = репосты заблокированы
 ## options / settings
 settings = Настройки
 backups = Резервные копии
-import-backup = Импортировать резервную копию
-export-backup = Экспортировать резервную копию
-backup-creation-error = Произошла ошибка при создании резервной копии:<br/>{$error}
-backup-restoration-error = Произошла ошибка при импортировании резервной копии:<br/>{$error}
-backup-migrations-failed = Не удалось выполнить миграции для {$keys}: {$error}
-backup-imported-successfully = Резервная копия успешно импортирована
-backup-imported-successfully-but-reinitialization-failed = Резервная копия была успешно импортирована, но обновить состояние не удалось. Расширение будет автоматически перезапущено.
-import-backup-confirmation-header = Вы уверены?
-import-backup-confirmation-message = Все существующие данные будут перезаписаны резервной копией. Продолжить?
-file-content-is-not-a-valid-backup = Содержимое файла не является валидной резервной копией
 extension-settings-tooltip = Эти настройки влияют только на само расширение. Контент, добавляемый на Coub.com, будет стараться соответствовать настройкам Coub.com
 theme-setting =
   .label = Тема
@@ -131,3 +121,32 @@ locale-setting =
 locale-setting-system = Системный
 locale-setting-ru-RU = Русский
 locale-setting-en-US = English
+### options / settings / export
+export-backup = Экспортировать резервную копию
+backup-creation-error = Произошла ошибка при создании резервной копии:<br/>{$error}
+file-content-is-not-a-valid-backup = Содержимое файла не является валидной резервной копией
+### options / settings / import
+import-backup = Импортировать резервную копию
+import-backup-confirmation-header = Вы уверены?
+import-backup-confirmation-message = Все существующие данные будут перезаписаны резервной копией. Продолжить?
+### options / settings / import-merge
+import-merge-backup = Импортировать резервную копию и объединить с текущими настройками
+import-merge-backup-confirmation-message = Существующие данные будут объединены с резервной копией. Продолжить?
+storages-versions-are-different = Версии некоторых хранилищ не совпадают с версиями резервной копии.
+  Объединение хранилищ с разными версиями на данный момент не поддерживается. Вы можете:<br/>
+  - импортировать с перезаписью;<br/>
+  - обновить расширение на устройстве, на котором была сделана резервная копия, экспортировать новую резервную копию и импортировать уже её.<br/>
+  <br/>
+  Детали:<br/>
+  <pre>{$error}</pre>
+backup-merges-failed = Не удалось объединить текущее состояние с резервной копией:<br/>{$error}
+storage-version-is-not-equal-to-backup = текущая версия `{$key}` (v{$currentVersion}) не совпадает с версией резервной копии (v{$backupVersion})
+storage-current-state-is-older-than-backup = текущая версия `{$key}` (v{$currentVersion}) старше резервной копии (v{$backupVersion})
+storage-is-missing-migrations = для `{$key}` не объявлены миграции
+storage-is-missing-migration-version = для `{$key}` не объявлена миграция для версии {$version}
+storage-merge-failed = не удалось объединить `{$key}` с резервной копией: {$error}
+### options / settings / import status
+backup-restoration-error = Произошла ошибка при импортировании резервной копии:<br/><pre>{$error}</pre>
+backup-migrations-failed = Не удалось выполнить миграции для {$keys}: {$error}
+backup-imported-successfully = Резервная копия успешно импортирована
+backup-imported-successfully-but-reinitialization-failed = Резервная копия была успешно импортирована, но обновить состояние не удалось. Расширение будет автоматически перезапущено.

@@ -19,24 +19,26 @@ export type ReadonlyBlockedCoubTitles = ToReadonly<BlockedCoubTitles>;
 
 const key = 'blockedCoubTitles' as const;
 
-const defaultValue: RawBlockedCoubTitles = '';
+const fallbackValue: RawBlockedCoubTitles = '';
 
-export const blockedCoubTitlesItem = storage.defineItem<
-	RawBlockedCoubTitles,
-	BlockedCoubTitlesMeta
->(`local:${key}`, {
-	version: 1,
-	defaultValue,
-});
+const blockedCoubTitlesItem = storage.defineItem<RawBlockedCoubTitles, BlockedCoubTitlesMeta>(
+	`local:${key}`,
+	{
+		version: 1,
+		fallback: fallbackValue,
+	},
+);
 
 export class BlockedCoubTitlesStorage extends PhrasesBlocklistStorage<typeof key> {
 	static readonly KEY = key;
 	static readonly META_KEY = `${key}$` as const;
+	static readonly STORAGE = blockedCoubTitlesItem;
+	static readonly MIGRATIONS = undefined;
 	protected readonly logger: Logger;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, new.target.KEY, blockedCoubTitlesItem);
+		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

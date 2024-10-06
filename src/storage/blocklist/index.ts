@@ -16,26 +16,28 @@ export type ReadonlyBlocklist = ToReadonly<Blocklist>;
 
 const key = 'blocklist' as const;
 
-const defaultValue: Blocklist = {
+const fallbackValue: Blocklist = {
 	isBlockRecoubs: false,
 	isHideCommentsFromBlockedChannels: true,
 	isBlockRepostsOfStories: false,
 };
 
-export const blocklistItem = storage.defineItem<Blocklist, BlocklistMeta>(`local:${key}`, {
+const blocklistItem = storage.defineItem<Blocklist, BlocklistMeta>(`local:${key}`, {
 	version: 3,
-	defaultValue,
+	fallback: fallbackValue,
 	migrations: blocklistMigrations,
 });
 
 export class BlocklistStorage extends StorageBase<typeof key, Blocklist, BlocklistMeta> {
 	static readonly KEY = key;
 	static readonly META_KEY = `${key}$` as const;
+	static readonly STORAGE = blocklistItem;
+	static readonly MIGRATIONS = blocklistMigrations;
 	protected readonly logger: Logger;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, new.target.KEY, blocklistItem);
+		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}
@@ -49,4 +51,7 @@ export class BlocklistStorage extends StorageBase<typeof key, Blocklist, Blockli
 		const current = await this.getValue();
 		return this.setValue({ ...current, ...value });
 	};
+
+	static readonly merge = (current: Blocklist, backup: Partial<Blocklist>): Blocklist =>
+		Object.assign(current, backup);
 }

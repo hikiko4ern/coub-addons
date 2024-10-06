@@ -16,21 +16,23 @@ export type ReadonlyBlockedTags = ToReadonly<BlockedTags>;
 
 const key = 'blockedTags' as const;
 
-const defaultValue: RawBlockedTags = '';
+const fallbackValue: RawBlockedTags = '';
 
-export const blockedTagsItem = storage.defineItem<RawBlockedTags, BlockedTagsMeta>(`local:${key}`, {
+const blockedTagsItem = storage.defineItem<RawBlockedTags, BlockedTagsMeta>(`local:${key}`, {
 	version: 1,
-	defaultValue,
+	fallback: fallbackValue,
 });
 
 export class BlockedTagsStorage extends PhrasesBlocklistStorage<typeof key> {
 	static readonly KEY = key;
 	static readonly META_KEY = `${key}$` as const;
+	static readonly STORAGE = blockedTagsItem;
+	static readonly MIGRATIONS = undefined;
 	protected readonly logger: Logger;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);
-		super(tabId, source, childLogger, new.target.KEY, blockedTagsItem);
+		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

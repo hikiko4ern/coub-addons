@@ -6,6 +6,7 @@ import { isPromise } from '@/helpers/isPromise';
 import { StorageBase } from '../base';
 import type { FnWithState, StorageMeta } from '../types';
 import { getMatchedPhrase } from './helpers/getMatchedPhrase';
+import { mergePhrasesBlocklist } from './helpers/mergePhrasesBlocklist';
 import { parsePhrasesBlocklist } from './helpers/parsePhrasesBlocklist';
 import { addPhraseToTree } from './helpers/phrasesTree';
 import { type SegmenterUtils, loadSegmenterUtils } from './helpers/segmenterUtils';
@@ -28,6 +29,8 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 	PhrasesBlocklistMeta,
 	RawPhrasesBlocklist
 > {
+	static readonly merge = mergePhrasesBlocklist;
+
 	initialize() {
 		return (this.statePromise = this.loadUtilsThenInitialize());
 	}
