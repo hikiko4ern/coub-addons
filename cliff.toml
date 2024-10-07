@@ -11,7 +11,7 @@ body = """
 		{% set int_value = footer.value | int(default=-1) %}\
 		{% if (footer.value is matching("^\\d+$")) and (int_value > 0) and (footer.token in ["close", "closes", "closed", "fix", "fixes", "fixed", "resolve", "resolves", "resolved"]) %}\
 			{% set encoded_value = int_value | as_str | urlencode_strict %}\
-			{% set_global ref_links = ref_links | concat(with=("[#" ~ int_value ~ "](https://github.com/" ~ remote.github.owner ~ "/" ~ remote.github.repo ~ "/issues/" ~ encoded_value ~ ")")) %}\
+			{% set_global ref_links = ref_links | concat(with=("[#" ~ int_value ~ "](https://github.com/hikiko4ern/coub-addons/issues/" ~ encoded_value ~ ")")) %}\
 		{% endif %}\
 	{% endfor %}\
 	{% if ref_links %} ({{ ref_links | unique | join(sep=", ") }}){% endif -%}
@@ -78,7 +78,3 @@ sort_commits = "oldest"
 [bump]
 features_always_bump_minor = false
 breaking_always_bump_major = false
-
-[remote.github]
-owner = "hikiko4ern"
-repo = "coub-addons"

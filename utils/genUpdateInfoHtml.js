@@ -1,10 +1,21 @@
-/** @file generates release notes for auto-updates */
+/**
+ * @file generates release notes for auto-updates
+ *
+ * Usage:
+ *
+ * 1. generate changelog during bump:
+ * 		node ./utils/genUpdateInfoHtml.js
+ *
+ * 2. generate changelog for a specific version:
+ * 		node ./utils/genUpdateInfoHtml.js -v 0.1.26 --range v0.1.25..v0.1.26
+ */
 
 // @ts-check
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 import { codeToANSI } from '@shikijs/cli';
 import { runGitCliff } from 'git-cliff';
 import { toHtml } from 'hast-util-to-html';
@@ -15,13 +26,33 @@ import rehypeMinifyWhitespace from 'rehype-minify-whitespace';
 import { remove } from 'unist-util-remove';
 
 import pkg from '../package.json' with { type: 'json' };
-const { version } = pkg;
 
 const ROOT_PATH = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const RELEASE_NOTES_DIR = path.join(ROOT_PATH, 'docs', 'release-notes');
 
+const {
+	values: { version, range },
+} = parseArgs({
+	options: {
+		version: {
+			type: 'string',
+			short: 'v',
+			default: pkg.version,
+		},
+		range: {
+			type: 'string',
+		},
+	},
+});
+
+if (!version) {
+	throw new RangeError(`\`--version\` is required, got \`${JSON.stringify(version)}\``);
+}
+
 const newVersionMarkdown = (
-	await runGitCliff({ unreleased: true }, { stdio: ['ignore', 'pipe', 'inherit'] })
+	await runGitCliff(range ? [range] : ['--unreleased'], {
+		stdio: ['ignore', 'pipe', 'inherit'],
+	})
 ).stdout;
 
 const mdTree = fromMarkdown(newVersionMarkdown);
