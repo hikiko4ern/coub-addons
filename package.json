@@ -24,6 +24,7 @@
 		"release-build": "run-s \"release-build:*\"",
 		"release-build:su-prod": "pnpm --filter=\"@coub-addons/segmenter-utils\" run postinstall",
 		"release-build:zip-ff": "NODE_ENV=production wxt zip -b firefox",
+		"add-update": "NODE_ENV=production node -r dotenv-flow/config ./utils/addUpdate.js",
 		"gql:fetch-schema": "tsx -r dotenv-flow/config ./utils/fetchGqlSchema.ts",
 		"gql:gen": "graphql-codegen --config ./utils/gqlCodegen.ts",
 		"su": "pnpm --filter=\"@coub-addons/segmenter-utils\"",
