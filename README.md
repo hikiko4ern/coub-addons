@@ -63,6 +63,16 @@ After installing the extension (and sometimes updating it) you need to refresh [
 >
 > - in some situations may generate states that the logic of [Coub.com](https://coub.com) itself does not take into account (example - hikiko4ern/coub-addons#5)
 
+---
+
+<details>
+  <summary>Repository mirrors</summary>
+
+1. on [Codeberg](https://codeberg.org) - [hikiko4ern/coub-addons](https://codeberg.org/hikiko4ern/coub-addons) (with releases)
+2. on [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/ash.radicle.garden/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (code only)
+
+</details>
+
 <!-- links -->
 
 [latest-release]: https://github.com/hikiko4ern/coub-addons/releases/latest

@@ -30,6 +30,7 @@
 		"AMO",
 		"Binaryen",
 		"cmds",
+		"codeberg",
 		"coub",
 		"coubs",
 		"disqus",
@@ -137,7 +138,9 @@
 		// Markdown ToC elements
 		"/^- \\[[^\\]]*\\]\\((#[^)]*)\\)$/m",
 		// deps
-		"/@fluent/\\w+/"
+		"/@fluent/\\w+/",
+		// radicle ID
+		"rad:[a-z0-9]+"
 	],
 	"ignorePaths": [
 		"/.gitattributes",

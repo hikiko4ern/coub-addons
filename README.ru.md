@@ -62,6 +62,16 @@ Web Extension, добавляющий дополнительный функци�
 >
 > - в некоторых ситуациях может порождать состояния, которые логика самого [Coub.com](https://coub.com) не учитывает (пример - hikiko4ern/coub-addons#5)
 
+---
+
+<details>
+  <summary>Зеркала репозитория</summary>
+
+1. на [Codeberg](https://codeberg.org) - [hikiko4ern/coub-addons](https://codeberg.org/hikiko4ern/coub-addons) (с релизами)
+2. на [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/ash.radicle.garden/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (только код)
+
+</details>
+
 <!-- links -->
 
 [latest-release]: https://github.com/hikiko4ern/coub-addons/releases/latest
