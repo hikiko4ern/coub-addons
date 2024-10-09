@@ -316,6 +316,9 @@ importers:
       mdast-util-to-hast:
         specifier: ^13.2.0
         version: 13.2.0
+      mdast-util-to-markdown:
+        specifier: ^2.1.0
+        version: 2.1.0
       mdast-zone:
         specifier: ^6.1.0
         version: 6.1.0

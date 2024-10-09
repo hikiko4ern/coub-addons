@@ -136,6 +136,7 @@
 		"mdast-util-from-markdown": "^2.0.1",
 		"mdast-util-gfm": "^3.0.0",
 		"mdast-util-to-hast": "^13.2.0",
+		"mdast-util-to-markdown": "^2.1.0",
 		"mdast-zone": "^6.1.0",
 		"micromark-extension-gfm": "^3.0.0",
 		"prettier": "^3.3.3",
