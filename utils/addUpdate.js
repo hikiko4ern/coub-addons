@@ -74,7 +74,7 @@ try {
 const newUpdate = {
 	version,
 	update_link: `https://github.com/hikiko4ern/coub-addons/releases/download/v${version}/coub-addons-${version}-firefox.xpi`,
-	update_info_url: `https://hikiko4ern.github.io/coub-addons/release-notes/${version}.html`,
+	update_info_url: `https://coub-addons.doggo.moe/release-notes/${version}.html`,
 	update_hash: `sha256:${newUpdateHash}`,
 };
 
