@@ -14,6 +14,8 @@ revert = Revert
 edit = Edit
 extension = Extension
 id = ID
+miscellaneous = Miscellaneous
+milliseconds = ms
 
 ## follow button
 
@@ -88,6 +90,8 @@ built-in = built-in
 press-any-key-combination = Press any key combination
 recording-key-combination-label = Recording
 conflicts-with-actions = Conflicts with actions: {$with}
+hide-controls-after =
+  .label = Hide controls after
 
 ## options / stats
 stats = Stats

@@ -1,9 +1,15 @@
 import { HotkeyModifier } from '@/hotkey/constants';
 import type { Hotkey } from '@/hotkey/types';
-import type { HotkeyV1, PlayerSettingsV1, PlayerSettingsV2, PlayerSettingsV3 } from './types';
+import type {
+	HotkeyV1,
+	PlayerSettingsV1,
+	PlayerSettingsV2,
+	PlayerSettingsV3,
+	PlayerSettingsV4,
+} from './types';
 
 // biome-ignore lint/suspicious/noExplicitAny:
-type Migrations = Record<2 | 3, (playerSettings: any) => unknown>;
+type Migrations = Record<2 | 3 | 4, (playerSettings: any) => unknown>;
 
 export const playerSettingsMigrations: Migrations = {
 	2: (playerSettings: PlayerSettingsV1): PlayerSettingsV2 => ({
@@ -15,6 +21,10 @@ export const playerSettingsMigrations: Migrations = {
 	3: (playerSettings: PlayerSettingsV2): PlayerSettingsV3 => ({
 		...playerSettings,
 		copyCoubPermalinkHotkey: undefined,
+	}),
+	4: (playerSettings: PlayerSettingsV3): PlayerSettingsV4 => ({
+		...playerSettings,
+		hideControlsAfter: undefined,
 	}),
 };
 

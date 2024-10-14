@@ -16,15 +16,20 @@ import {
 	revertCoubBlockClientsidePatches,
 } from './patches/CoubBlockClientside';
 import {
-	H5P_ATTACH_EVENTS_KEY,
-	H5P_CHANGE_STATE_KEY,
-	H5P_KEY_UP_EVENT,
-	H5P_KEY_UP_HANDLERS_KEY,
-	patchHtml5Player,
-	revertHtml5PlayerPatches,
-} from './patches/Html5Player';
+	H5PC_ATTACH_EVENTS_KEY,
+	H5PC_CHANGE_STATE_KEY,
+	H5PC_KEY_UP_EVENT,
+	H5PC_KEY_UP_HANDLERS_KEY,
+	patchHtml5PlayerClass,
+	revertHtml5PlayerClassPatches,
+} from './patches/Html5Player_class';
+import {
+	patchHtml5PlayerGlobal,
+	revertHtml5PlayerGlobalPatches,
+} from './patches/html5Player_global';
+import { H5PG_UI_ORIG_INIT_KEY } from './patches/html5Player_global/constants';
 
-const UNLOAD_HANDLERS_SUFFIX = 'keyboardShortcuts';
+const UNLOAD_HANDLERS_SUFFIX = 'player';
 
 export default defineContentScript({
 	matches: [`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/*`],
@@ -42,7 +47,7 @@ export default defineContentScript({
 	runAt: 'document_start',
 	async main(ctx) {
 		const ID = nanoid();
-		const logger = Logger.create('keyboard shortcuts cs', { devUniqueId: ID });
+		const logger = Logger.create('player cs', { devUniqueId: ID });
 
 		try {
 			await removeOldUnloadHandlers(UNLOAD_HANDLERS_SUFFIX);
@@ -52,7 +57,7 @@ export default defineContentScript({
 
 		try {
 			const tabId = await EventDispatcher.getTabId();
-			const playerSettingsStorage = new PlayerSettingsStorage(tabId, 'keyboard shortcuts', logger);
+			const playerSettingsStorage = new PlayerSettingsStorage(tabId, 'player', logger);
 			const mutablePlayerSettings: Writable<ReadonlyPlayerSettings> = {
 				...(await playerSettingsStorage.getValue()),
 			};
@@ -68,8 +73,10 @@ export default defineContentScript({
 				waivedWindow,
 				{
 					CoubBlockClientside: patchCoubBlockClientside,
-					Html5Player: patchHtml5Player,
+					Html5Player: patchHtml5PlayerClass,
+					html5Player: patchHtml5PlayerGlobal,
 				},
+				waivedWindow,
 				mutablePlayerSettings,
 			);
 
@@ -82,12 +89,15 @@ export default defineContentScript({
 					cbcViewerBlockKeyUpEvent,
 					cbcViewerBlockKeyUpHandlersKey,
 					revertCoubBlockClientsidePatches,
-					// Html5Player
-					h5pAttachEventsKey,
-					h5pKeyUpEvent,
-					h5pKeyUpHandlersKey,
-					h5pChangeStateKey,
-					revertHtml5PlayerPatches,
+					// Html5Player (class)
+					h5pcAttachEventsKey,
+					h5pcKeyUpEvent,
+					h5pcKeyUpHandlersKey,
+					h5pcChangeStateKey,
+					revertHtml5PlayerClassPatches,
+					// html5Player (global)
+					h5pgUiOrigInitKey,
+					revertHtml5PlayerGlobalPatches,
 				) => {
 					console.debug(`[${loggerPrefix}]`, 'reverting patches');
 
@@ -98,13 +108,15 @@ export default defineContentScript({
 						loggerPrefix,
 					);
 
-					revertHtml5PlayerPatches(
-						h5pAttachEventsKey,
-						h5pKeyUpEvent,
-						h5pKeyUpHandlersKey,
-						h5pChangeStateKey,
+					revertHtml5PlayerClassPatches(
+						h5pcAttachEventsKey,
+						h5pcKeyUpEvent,
+						h5pcKeyUpHandlersKey,
+						h5pcChangeStateKey,
 						loggerPrefix,
 					);
+
+					revertHtml5PlayerGlobalPatches(h5pgUiOrigInitKey, loggerPrefix);
 				},
 				logger.prefix,
 				// CoubBlockClientside
@@ -112,12 +124,15 @@ export default defineContentScript({
 				CBC_VIEWER_BLOCK_KEY_UP_EVENT,
 				CBC_VIEWER_BLOCK_KEY_UP_HANDLERS_KEY,
 				revertCoubBlockClientsidePatches,
-				// Html5Player
-				H5P_ATTACH_EVENTS_KEY,
-				H5P_KEY_UP_EVENT,
-				H5P_KEY_UP_HANDLERS_KEY,
-				H5P_CHANGE_STATE_KEY,
-				revertHtml5PlayerPatches,
+				// Html5Player (class)
+				H5PC_ATTACH_EVENTS_KEY,
+				H5PC_KEY_UP_EVENT,
+				H5PC_KEY_UP_HANDLERS_KEY,
+				H5PC_CHANGE_STATE_KEY,
+				revertHtml5PlayerClassPatches,
+				// html5Player (global)
+				H5PG_UI_ORIG_INIT_KEY,
+				revertHtml5PlayerGlobalPatches,
 			);
 
 			ctx.onInvalidated(() => {

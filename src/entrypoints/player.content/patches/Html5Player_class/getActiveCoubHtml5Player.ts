@@ -1,5 +1,5 @@
 import type { Logger } from '@/utils/logger';
-import { H5P_PLAYERS_MAP_SYM } from './constants';
+import { H5PC_PLAYERS_MAP_SYM } from './constants';
 import { selectActiveCoubViewer } from './selectActiveCoubViewer';
 
 export const getActiveCoubHtml5Player = (
@@ -15,7 +15,7 @@ export const getActiveCoubHtml5Player = (
 		return;
 	}
 
-	const playersMap = proto[H5P_PLAYERS_MAP_SYM];
+	const playersMap = proto[H5PC_PLAYERS_MAP_SYM];
 	const player = playersMap?.get(activeCoubViewer[0])?.deref();
 
 	if (!player) {

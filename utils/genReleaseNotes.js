@@ -24,8 +24,8 @@ import { fromMarkdown } from 'mdast-util-from-markdown';
 import { gfmToMarkdown } from 'mdast-util-gfm';
 import { toMarkdown } from 'mdast-util-to-markdown';
 import { remove } from 'unist-util-remove';
-
 import { SKIP, visit } from 'unist-util-visit';
+
 import pkg from '../package.json' with { type: 'json' };
 
 let {
