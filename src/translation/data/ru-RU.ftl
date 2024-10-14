@@ -14,6 +14,8 @@ revert = Откатить
 edit = Редактировать
 extension = Расширение
 id = ID
+miscellaneous = Прочее
+milliseconds = мс
 
 ## Follow button
 
@@ -89,6 +91,8 @@ built-in = встроенное
 press-any-key-combination = Нажмите любое сочетание клавиш
 recording-key-combination-label = Запись
 conflicts-with-actions = Конфликтует с действиями: {$with}
+hide-controls-after =
+  .label = Скрывать элементы управления через
 
 ## options / stats
 stats = Статистика

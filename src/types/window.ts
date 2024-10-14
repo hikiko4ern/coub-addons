@@ -129,6 +129,20 @@ declare global {
 		interface JstPatches {}
 
 		type JstTemplate = (this: Window['JST'], it: object, ...args: unknown[]) => string;
+
+		namespace html5Player {
+			interface UI {
+				vb: JQuery;
+				init(): unknown;
+				prototype: {
+					init: UI['init'];
+				} & UIPatches;
+			}
+
+			const UI: UI;
+
+			interface UIPatches {}
+		}
 	}
 
 	interface Window {
@@ -139,6 +153,7 @@ declare global {
 		Html5Player: coub.Html5Player;
 		CoubBlockClientside: coub.CoubBlockClientside;
 		JST: coub.JST;
+		html5Player: typeof coub.html5Player;
 
 		// Gecko waived Xray
 		// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts

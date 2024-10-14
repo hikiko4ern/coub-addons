@@ -7,7 +7,7 @@ import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
 
 import { playerSettingsMigrations } from './migrations';
-import type { PlayerSettingsV3 as PlayerSettings } from './types';
+import type { PlayerSettingsV4 as PlayerSettings } from './types';
 
 export type { PlayerSettings };
 
@@ -32,10 +32,11 @@ const fallbackValue: PlayerSettings = {
 		key: 'f',
 	},
 	copyCoubPermalinkHotkey: undefined,
+	hideControlsAfter: undefined,
 };
 
 const playerSettingsItem = storage.defineItem<PlayerSettings, PlayerSettingsMeta>(`local:${key}`, {
-	version: 3,
+	version: 4,
 	fallback: fallbackValue,
 	migrations: playerSettingsMigrations,
 });

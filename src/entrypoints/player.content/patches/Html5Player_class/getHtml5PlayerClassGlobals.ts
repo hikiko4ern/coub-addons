@@ -10,7 +10,7 @@ export interface Html5PlayerGlobals {
 	Html5Player: typeof window.Html5Player;
 }
 
-export const getHtml5PlayerGlobals = (logger: Logger): GetGlobalsRes<Html5PlayerGlobals> => {
+export const getHtml5PlayerClassGlobals = (logger: Logger): GetGlobalsRes<Html5PlayerGlobals> => {
 	const jqGlobal = getJQuery();
 
 	if (!jqGlobal.isValid) {

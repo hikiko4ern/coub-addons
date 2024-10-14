@@ -7,28 +7,28 @@ import type { Logger } from '@/utils/logger';
 import { actualizeMediaSessionFromHtml5Player } from './actualizeMediaSessionFromHtml5Player';
 import { addKeyUpHandlerToHtml5Player } from './addKeyUpHandlerToHtml5Player';
 import {
-	H5P_ATTACH_EVENTS_KEY,
-	H5P_ATTACH_EVENTS_SYM,
-	H5P_CHANGE_STATE_KEY,
-	H5P_CHANGE_STATE_SYM,
-	H5P_KEY_UP_EVENT,
-	H5P_KEY_UP_HANDLERS_KEY,
-	H5P_KEY_UP_HANDLERS_SYM,
-	H5P_PLAYERS_MAP_SYM,
+	H5PC_ATTACH_EVENTS_KEY,
+	H5PC_ATTACH_EVENTS_SYM,
+	H5PC_CHANGE_STATE_KEY,
+	H5PC_CHANGE_STATE_SYM,
+	H5PC_KEY_UP_EVENT,
+	H5PC_KEY_UP_HANDLERS_KEY,
+	H5PC_KEY_UP_HANDLERS_SYM,
+	H5PC_PLAYERS_MAP_SYM,
 } from './constants';
 import { getActiveCoubHtml5Player } from './getActiveCoubHtml5Player';
-import { getHtml5PlayerGlobals } from './getHtml5PlayerGlobals';
-import { revertHtml5PlayerPatches } from './revertHtml5PlayerPatches';
+import { getHtml5PlayerClassGlobals } from './getHtml5PlayerClassGlobals';
+import { revertHtml5PlayerClassPatches } from './revertHtml5PlayerClassPatches';
 import { selectActiveCoubViewer } from './selectActiveCoubViewer';
 
 type Patches = {
-	[key in typeof H5P_ATTACH_EVENTS_SYM]?: coub.Html5Player['attachEvents'];
+	[key in typeof H5PC_ATTACH_EVENTS_SYM]?: coub.Html5Player['attachEvents'];
 } & {
-	[key in typeof H5P_CHANGE_STATE_SYM]?: coub.Html5Player['changeState'];
+	[key in typeof H5PC_CHANGE_STATE_SYM]?: coub.Html5Player['changeState'];
 } & {
-	[key in typeof H5P_PLAYERS_MAP_SYM]?: WeakMap<Element, WeakRef<coub.Html5Player>>;
+	[key in typeof H5PC_PLAYERS_MAP_SYM]?: WeakMap<Element, WeakRef<coub.Html5Player>>;
 } & {
-	[key in typeof H5P_KEY_UP_HANDLERS_SYM]?: [
+	[key in typeof H5PC_KEY_UP_HANDLERS_SYM]?: [
 		playerRef: WeakRef<coub.Html5Player>,
 		handler: ((eventObject: JQueryEventObject, ...args: unknown[]) => unknown) | undefined,
 	][];
@@ -40,12 +40,13 @@ declare global {
 	}
 }
 
-export function patchHtml5Player(
+export function patchHtml5PlayerClass(
 	parentLogger: Logger,
+	_waivedWindow: typeof window,
 	playerSettings: ReadonlyPlayerSettings,
 ): RevertPatch | unknown[] {
 	const logger = parentLogger.getChildLogger('Html5Player');
-	const validatedGlobals = getHtml5PlayerGlobals(logger);
+	const validatedGlobals = getHtml5PlayerClassGlobals(logger);
 
 	if (!validatedGlobals.isValid) {
 		return validatedGlobals.ret;
@@ -56,27 +57,27 @@ export function patchHtml5Player(
 	const proto = Html5Player.prototype;
 
 	{
-		const origAttachEvents = proto[H5P_ATTACH_EVENTS_SYM];
+		const origAttachEvents = proto[H5PC_ATTACH_EVENTS_SYM];
 
 		if (typeof origAttachEvents === 'function') {
 			logger.debug('reverting non-reverted `attachEvents` patch');
 			proto.attachEvents = origAttachEvents;
-			delete proto[H5P_ATTACH_EVENTS_SYM];
+			delete proto[H5PC_ATTACH_EVENTS_SYM];
 		}
 	}
 
 	{
-		const origChangeState = proto[H5P_CHANGE_STATE_SYM];
+		const origChangeState = proto[H5PC_CHANGE_STATE_SYM];
 
 		if (typeof origChangeState === 'function') {
 			logger.debug('reverting non-reverted `changeState` patch');
 			proto.changeState = origChangeState;
-			delete proto[H5P_CHANGE_STATE_SYM];
+			delete proto[H5PC_CHANGE_STATE_SYM];
 		}
 	}
 
 	{
-		const origAttachEvents = (proto[H5P_ATTACH_EVENTS_SYM] = proto.attachEvents);
+		const origAttachEvents = (proto[H5PC_ATTACH_EVENTS_SYM] = proto.attachEvents);
 
 		const patchedAttachEvents: typeof proto.attachEvents = function patchedAttachEvents(...args) {
 			const player = this.wrappedJSObject || this;
@@ -85,8 +86,8 @@ export function patchHtml5Player(
 				// `attachEvents` is called for the first time in the constructor,
 				// so we can add handlers with the highest priority
 				const exportedHandler = addKeyUpHandlerToHtml5Player(logger, player, playerSettings);
-				const handlers = (proto[H5P_KEY_UP_HANDLERS_SYM] ||= cloneInto([], proto));
-				const playersMap = (proto[H5P_PLAYERS_MAP_SYM] ||= new WeakMap());
+				const handlers = (proto[H5PC_KEY_UP_HANDLERS_SYM] ||= cloneInto([], proto));
+				const playersMap = (proto[H5PC_PLAYERS_MAP_SYM] ||= new WeakMap());
 
 				const playerRef = new WeakRef(player);
 
@@ -113,7 +114,7 @@ export function patchHtml5Player(
 	}
 
 	{
-		const origChangeState = (proto[H5P_CHANGE_STATE_SYM] = proto.changeState);
+		const origChangeState = (proto[H5PC_CHANGE_STATE_SYM] = proto.changeState);
 
 		const patchedChangeState: typeof proto.changeState = function patchedChangeState(...args) {
 			const player = this.wrappedJSObject || this;
@@ -234,7 +235,7 @@ export function patchHtml5Player(
 	}
 
 	try {
-		const keyUpHandlers = proto[H5P_KEY_UP_HANDLERS_SYM];
+		const keyUpHandlers = proto[H5PC_KEY_UP_HANDLERS_SYM];
 
 		if (Array.isArray(keyUpHandlers)) {
 			for (const entry of keyUpHandlers) {
@@ -243,7 +244,7 @@ export function patchHtml5Player(
 					const player = playerRef.deref();
 
 					if (player) {
-						handler && player.vb.off(H5P_KEY_UP_EVENT, handler);
+						handler && player.vb.off(H5PC_KEY_UP_EVENT, handler);
 						entry[1] = addKeyUpHandlerToHtml5Player(logger, player, playerSettings);
 					}
 				} catch (err) {
@@ -262,11 +263,11 @@ export function patchHtml5Player(
 	return () => {
 		logger.debug('removing patches');
 
-		revertHtml5PlayerPatches(
-			H5P_ATTACH_EVENTS_KEY,
-			H5P_KEY_UP_EVENT,
-			H5P_KEY_UP_HANDLERS_KEY,
-			H5P_CHANGE_STATE_KEY,
+		revertHtml5PlayerClassPatches(
+			H5PC_ATTACH_EVENTS_KEY,
+			H5PC_KEY_UP_EVENT,
+			H5PC_KEY_UP_HANDLERS_KEY,
+			H5PC_CHANGE_STATE_KEY,
 			undefined,
 			logger,
 			proto,

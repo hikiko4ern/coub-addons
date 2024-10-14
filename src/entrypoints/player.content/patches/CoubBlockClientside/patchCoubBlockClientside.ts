@@ -40,6 +40,7 @@ const DISLIKE_BUTTON_SELECTOR = '.coub__dislike-button' as const;
 
 export function patchCoubBlockClientside(
 	parentLogger: Logger,
+	_waivedWindow: typeof window,
 	playerSettings: ReadonlyPlayerSettings,
 ): RevertPatch | unknown[] {
 	const logger = parentLogger.getChildLogger('CoubBlockClientside');

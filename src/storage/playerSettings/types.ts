@@ -32,3 +32,14 @@ export interface PlayerSettingsV2
 export interface PlayerSettingsV3 extends PlayerSettingsV2 {
 	copyCoubPermalinkHotkey: HotkeyV2 | undefined;
 }
+
+// v4
+
+export interface PlayerSettingsV4 extends PlayerSettingsV3 {
+	/**
+	 * time in milliseconds after which fullscreen controls should be hidden
+	 *
+	 * Coub uses 5000ms by default
+	 */
+	hideControlsAfter: number | undefined;
+}
