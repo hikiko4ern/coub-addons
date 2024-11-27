@@ -19,6 +19,12 @@
 					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.26/coub-addons-0.1.26-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.26.html",
 					"update_hash": "sha256:31573f6ecb0f1304dc073fbd4484137248f82b6e61d83ac371e735cf4b0cb364"
+				},
+				{
+					"version": "0.1.27",
+					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.27/coub-addons-0.1.27-firefox.xpi",
+					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.27.html",
+					"update_hash": "sha256:650b7ffc84d4b527e1a7377fa856b9ab2b2787e0df981732c31b336739b1aa61"
 				}
 			]
 		}
