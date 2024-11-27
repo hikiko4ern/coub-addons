@@ -11,7 +11,7 @@
 		"xast-util-to-xml": "^4.0.0"
 	},
 	"devDependencies": {
-		"@types/node": "^20.16.5",
+		"@types/node": "^22.10.0",
 		"@types/xast": "^2.0.4"
 	},
 	"peerDependencies": {
