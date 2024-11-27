@@ -8,7 +8,11 @@ import { toast } from 'react-toastify';
 import type { Permissions } from 'wxt/browser';
 
 import { logger } from '@/options/constants';
-import { COMMENTS_GRAPHQL_HOST, COMMENTS_GRAPHQL_PERMISSIONS } from '@/permissions/constants';
+import {
+	ARE_COMMENTS_ON_DIFFERENT_HOST,
+	COMMENTS_GRAPHQL_HOST,
+	COMMENTS_GRAPHQL_PERMISSIONS,
+} from '@/permissions/constants';
 import type { Blocklist, BlocklistStorage, ReadonlyBlocklist } from '@/storage/blocklist';
 
 interface Props {
@@ -26,7 +30,7 @@ const useMergeCallback = <Key extends keyof Blocklist>(
 	return useCallback(
 		(value: Blocklist[Key]) => {
 			storage.mergeWith({ [key]: value });
-			onChangeRef.current?.(value);
+			typeof onChangeRef.current === 'function' && onChangeRef.current(value);
 		},
 		[storage, key],
 	);
@@ -35,41 +39,45 @@ const useMergeCallback = <Key extends keyof Blocklist>(
 export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) => {
 	const [haveAccessToComments, setHaveAccessToComments] = useState<boolean>();
 
-	useEffect(() => {
-		browser.permissions.contains(COMMENTS_GRAPHQL_PERMISSIONS).then(setHaveAccessToComments);
+	if (ARE_COMMENTS_ON_DIFFERENT_HOST) {
+		useEffect(() => {
+			browser.permissions.contains(COMMENTS_GRAPHQL_PERMISSIONS).then(setHaveAccessToComments);
 
-		const handler = (type: 'added' | 'removed', permissions: Permissions.Permissions) => {
-			logger.debug(type, 'permissions', permissions);
+			const handler = (type: 'added' | 'removed', permissions: Permissions.Permissions) => {
+				logger.debug(type, 'permissions', permissions);
 
-			if (permissions.origins?.includes(COMMENTS_GRAPHQL_HOST)) {
-				setHaveAccessToComments(type === 'added');
-			}
-		};
+				if (permissions.origins?.includes(COMMENTS_GRAPHQL_HOST)) {
+					setHaveAccessToComments(type === 'added');
+				}
+			};
 
-		const addedHandler = (permissions: Permissions.Permissions) => handler('added', permissions);
-		const removedHandler = (permissions: Permissions.Permissions) =>
-			handler('removed', permissions);
+			const addedHandler = (permissions: Permissions.Permissions) => handler('added', permissions);
+			const removedHandler = (permissions: Permissions.Permissions) =>
+				handler('removed', permissions);
 
-		browser.permissions.onAdded.addListener(addedHandler);
-		browser.permissions.onRemoved.addListener(removedHandler);
+			browser.permissions.onAdded.addListener(addedHandler);
+			browser.permissions.onRemoved.addListener(removedHandler);
 
-		return () => {
-			browser.permissions.onRemoved.removeListener(removedHandler);
-			browser.permissions.onAdded.removeListener(addedHandler);
-		};
-	}, []);
+			return () => {
+				browser.permissions.onRemoved.removeListener(removedHandler);
+				browser.permissions.onAdded.removeListener(addedHandler);
+			};
+		}, []);
+	}
 
-	const requestAccessToComments = useCallback(() => {
-		browser.permissions
-			.request(COMMENTS_GRAPHQL_PERMISSIONS)
-			.then(isGranted =>
-				isGranted
-					? setHaveAccessToComments(true)
-					: toast.warn(
-							<Localized id="permissions-must-be-granted-for-this-functionality-to-work" />,
-						),
-			);
-	}, []);
+	const requestAccessToComments = ARE_COMMENTS_ON_DIFFERENT_HOST
+		? useCallback(() => {
+				browser.permissions
+					.request(COMMENTS_GRAPHQL_PERMISSIONS)
+					.then(isGranted =>
+						isGranted
+							? setHaveAccessToComments(true)
+							: toast.warn(
+									<Localized id="permissions-must-be-granted-for-this-functionality-to-work" />,
+								),
+					);
+			}, [])
+		: undefined;
 
 	const handleIsBlockRecoubsChange = useMergeCallback(storage, 'isBlockRecoubs');
 
@@ -78,9 +86,11 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 	const handleIsHideCommentsFromBlockedChannelsChange = useMergeCallback(
 		storage,
 		'isHideCommentsFromBlockedChannels',
-		isHide => {
-			isHide && !haveAccessToComments && requestAccessToComments();
-		},
+		typeof requestAccessToComments === 'function'
+			? isHide => {
+					isHide && !haveAccessToComments && requestAccessToComments();
+				}
+			: undefined,
 	);
 
 	return (
@@ -108,11 +118,13 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 					<Localized id="hide-comments-from-blocked-channels" />
 				</Checkbox>
 
-				{state.isHideCommentsFromBlockedChannels && haveAccessToComments === false && (
-					<Button color="warning" variant="flat" size="sm" onPress={requestAccessToComments}>
-						<Localized id="grant-permissions" />
-					</Button>
-				)}
+				{ARE_COMMENTS_ON_DIFFERENT_HOST &&
+					state.isHideCommentsFromBlockedChannels &&
+					haveAccessToComments === false && (
+						<Button color="warning" variant="flat" size="sm" onPress={requestAccessToComments}>
+							<Localized id="grant-permissions" />
+						</Button>
+					)}
 			</div>
 		</div>
 	);

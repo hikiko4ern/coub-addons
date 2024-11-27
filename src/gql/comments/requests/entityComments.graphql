@@ -1,51 +1,33 @@
-# saved at 2024/07/09
+# last updated 2024/11/27
 
-fragment CommentFields on DisqusComment {
+fragment CommentFields on Comment {
   author {
-    avatar {
-      cache
-      permalink
-      __typename
-    }
-    coubcomChannelId
+    avatar
+    channelId
     name
-    profileUrl
+    permalink
     __typename
   }
+  id
   createdAt
-  disqusCommentId
   hasChildren
   isDeleted
   isEdited
-  isReported
   message
-  parentPostId
+  parentCommentId
   __typename
 }
 
-query EntityComments(
-  $entityId: ID!
-  $entityType: Entity!
-  $cursorNext: String
-  $limit: Int
-  $order: SortOrder
-  $parentPostId: String
-) {
-  entityComments(
-    entityId: $entityId
-    entityType: $entityType
-    cursorNext: $cursorNext
-    limit: $limit
-    order: $order
-    parentPostId: $parentPostId
-  ) {
-    cursor {
-      next
-      hasNext
-      __typename
-    }
+query Comments($entityId: Int!, $entityType: Entity!, $page: Int!, $perPage: Int) {
+  entityComments(entityId: $entityId, entityType: $entityType, page: $page, perPage: $perPage) {
     comments {
       ...CommentFields
+      __typename
+    }
+    meta {
+      page
+      perPage
+      totalPages
       __typename
     }
     __typename

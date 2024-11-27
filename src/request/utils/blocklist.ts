@@ -133,8 +133,8 @@ class BlocklistChecker {
 			return [false];
 		}
 
-		if (isObject(comment.author) && typeof comment.author.coubcomChannelId === 'string') {
-			const channelId = Number.parseInt(comment.author.coubcomChannelId);
+		if (isObject(comment.author) && typeof comment.author.channelId === 'string') {
+			const channelId = Number.parseInt(comment.author.channelId, 10);
 
 			if (!Number.isNaN(channelId) && this.#isChannelBlocked(channelId)) {
 				return [true, CommentExclusionReason.CHANNEL_BLOCKED];

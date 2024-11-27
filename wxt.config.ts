@@ -10,7 +10,11 @@ import { normalizePath } from 'vite';
 import sassDts from 'vite-plugin-sass-dts';
 import { type WxtViteConfig, defineConfig } from 'wxt';
 
-import { COMMENTS_GRAPHQL_HOST } from './src/permissions/constants';
+import {
+	ARE_COMMENTS_ON_DIFFERENT_HOST,
+	COMMENTS_GRAPHQL_HOST,
+	COUB_HOST,
+} from './src/permissions/constants';
 
 const SEGMENTER_UTILS_ASSET = 'segmenter-utils.wasm';
 
@@ -42,9 +46,11 @@ export default defineConfig({
 			'webRequestBlocking',
 			'webRequestFilterResponse',
 			'menus',
-			`${process.env.VITE_COUB_ORIGIN}/*`,
+			COUB_HOST,
 		],
-		optional_permissions: [COMMENTS_GRAPHQL_HOST],
+		...(ARE_COMMENTS_ON_DIFFERENT_HOST && {
+			optional_permissions: [COMMENTS_GRAPHQL_HOST],
+		}),
 		browser_action: {},
 		browser_specific_settings: {
 			gecko: {

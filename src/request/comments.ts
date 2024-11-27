@@ -1,7 +1,8 @@
-import type { EntityCommentsQuery } from '@/gql/comments/graphql';
+import type { KeysOfUnion } from 'type-fest';
+
+import type { CommentsQuery, RepliesQuery } from '@/gql/comments/graphql';
 import { isObject } from '@/helpers/isObject';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
-import type { Logger } from '@/utils/logger';
 import type { Context } from './ctx';
 import { CommentExclusionReason } from './types/comment';
 
@@ -9,54 +10,70 @@ interface FilteredOutComment {
 	reason: CommentExclusionReason;
 	tReason: string;
 	authorName: string | null | undefined;
-	authorProfileUrl: string | null | undefined;
-	message: string | undefined;
+	authorPermalink: string | null | undefined;
+	message: string | null | undefined;
 }
+
+type Queries = CommentsQuery | RepliesQuery;
+type QueriesFields = KeysOfUnion<Queries>;
+
+type GetFromUnion<T, Key> = T extends unknown ? (Key extends keyof T ? T[Key] : never) : never;
 
 const EXCLUSION_REASON_TEXT: Record<CommentExclusionReason, string> = {
 	[CommentExclusionReason.CHANNEL_BLOCKED]: 'author is blocked manually',
 };
 
+const QUERY_FIELDS = ['entityComments', 'commentReplies'] satisfies QueriesFields[];
+
 export const registerCommentsHandlers = (ctx: Context) => {
-	ctx.webRequest.rewriteCompleteGraphql<EntityCommentsQuery>({
+	ctx.webRequest.rewriteCompleteGraphql<Queries>({
 		name: 'comments handler',
 		filter: {
 			urls: [`${ctx.commentsOrigin}/graphql`],
 			types: ['xmlhttprequest'],
 		},
-		// NOTE: as of July 10, 2024, the `threadComments` request is not present in `disqus-3d9410fccc8802be8a3b.js`
-		// fyi: Coub uses Apollo Client (v3.7.10 at the time of writing; https://www.apollographql.com/docs/react)
-		ifQueriesFields: ['entityComments'],
+		ifQueriesFields: QUERY_FIELDS,
 		rewrite: async ({ ctx, logger, details, data }) => {
 			let isModified = false;
-			const { entityComments } = data;
 
-			if (
-				isObject(entityComments) &&
-				Array.isArray(entityComments.comments) &&
-				entityComments.comments.length > 0
-			) {
+			for (const field of QUERY_FIELDS) {
+				const entity = data[field as never] as GetFromUnion<typeof data, typeof field> | undefined;
+
+				if (
+					!entity ||
+					!isObject(entity) ||
+					!Array.isArray(entity.comments) ||
+					entity.comments.length < 1
+				) {
+					continue;
+				}
+
 				ctx.blockedChannels
-					.actualizeChannelsData(iterAsBlockedChannels(logger, entityComments.comments))
+					.actualizeChannelsData(iterAsBlockedChannels(entity.comments))
 					.catch((err: unknown) => logger.error('failed to actualize blocked channels data', err));
 
 				{
 					const isHide = await ctx.blocklist.isHideCommentsFromBlockedChannels();
 
 					if (!isHide) {
-						logger.debug('ignoring comments response due to isHideCommentsFromBlockedChannels =');
-						return;
+						logger.debug(
+							'ignoring comments',
+							field,
+							'response due to isHideCommentsFromBlockedChannels =',
+							isHide,
+						);
+						continue;
 					}
 				}
 
-				const origAmount = entityComments.comments.length;
+				const origAmount = entity.comments.length;
 
-				const filteredComments: (typeof entityComments)['comments'] = [];
+				const filteredComments: (typeof entity)['comments'] = [];
 				const filteredOutComments: FilteredOutComment[] = [];
 
 				const checker = await ctx.blocklistUtils.createChecker();
 
-				for (const comment of entityComments.comments) {
+				for (const comment of entity.comments) {
 					const [isExclude, reason] = checker.isExcludeComment(comment);
 
 					if (isExclude) {
@@ -64,7 +81,7 @@ export const registerCommentsHandlers = (ctx: Context) => {
 							reason,
 							tReason: EXCLUSION_REASON_TEXT[reason],
 							authorName: comment.author?.name,
-							authorProfileUrl: comment.author?.profileUrl,
+							authorPermalink: comment.author?.permalink,
 							message: comment.message,
 						});
 						continue;
@@ -73,14 +90,16 @@ export const registerCommentsHandlers = (ctx: Context) => {
 					filteredComments.push(comment);
 				}
 
-				data.entityComments.comments = filteredComments;
-				isModified = filteredComments.length !== origAmount;
+				entity.comments = filteredComments;
+				isModified ||= filteredComments.length !== origAmount;
 
 				if (filteredOutComments.length) {
 					logger.groupCollapsed(
 						'filtered out',
 						filteredOutComments.length,
 						filteredOutComments.length > 1 ? 'comments' : 'comment',
+						'from',
+						field,
 					);
 					logger.tableRaw(filteredOutComments, [
 						'authorName',
@@ -111,37 +130,25 @@ export const registerCommentsHandlers = (ctx: Context) => {
 };
 
 function* iterAsBlockedChannels(
-	logger: Logger,
-	comments: EntityCommentsQuery['entityComments']['comments'],
+	comments: CommentsQuery['entityComments']['comments'],
 ): Generator<BlockedChannelData, void, never> {
 	for (const comment of comments) {
 		if (
 			isObject(comment) &&
 			isObject(comment.author) &&
-			typeof comment.author.coubcomChannelId === 'string' &&
-			typeof comment.author.name === 'string' &&
-			typeof comment.author.profileUrl === 'string' &&
-			comment.author.profileUrl
+			typeof comment.author.channelId === 'string' &&
+			typeof comment.author.permalink === 'string' &&
+			comment.author.permalink
 		) {
-			const id = Number.parseInt(comment.author.coubcomChannelId, 10);
-			const permalink = getPermalinkFromUrl(logger, comment.author.profileUrl);
+			const id = Number.parseInt(comment.author.channelId, 10);
 
-			if (!Number.isNaN(id) && permalink) {
+			if (!Number.isNaN(id)) {
 				yield {
 					id,
-					title: comment.author.name,
-					permalink,
+					title: (typeof comment.author.name === 'string' && comment.author.name) || '',
+					permalink: comment.author.permalink,
 				};
 			}
 		}
 	}
 }
-
-const getPermalinkFromUrl = (logger: Logger, profileUrl: string) => {
-	try {
-		const url = new URL(profileUrl);
-		return url.pathname.slice(1);
-	} catch (err) {
-		logger.error('failed to parse `profileUrl`', err);
-	}
-};

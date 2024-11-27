@@ -69,7 +69,7 @@ Here are some helpful commands:
 
 #### GraphQL <!-- omit in toc -->
 
-A copy of the `https://comments.coub.com/graphql` GraphQL schema is stored in the repository for type checking. Usually there is no need to touch it, but if the schema becomes outdated, to update it, execute:
+A copy of the `https://coub.com/graphql` GraphQL schema is stored in the repository for type checking. Usually there is no need to touch it, but if the schema becomes outdated, to update it, execute:
 
 ```sh
 pnpm gql:fetch-schema # executes an Introspection query and saves its response
@@ -135,6 +135,11 @@ This will automatically bump up the version based on new commits added since the
 - `coub-addons-x.x.x-sources.zip` - source code of the extension for [review in <abbr title="addons.mozilla.org">AMO</abbr>](https://extensionworkshop.com/documentation/publish/source-code-submission/)
 
 where `x.x.x` is the new version of the extension after `bump` (e.g. `0.1.20`).
+
+To publish a release, run:
+
+1. `pnpm release-build`
+2. `pnpm tsx ./utils/upload/index.ts`
 
 <!-- links -->
 

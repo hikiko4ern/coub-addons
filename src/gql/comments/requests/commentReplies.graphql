@@ -1,0 +1,35 @@
+# last updated 2024/11/27
+
+fragment CommentFields on Comment {
+  author {
+    avatar
+    channelId
+    name
+    permalink
+    __typename
+  }
+  id
+  createdAt
+  hasChildren
+  isDeleted
+  isEdited
+  message
+  parentCommentId
+  __typename
+}
+
+query Replies($page: Int!, $parentCommentId: Int!, $perPage: Int) {
+  commentReplies(parentCommentId: $parentCommentId, page: $page, perPage: $perPage) {
+    comments {
+      ...CommentFields
+      __typename
+    }
+    meta {
+      page
+      perPage
+      totalPages
+      __typename
+    }
+    __typename
+  }
+}

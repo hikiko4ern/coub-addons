@@ -1,4 +1,4 @@
-import type { SetReturnType, UnknownRecord } from 'type-fest';
+import type { KeysOfUnion, SetReturnType, UnknownRecord } from 'type-fest';
 import type { WebRequest } from 'wxt/browser';
 
 import { concatArrays } from '@/helpers/concatArrays';
@@ -50,7 +50,7 @@ interface CompleteJsonResponseRewriterCtx<T extends object> extends OnBeforeRequ
 
 interface RewriteCompleteGraphqlOptions<T extends object, CtxAddition extends object>
 	extends RewriteCompleteJsonResponseOptions<T, CtxAddition> {
-	ifQueriesFields?: (keyof T)[];
+	ifQueriesFields?: KeysOfUnion<T>[];
 }
 
 export class WebRequestExt implements Disposable {
