@@ -1,6 +1,7 @@
 import type { AugmentedBrowser as Browser, Events } from 'wxt/browser';
 
 import { Logger } from '@/utils/logger';
+import type { SetReturnType } from 'type-fest';
 import { isObject } from './helpers/isObject';
 import type { StorageEvent } from './storage/types';
 
@@ -33,7 +34,8 @@ type Event =
 	| GetUnloadStylesClassWithPrefixEvent
 	| GetUnloadStylesClassEvent;
 
-type EventHandler = OnMessageHandlerWithMessageType<Event>;
+type RawEventHandler = OnMessageHandlerWithMessageType<Event>;
+type EventHandler = SetReturnType<RawEventHandler, void | ReturnType<RawEventHandler>>;
 
 const EVENT_IDS: ReadonlySet<Event['type']> = new Set([
 	'I18nLocaleEvent',
@@ -99,7 +101,7 @@ export class EventListener implements Disposable {
 			try {
 				if (isEvent(e)) {
 					this.#logger.debug('received event', e);
-					return handler(e as Event, ...args);
+					return (handler as RawEventHandler)(e as Event, ...args);
 				}
 			} catch (err) {
 				this.#logger.error('failed to handle event', e, err);

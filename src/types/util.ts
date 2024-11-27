@@ -15,3 +15,7 @@ export type Value<T> = T extends ReadonlySet<infer U>
 		: T;
 
 export type MaybePromise<T> = T | Promise<T>;
+
+export type ExtractFunction<T> =
+	// biome-ignore lint/suspicious/noExplicitAny: required for correct type inference
+	T extends unknown ? Extract<T, (...args: any) => any> : never;

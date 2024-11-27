@@ -8,7 +8,7 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { getActiveKeyboardEventModifiers } from '@/hotkey/getActiveKeyboardEventModifiers';
 import { getUniversalHotkeyKey } from '@/hotkey/getUniversalHotkeyKey';
 import type { ReadonlyHotkey, ReadonlyPartialHotkey } from '@/hotkey/types';
-import type { Value } from '@/types/util';
+import type { ExtractFunction, Value } from '@/types/util';
 
 const STOP_ON_PRESSED = new Set(['escape', 'enter'] as const);
 const ALLOWED_CHARS = new Set([
@@ -151,7 +151,9 @@ export const useRecordHotkey = (options: Options) => {
 			start,
 			clear,
 			onBlur: handleBlur,
-			onKeyDown: handleKeyDown as unknown as JSX.KeyboardEventHandler<HTMLInputElement>,
+			onKeyDown: handleKeyDown as unknown as ExtractFunction<
+				JSX.KeyboardEventHandler<HTMLInputElement>
+			>,
 		},
 	] as const;
 };

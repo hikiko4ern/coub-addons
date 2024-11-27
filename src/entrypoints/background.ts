@@ -85,9 +85,8 @@ export default defineBackground(() => {
 			case 'GetTabId':
 				return sendResponse(sender.tab?.id);
 
-			case 'GetUnloadStylesClassWithPrefix': {
+			case 'GetUnloadStylesClassWithPrefix':
 				return sendResponse([unloadStylesClassPrefix, unloadStylesClass]);
-			}
 
 			case 'GetUnloadStylesClass': {
 				(async () => {

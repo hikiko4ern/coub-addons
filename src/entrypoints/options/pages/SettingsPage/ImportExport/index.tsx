@@ -27,6 +27,7 @@ import {
 	createBackup,
 	restoreBackup,
 } from '@/storage/backup';
+import type { ExtractFunction } from '@/types/util';
 
 const pad = (value: number) => value.toString().padStart(2, '0');
 
@@ -119,27 +120,30 @@ export const ImportExport: FunctionComponent = () => {
 		}
 	}, [l10n]);
 
-	const handleChange = useCallback<JSX.GenericEventHandler<HTMLInputElement>>(async e => {
-		const input = e.currentTarget;
-		const file = input.files?.[0];
+	const handleChange = useCallback<ExtractFunction<JSX.GenericEventHandler<HTMLInputElement>>>(
+		async e => {
+			const input = e.currentTarget;
+			const file = input.files?.[0];
 
-		if (file) {
-			try {
-				const text = await file.text();
-				const data = JSON.parse(text) as Backup;
+			if (file) {
+				try {
+					const text = await file.text();
+					const data = JSON.parse(text) as Backup;
 
-				input.value = '';
-				restoreRef.current = {
-					data,
-					isMerge: input.dataset.merge === 'true',
-				};
+					input.value = '';
+					restoreRef.current = {
+						data,
+						isMerge: input.dataset.merge === 'true',
+					};
 
-				return openImportConfirmation();
-			} catch {}
+					return openImportConfirmation();
+				} catch {}
 
-			toast.error(<Localized id="file-content-is-not-a-valid-backup" />);
-		}
-	}, []);
+				toast.error(<Localized id="file-content-is-not-a-valid-backup" />);
+			}
+		},
+		[],
+	);
 
 	const renderImportBackupButton = (
 		title: string,

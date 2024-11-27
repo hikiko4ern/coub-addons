@@ -232,7 +232,7 @@ export class WebRequestExt implements Disposable {
 
 				try {
 					const { query } = JSON.parse(
-						this.#utf8Decoder.decode(requestBody.raw[0].bytes),
+						this.#utf8Decoder.decode(requestBody.raw[0].bytes as AllowSharedBufferSource),
 					) as GraphqlRequest<UnknownRecord>;
 
 					const isIncludesFields = fieldsRegex.test(query);
