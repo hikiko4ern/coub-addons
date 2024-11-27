@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.1.27] - 2024-11-27
+
+### Bug Fixes
+
+- **(blocklist)** handle comments on the new `coub.com` host
+
+### Miscellaneous Tasks
+
+- remove `test-extension` from sources zip
+- **(docs,release-notes)** regenerate release notes for `v0.1.24` and `v0.1.25`
+- **(updates)** specify `update_hash` in `updates.json`
+- change `update_url` to `coub-addons.doggo.moe` ([#16](https://github.com/hikiko4ern/coub-addons/issues/16))
+
 ## [0.1.26] - 2024-10-06
 
 ### Features
