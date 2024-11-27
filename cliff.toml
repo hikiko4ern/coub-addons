@@ -45,17 +45,21 @@ body = """
 # spell-checker: enable
 trim = true
 
+[bump]
+features_always_bump_minor = false
+breaking_always_bump_major = false
+
 [git]
 conventional_commits = true
 filter_unconventional = true
 split_commits = false
 commit_parsers = [
 	# ignore
-	{ sha = "393a2bbf704825d51c2659e14d42e1d71ed9e325", skip = true },
-	{ sha = "da3317643bfd416a13f516458f052a5fd10da8e3", skip = true },
+	{ sha = "393a2bbf704825d51c2659e14d42e1d71ed9e325", skip = true }, # feat: initial commit
+	{ sha = "00bc3be2e3ab07e561d1a20728f9317d5259b44a", skip = true }, # chore: remove `test-extension` from sources zip
 
 	# groups
-	{ message = "chore\\((build|changelog|dev|deps|release|utils|internal)(\\)|,)", skip = true },
+	{ message = "^chore\\((build|changelog|dev|deps|release|utils|internal)(\\)|,)", skip = true },
 	{ message = "^fix", group = "<!-- 1 -->Bug Fixes" },
 	{ message = "^feat", group = "<!-- 2 -->Features" },
 	{ message = "^docs", group = "Documentation", skip = true },
@@ -74,7 +78,8 @@ ignore_tags = ""
 # spell-checker: ignore topo
 topo_order = false
 sort_commits = "oldest"
-
-[bump]
-features_always_bump_minor = false
-breaking_always_bump_major = false
+# fix commit messages
+commit_preprocessors = [
+	{ pattern = "^chore\\(docs\\)", replace = "docs" },
+	{ pattern = "^chore\\(docs,", replace = "docs(" },
+]

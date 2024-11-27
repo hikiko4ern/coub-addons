@@ -8,8 +8,6 @@
 
 ### Miscellaneous Tasks
 
-- remove `test-extension` from sources zip
-- **(docs,release-notes)** regenerate release notes for `v0.1.24` and `v0.1.25`
 - **(updates)** specify `update_hash` in `updates.json`
 - change `update_url` to `coub-addons.doggo.moe` ([#16](https://github.com/hikiko4ern/coub-addons/issues/16))
 
