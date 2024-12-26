@@ -2,7 +2,12 @@ import type { SegmenterUtils } from './segmenterUtils';
 
 import type { ToReadonly } from '@/types/util';
 
-import { type PhrasesTree, preparePhraseForTree } from './phrasesTree';
+import {
+	LAST_WORD,
+	type PhrasesTree,
+	type PhrasesTreeLeaf,
+	preparePhraseForTree,
+} from './phrasesTree';
 
 export const getMatchedPhrase = (
 	utils: SegmenterUtils,
@@ -12,26 +17,36 @@ export const getMatchedPhrase = (
 	for (let str of strings) {
 		str = preparePhraseForTree(str);
 
-		const strLength = str.length,
-			wordsBoundaries = utils.segmentWords(str);
+		const words = utils.segmentWords(str);
 
-		if (wordsBoundaries) {
-			for (const { word, index } of wordsBoundaries.words) {
-				const phrases = tree[word];
+		if (words) {
+			const matchedPhrase = findPhraseInTree(tree, words);
 
-				if (!phrases) {
-					continue;
-				}
+			if (matchedPhrase) {
+				return matchedPhrase;
+			}
+		}
+	}
+};
 
-				for (const phrase of phrases) {
-					if (str.startsWith(phrase, index)) {
-						const endIndex = index + phrase.length;
+const findPhraseInTree = (tree: PhrasesTree, words: string[]): string | undefined => {
+	const wordsLen = words.length;
 
-						if (endIndex === strLength || wordsBoundaries.wordBoundaryIndexes.has(endIndex)) {
-							return phrase;
-						}
-					}
-				}
+	byWords: for (let i = 0; i < wordsLen; i++) {
+		let leaf: PhrasesTreeLeaf | undefined = tree;
+
+		for (let j = i; j < wordsLen; j++) {
+			const word = words[j];
+			leaf = leaf[word];
+
+			if (!leaf) {
+				continue byWords;
+			}
+
+			const lastWord = leaf[LAST_WORD];
+
+			if (lastWord) {
+				return lastWord;
 			}
 		}
 	}

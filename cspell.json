@@ -148,6 +148,7 @@
 		"/cspell.json",
 		"/pnpm-lock.yaml",
 		"/src/gql",
-		"/patches"
+		"/patches",
+		"*.snap"
 	]
 }

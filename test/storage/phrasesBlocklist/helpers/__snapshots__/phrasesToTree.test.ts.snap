@@ -1,0 +1,99 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`many words 1`] = `
+{
+  "teh": {
+    "rabbit": {
+      "hwowal": {
+        "went": {
+          "stwaight": {
+            "on": {
+              "wike": {
+                "a": {
+                  "tunnyew": {
+                    "fwow": {
+                      "swome": {
+                        "way": {
+                          "o": {
+                            " ́": {
+                              "o": {
+                                "and": {
+                                  "when": {
+                                    "dipped": {
+                                      "suddenwy": {
+                                        "dwown": {
+                                          "*": {
+                                            "ω": {
+                                              "swo": {
+                                                "suddenwy": {
+                                                  "dat": {
+                                                    "awice": {
+                                                      "had": {
+                                                        "nyot": {
+                                                          "a": {
+                                                            "mwoment": {
+                                                              "two": {
+                                                                "fwink": {
+                                                                  "abwout": {
+                                                                    "stwopping": {
+                                                                      "hewsewf": {
+                                                                        "befwowe": {
+                                                                          "she": {
+                                                                            "fwound": {
+                                                                              "hewsewf": {
+                                                                                "fawwing": {
+                                                                                  "dwown": {
+                                                                                    "a": {
+                                                                                      "wewwy": {
+                                                                                        "deep": {
+                                                                                          "weww": {
+                                                                                            "uwu": {
+                                                                                              "#last word#": "teh rabbit-hwowal went stwaight on wike a tunnyew fwow swome way (o ́∀\`o) and when dipped suddenwy dwown (* ^ ω ^) swo suddenwy dat awice had nyot a mwoment two fwink abwout stwopping hewsewf befwowe she fwound hewsewf fawwing dwown a wewwy deep weww uwu",
+                                                                                            },
+                                                                                          },
+                                                                                        },
+                                                                                      },
+                                                                                    },
+                                                                                  },
+                                                                                },
+                                                                              },
+                                                                            },
+                                                                          },
+                                                                        },
+                                                                      },
+                                                                    },
+                                                                  },
+                                                                },
+                                                              },
+                                                            },
+                                                          },
+                                                        },
+                                                      },
+                                                    },
+                                                  },
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+}
+`;

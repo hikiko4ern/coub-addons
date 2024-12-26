@@ -1,7 +1,5 @@
-import initWasm, {
-	getFirstWord as wasm_getFirstWord,
-	segmentWords as wasm_segmentWords,
-} from '@coub-addons/segmenter-utils';
+import initWasm, { segmentWords as wasm_segmentWords } from '@coub-addons/segmenter-utils';
+import createEmojiRegex from 'emoji-regex';
 
 import type { MaybePromise } from '@/types/util';
 import { Logger } from '@/utils/logger';
@@ -9,19 +7,8 @@ import { Logger } from '@/utils/logger';
 const logger = Logger.create('segmenter');
 const wasmUrl = browser.runtime.getURL('segmenter-utils.wasm');
 
-export interface WordsBoundaries {
-	words: Word[];
-	wordBoundaryIndexes: Set<number>;
-}
-
-interface Word {
-	word: string;
-	index: number;
-}
-
 export interface SegmenterUtils {
-	getFirstWord: (input: string) => string | undefined;
-	segmentWords: (input: string) => WordsBoundaries | undefined;
+	segmentWords: (input: string) => string[] | undefined;
 }
 
 let loadSegmenterUtils: () => MaybePromise<SegmenterUtils>;
@@ -37,7 +24,6 @@ if (typeof Intl.Segmenter === 'undefined') {
 			logger.debug('successfully loaded from', wasmUrl);
 
 			segmenterUtils = {
-				getFirstWord: wasm_getFirstWord,
 				segmentWords: wasm_segmentWords,
 			};
 
@@ -53,31 +39,19 @@ if (typeof Intl.Segmenter === 'undefined') {
 	logger.debug('using native `Intl.Segmenter`');
 
 	const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+	const emojiRegex = createEmojiRegex();
 
 	const segmenterUtils: SegmenterUtils = {
-		getFirstWord: function getFirstWord(input) {
-			const first = segmenter.segment(input)[Symbol.iterator]().next();
-			return !first.done && first.value.isWordLike ? first.value.segment : undefined;
-		},
 		segmentWords: function segmentWords(input: string) {
-			const res: WordsBoundaries = {
-				words: [],
-				wordBoundaryIndexes: new Set(),
-			};
+			const words: string[] = [];
 
 			for (const s of segmenter.segment(input)) {
-				if (s.isWordLike) {
-					res.words.push({
-						word: s.segment,
-						index: s.index,
-					});
-
-					res.wordBoundaryIndexes.add(s.index);
-					res.wordBoundaryIndexes.add(s.index + s.segment.length);
+				if (s.isWordLike || emojiRegex.test(s.segment)) {
+					words.push(s.segment);
 				}
 			}
 
-			return res.words.length ? res : undefined;
+			return words.length ? words : undefined;
 		},
 	};
 
