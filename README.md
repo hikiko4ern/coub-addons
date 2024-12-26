@@ -46,6 +46,14 @@ Minimum supported browser versions:
   | toggle fullscreen mode    | <kbd>F</kbd> (<ins>F</ins>ullscreen) |
   | copy link to coub         | —                                    |
 
+Also fixes some bugs/weirdnesses:
+
+- adds a year to last year's dates that occurred less than a year ago
+
+  for example, if today is `2024/12/01` and Coub was published `2023/12/10`, Coub will display the date `Dec 10` (as if it were December 10 of the current year 2024, not the past year) instead of `Dec 10, 2023`
+
+  the extension makes it so that the year is always displayed for last year's dates (`December 10, 2023`)
+
 <!-- features end -->
 
 <!-- reload-warn start -->

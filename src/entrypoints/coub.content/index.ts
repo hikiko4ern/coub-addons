@@ -23,8 +23,13 @@ import {
 	patchHtml5Player,
 	revertHtml5PlayerPatches,
 } from './patches/Html5Player';
+import {
+	APPLICATION_ORIGINAL_SMART_DATE_TIME_KEY,
+	patchHelpers,
+	revertHelpersPatches,
+} from './patches/helpers';
 
-const UNLOAD_HANDLERS_SUFFIX = 'keyboardShortcuts';
+const UNLOAD_HANDLERS_SUFFIX = 'coub';
 
 export default defineContentScript({
 	matches: [`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/*`],
@@ -42,7 +47,7 @@ export default defineContentScript({
 	runAt: 'document_start',
 	async main(ctx) {
 		const ID = nanoid();
-		const logger = Logger.create('keyboard shortcuts cs', { devUniqueId: ID });
+		const logger = Logger.create('coub cs', { devUniqueId: ID });
 
 		try {
 			await removeOldUnloadHandlers(UNLOAD_HANDLERS_SUFFIX);
@@ -52,7 +57,7 @@ export default defineContentScript({
 
 		try {
 			const tabId = await EventDispatcher.getTabId();
-			const playerSettingsStorage = new PlayerSettingsStorage(tabId, 'keyboard shortcuts', logger);
+			const playerSettingsStorage = new PlayerSettingsStorage(tabId, 'coub', logger);
 			const mutablePlayerSettings: Writable<ReadonlyPlayerSettings> = {
 				...(await playerSettingsStorage.getValue()),
 			};
@@ -69,7 +74,9 @@ export default defineContentScript({
 				{
 					CoubBlockClientside: patchCoubBlockClientside,
 					Html5Player: patchHtml5Player,
+					helpers: patchHelpers,
 				},
+				waivedWindow,
 				mutablePlayerSettings,
 			);
 
@@ -88,6 +95,9 @@ export default defineContentScript({
 					h5pKeyUpHandlersKey,
 					h5pChangeStateKey,
 					revertHtml5PlayerPatches,
+					// helpers
+					applicationOriginalSmartDateTimeKey,
+					revertHelpersPatches,
 				) => {
 					console.debug(`[${loggerPrefix}]`, 'reverting patches');
 
@@ -105,6 +115,8 @@ export default defineContentScript({
 						h5pChangeStateKey,
 						loggerPrefix,
 					);
+
+					revertHelpersPatches(applicationOriginalSmartDateTimeKey, loggerPrefix);
 				},
 				logger.prefix,
 				// CoubBlockClientside
@@ -118,6 +130,9 @@ export default defineContentScript({
 				H5P_KEY_UP_HANDLERS_KEY,
 				H5P_CHANGE_STATE_KEY,
 				revertHtml5PlayerPatches,
+				// helpers
+				APPLICATION_ORIGINAL_SMART_DATE_TIME_KEY,
+				revertHelpersPatches,
 			);
 
 			ctx.onInvalidated(() => {

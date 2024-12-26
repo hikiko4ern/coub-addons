@@ -135,9 +135,15 @@ importers:
       '@react-types/shared':
         specifier: 3.23.1
         version: 3.23.1(react@18.3.1)
+      '@types/i18n-js':
+        specifier: ^3.8.9
+        version: 3.8.9
       '@types/jquery':
         specifier: ^1.10.45
         version: 1.10.45
+      '@types/moment':
+        specifier: 2.11.29
+        version: 2.11.29
       '@types/node':
         specifier: ^22.10.0
         version: 22.10.0
@@ -2549,6 +2555,9 @@ packages:
   '@types/http-cache-semantics@4.0.4':
     resolution: {integrity: sha512-1m0bIFVc7eJWyve9S0RnuRgcQqF/Xd5QsUZAZeQFr1Q3/p9JWoQQEqmVy+DPTNpGXwhgIetAoYF8JSc33q29QA==}
 
+  '@types/i18n-js@3.8.9':
+    resolution: {integrity: sha512-bSxgya4x5O+x+QhfCGckiDDE+17XGPp1TNBgBA/vfF5EwdiZC70F4cKG5QK2v44+v62oY7/t/InreRhxskulcA==}
+
   '@types/jquery@1.10.45':
     resolution: {integrity: sha512-JvoVtPbu1wrcOldn5gvuyJqr7DLX6I657N68Fqj5S7AUutdYZqabQjfP7dY6Gee7/Afo1uajwcORVlQfnsjkLQ==}
 
@@ -2563,6 +2572,9 @@ packages:
 
   '@types/minimatch@3.0.5':
     resolution: {integrity: sha512-Klz949h02Gz2uZCMGwDUSDS1YBlTdDDgbWHi+81l29tQALUtvz4rAYi5uoVhE5Lagoq6DeqAUlbrHvW/mXDgdQ==}
+
+  '@types/moment@2.11.29':
+    resolution: {integrity: sha512-D5WIgbLYQzvgfsDnBhZFSTnt/BjGPOE+Jsh3k1BYYijJAkrn7ceeLvU4jtjKKXXuXN42O3ARlU4D/P9ezbQYFA==}
 
   '@types/ms@0.7.34':
     resolution: {integrity: sha512-nG96G3Wp6acyAgJqGasjODb+acrI7KltPiRxzHPXnP3NgI28bpQDRv53olbqGXbfcgF5aiiHmO3xpwEpS5Ld9g==}
@@ -9213,6 +9225,8 @@ snapshots:
 
   '@types/http-cache-semantics@4.0.4': {}
 
+  '@types/i18n-js@3.8.9': {}
+
   '@types/jquery@1.10.45': {}
 
   '@types/js-yaml@4.0.9': {}
@@ -9226,6 +9240,8 @@ snapshots:
       '@types/unist': 3.0.2
 
   '@types/minimatch@3.0.5': {}
+
+  '@types/moment@2.11.29': {}
 
   '@types/ms@0.7.34': {}
 

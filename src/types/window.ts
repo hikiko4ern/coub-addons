@@ -1,4 +1,6 @@
+import type I18n from 'i18n-js';
 import type jQuery from 'jquery';
+import type moment from 'moment';
 import type { ConditionalKeys, OmitIndexSignature } from 'type-fest';
 
 import type { Channel } from '@/api/types';
@@ -7,10 +9,6 @@ import type { JstTemplateName } from './jst';
 
 declare global {
 	namespace coub {
-		interface I18n {
-			locale: string;
-		}
-
 		interface Gon {
 			profile_channel?: ProfileChannel;
 		}
@@ -129,16 +127,28 @@ declare global {
 		interface JstPatches {}
 
 		type JstTemplate = (this: Window['JST'], it: object, ...args: unknown[]) => string;
+
+		namespace helpers {
+			interface Application extends ApplicationPatches {
+				smartDateTime<T extends object>(object: T, ago: boolean, dateProperty?: keyof T): string;
+			}
+
+			interface ApplicationPatches {}
+
+			const Application: Application;
+		}
 	}
 
 	interface Window {
 		$: typeof jQuery;
+		moment: typeof moment; // Coub is still using moment v2.3.1, which was released in 2013
+		I18n: typeof I18n;
 		gon: coub.Gon;
-		I18n: coub.I18n;
 		widgets: typeof coub.widgets;
 		Html5Player: coub.Html5Player;
 		CoubBlockClientside: coub.CoubBlockClientside;
 		JST: coub.JST;
+		helpers: typeof coub.helpers;
 
 		// Gecko waived Xray
 		// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Sharing_objects_with_page_scripts

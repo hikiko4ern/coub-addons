@@ -42,6 +42,7 @@ declare global {
 
 export function patchHtml5Player(
 	parentLogger: Logger,
+	_waivedWindow: typeof window,
 	playerSettings: ReadonlyPlayerSettings,
 ): RevertPatch | unknown[] {
 	const logger = parentLogger.getChildLogger('Html5Player');
