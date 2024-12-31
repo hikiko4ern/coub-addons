@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.28] - 2024-12-31
+
+### Features
+
+- add a year to last year's dates that occurred less than a year ago
+- **(blocklist)** preserve emojis
+- **(blocklist)** add a blocklist tester
+
 ## [0.1.27] - 2024-11-27
 
 ### Bug Fixes
