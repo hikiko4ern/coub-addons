@@ -106,7 +106,11 @@ const patchApplication = (parentLogger: Logger, waivedWindow: typeof window) => 
 
 				logger.debug('created date');
 
-				if (dateYear !== now.getFullYear()) {
+				if (
+					dateYear !== now.getFullYear() &&
+					// Coub currently uses the “current year” format only if more than 72 hours have passed between dates
+					Math.abs(date.diff(cloneInto(now, date), 'hours')) >= 72
+				) {
 					return I18n.t(
 						'smart_datetime_new.year_ago',
 						cloneInto(
