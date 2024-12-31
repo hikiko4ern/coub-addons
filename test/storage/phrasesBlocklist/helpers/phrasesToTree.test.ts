@@ -7,6 +7,10 @@ import { phrasesToTree } from '@/storage/phrasesBlocklist/helpers/phrasesTree';
 import { segmenterUtils } from './segmenterUtils';
 
 it('1 word', () => {
+	expect(phrasesToTree(segmenterUtils, ['🥶'])).toStrictEqual({
+		'🥶': new Set(['🥶']),
+	});
+
 	expect(phrasesToTree(segmenterUtils, ['hewwo'])).toStrictEqual({
 		hewwo: new Set(['hewwo']),
 	});
@@ -23,6 +27,22 @@ it('1 word', () => {
 it('2 words', () => {
 	expect(phrasesToTree(segmenterUtils, ['hewwo wowwd'])).toStrictEqual({
 		hewwo: new Set(['hewwo wowwd']),
+	});
+
+	expect(phrasesToTree(segmenterUtils, ['🥶winter'])).toStrictEqual({
+		'🥶': new Set(['🥶winter']),
+	});
+
+	expect(phrasesToTree(segmenterUtils, ['🥶 winter'])).toStrictEqual({
+		'🥶': new Set(['🥶 winter']),
+	});
+
+	expect(phrasesToTree(segmenterUtils, ['winter🥶'])).toStrictEqual({
+		winter: new Set(['winter🥶']),
+	});
+
+	expect(phrasesToTree(segmenterUtils, ['winter 🥶'])).toStrictEqual({
+		winter: new Set(['winter 🥶']),
 	});
 });
 

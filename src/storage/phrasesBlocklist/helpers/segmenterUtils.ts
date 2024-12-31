@@ -2,6 +2,7 @@ import initWasm, {
 	getFirstWord as wasm_getFirstWord,
 	segmentWords as wasm_segmentWords,
 } from '@coub-addons/segmenter-utils';
+import createEmojiRegex from 'emoji-regex';
 
 import type { MaybePromise } from '@/types/util';
 import { Logger } from '@/utils/logger';
@@ -53,11 +54,15 @@ if (typeof Intl.Segmenter === 'undefined') {
 	logger.debug('using native `Intl.Segmenter`');
 
 	const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+	const emojiRegex = createEmojiRegex();
+
+	const isWordLikeSegment = (data: Intl.SegmentData) =>
+		data.isWordLike || ((emojiRegex.lastIndex = 0), emojiRegex.test(data.segment));
 
 	const segmenterUtils: SegmenterUtils = {
 		getFirstWord: function getFirstWord(input) {
 			const first = segmenter.segment(input)[Symbol.iterator]().next();
-			return !first.done && first.value.isWordLike ? first.value.segment : undefined;
+			return !first.done && isWordLikeSegment(first.value) ? first.value.segment : undefined;
 		},
 		segmentWords: function segmentWords(input: string) {
 			const res: WordsBoundaries = {
@@ -66,7 +71,7 @@ if (typeof Intl.Segmenter === 'undefined') {
 			};
 
 			for (const s of segmenter.segment(input)) {
-				if (s.isWordLike) {
+				if (isWordLikeSegment(s)) {
 					res.words.push({
 						word: s.segment,
 						index: s.index,

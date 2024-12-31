@@ -1,7 +1,5 @@
-#![allow(non_snake_case)]
-
-use icu_segmenter::{WordSegmenter, WordType};
-use itertools::Itertools;
+use icu_segmenter::{WordBreakIteratorUtf16, WordSegmenter};
+use itertools::Itertools as _;
 use js_sys::{JsString, Set};
 use serde::Serialize;
 use tsify::Tsify;
@@ -21,20 +19,22 @@ pub fn run() {
 
 #[derive(Tsify, Serialize)]
 #[tsify(into_wasm_abi)]
+#[serde(rename_all = "camelCase")]
 pub struct WordsBoundaries {
     words: Vec<Word>,
-    #[serde(rename = "wordBoundaryIndexes", with = "serde_wasm_bindgen::preserve")]
+    #[serde(with = "serde_wasm_bindgen::preserve")]
     #[tsify(type = "Set<number>")]
     word_boundary_indexes: js_sys::Set,
 }
 
 #[derive(Tsify, Serialize)]
 #[tsify(into_wasm_abi)]
+#[serde(rename_all = "camelCase")]
 pub struct Word {
     #[serde(with = "serde_wasm_bindgen::preserve")]
     #[tsify(type = "string")]
     word: JsString,
-    index: usize,
+    index: u32,
 }
 
 // since `JsValue` is returned, we have to describe functions manually,
@@ -63,7 +63,7 @@ pub fn get_first_word(input: &JsString) -> JsValue {
         return JsValue::UNDEFINED;
     };
 
-    if word_type == WordType::Letter {
+    if word_type.is_word_like() || is_emoji_utf16(input.iter().take(i)) {
         JsValue::from(input.slice(0, i as u32))
     } else {
         JsValue::UNDEFINED
@@ -73,25 +73,16 @@ pub fn get_first_word(input: &JsString) -> JsValue {
 #[wasm_bindgen(js_name = segmentWords, skip_typescript)]
 pub fn segment_words(input: &JsString) -> Result<JsValue, serde_wasm_bindgen::Error> {
     let (words, word_boundary_indexes) = SEGMENTER.with(|segmenter| {
+        let code_points = input.iter().collect::<Vec<u16>>();
+
+        let mut words: Vec<Word> = Vec::new();
         let word_boundary_indexes = Set::new(&JsValue::UNDEFINED);
 
-        let words: Vec<Word> = {
-            let code_points = input.iter().collect::<Vec<u16>>();
-            let mut it = segmenter.segment_utf16(&code_points);
-
-            core::iter::from_fn(move || it.next().map(|i| (i, it.word_type())))
-                .tuple_windows()
-                .filter(|(_, (_, word_type))| *word_type == WordType::Letter)
-                .map(|((i, _), (j, _))| {
-                    word_boundary_indexes.add(&JsValue::from_f64(i as f64));
-                    word_boundary_indexes.add(&JsValue::from_f64(j as f64));
-                    Word {
-                        word: input.slice(i as u32, j as u32),
-                        index: i,
-                    }
-                })
-                .collect()
-        };
+        for (i, j, word) in iter_words(input, segmenter.segment_utf16(&code_points)) {
+            word_boundary_indexes.add(&JsValue::from_f64(f64::from(i)));
+            word_boundary_indexes.add(&JsValue::from_f64(f64::from(j)));
+            words.push(Word { word, index: i });
+        }
 
         (words, word_boundary_indexes)
     });
@@ -104,4 +95,28 @@ pub fn segment_words(input: &JsString) -> Result<JsValue, serde_wasm_bindgen::Er
             word_boundary_indexes,
         })
     }
+}
+
+fn is_emoji_utf16<I>(iter: I) -> bool
+where
+    I: IntoIterator<Item = u16>,
+{
+    use icu_properties::sets::{self, CodePointSetDataBorrowed};
+
+    const EMOJI: CodePointSetDataBorrowed = sets::emoji();
+
+    char::decode_utf16(iter).all(|c| c.is_ok_and(|c| !c.is_ascii_whitespace() && EMOJI.contains(c)))
+}
+
+fn iter_words<'l, 's>(
+    input: &'s JsString,
+    mut segmenter: WordBreakIteratorUtf16<'l, 's>,
+) -> impl Iterator<Item = (u32, u32, JsString)> + use<'l, 's> {
+    core::iter::from_fn(move || segmenter.next().map(|i| (i as u32, segmenter.word_type())))
+        .tuple_windows()
+        .filter(|((i, _), (j, word_type))| {
+            word_type.is_word_like()
+                || is_emoji_utf16((*i..*j).map(|i| input.char_code_at(i) as u16))
+        })
+        .map(|((i, _), (j, _))| (i, j, input.slice(i, j)))
 }

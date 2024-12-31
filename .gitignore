@@ -15,8 +15,7 @@ web-ext.config.ts
 vitest.config.ts.*.mjs
 
 # Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+.vscode
 .idea
 .DS_Store
 *.suo

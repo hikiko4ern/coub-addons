@@ -6,7 +6,6 @@ edition = "2021"
 license = "Unlicense"
 publish = false
 repository = "https://github.com/hikiko4ern/coub-addons"
-rust-version = "1.73"
 description = "Intl.Segmenter utils based on ICU4X"
 
 [lib]
@@ -14,14 +13,15 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 console_error_panic_hook = { version = "0.1.7", optional = true }
+icu_properties = "1.5.1"
 icu_segmenter = "1.5.0"
-itertools = { version = "0.13.0", default-features = false }
-js-sys = "0.3.70"
-serde = { version = "1.0.210", features = ["derive"] }
+itertools = { version = "0.14.0", default-features = false }
+js-sys = "0.3.76"
+serde = { version = "1.0.217", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
 tsify = { version = "0.4.5", default-features = false, features = ["js"] }
-wasm-bindgen = "0.2.93"
-web-sys = { version = "0.3.70", optional = true }
+wasm-bindgen = "0.2.99"
+web-sys = { version = "0.3.76", optional = true }
 
 [features]
 default = ["console_panic_hook"]

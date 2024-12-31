@@ -31,9 +31,20 @@ it('simple', () => {
 	expect(getMatchedPhrase(segmenterUtils, tree, ['hello worldo!'])).toBeFalsy();
 });
 
-it('in between', () => {
-	const tree = phrasesToTree(segmenterUtils, ['свою смерть']);
-	expect(
-		getMatchedPhrase(segmenterUtils, tree, ['еретики примите свою смерть достойно']),
-	).toBeTruthy();
+it('partial', () => {
+	{
+		const tree = phrasesToTree(segmenterUtils, ['свою смерть']);
+		expect(
+			getMatchedPhrase(segmenterUtils, tree, ['еретики примите свою смерть достойно']),
+		).toBeTruthy();
+	}
+
+	{
+		const tree = phrasesToTree(segmenterUtils, ['🥶']);
+		expect(getMatchedPhrase(segmenterUtils, tree, ['🥶'])).toBeTruthy();
+		expect(getMatchedPhrase(segmenterUtils, tree, ['🥶 winter is coming'])).toBeTruthy();
+		expect(getMatchedPhrase(segmenterUtils, tree, ['winter is coming 🥶'])).toBeTruthy();
+		expect(getMatchedPhrase(segmenterUtils, tree, ['winter🥶winter'])).toBeTruthy();
+		expect(getMatchedPhrase(segmenterUtils, tree, ['winter 🥶 winter'])).toBeTruthy();
+	}
 });
