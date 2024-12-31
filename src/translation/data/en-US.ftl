@@ -36,6 +36,11 @@ error-boundary-exception = Well, something's broken. You can <recover>Try to rec
 revert-changes = Revert changes
 revert-changes-confirmation-title = Reverting changes
 revert-changes-confirmation-description = Are you sure you want to revert all changes back to when you last saved?
+phrases-tester =
+  .placeholder = Match tester
+phrases-tester-description =
+  Allows you to test the blocklist. Enter a phrase in this field, and if it matches one of the blocklist patterns,
+  that pattern will be highlighted and the field will be colored green. Don't forget to save the blocklist before using it!
 
 ## options / blocked channels
 blocked-channels = Blocked channels

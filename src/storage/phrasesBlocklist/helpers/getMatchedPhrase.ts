@@ -2,13 +2,14 @@ import type { SegmenterUtils } from './segmenterUtils';
 
 import type { ToReadonly } from '@/types/util';
 
+import type { MatchedBlocklistPhrase } from '../types';
 import { type PhrasesTree, preparePhraseForTree } from './phrasesTree';
 
 export const getMatchedPhrase = (
 	utils: SegmenterUtils,
 	tree: ToReadonly<PhrasesTree>,
 	strings: Iterable<string>,
-) => {
+): MatchedBlocklistPhrase | undefined => {
 	for (let str of strings) {
 		str = preparePhraseForTree(str);
 
@@ -17,18 +18,22 @@ export const getMatchedPhrase = (
 
 		if (wordsBoundaries) {
 			for (const { word, index } of wordsBoundaries.words) {
-				const phrases = tree[word];
+				const leaf = tree[word];
 
-				if (!phrases) {
+				if (!leaf) {
 					continue;
 				}
 
-				for (const phrase of phrases) {
+				for (const phrase of leaf.phrases) {
 					if (str.startsWith(phrase, index)) {
 						const endIndex = index + phrase.length;
 
 						if (endIndex === strLength || wordsBoundaries.wordBoundaryIndexes.has(endIndex)) {
-							return phrase;
+							return [
+								phrase,
+								// biome-ignore lint/style/noNonNullAssertion: the found phrase is guaranteed to have a position
+								leaf.rawPositions.get(phrase)!,
+							];
 						}
 					}
 				}

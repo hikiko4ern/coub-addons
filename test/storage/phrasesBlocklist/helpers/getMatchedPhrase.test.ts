@@ -3,17 +3,18 @@
 import { expect, it } from 'vitest';
 
 import { getMatchedPhrase } from '@/storage/phrasesBlocklist/helpers/getMatchedPhrase';
-import { phrasesToTree } from '@/storage/phrasesBlocklist/helpers/phrasesTree';
+import { parsePhrasesBlocklist } from '@/storage/phrasesBlocklist/helpers/parsePhrasesBlocklist';
 import { segmenterUtils } from './segmenterUtils';
 
+const parseTree = (raw: string) => parsePhrasesBlocklist(console, segmenterUtils, raw).phrases;
+
 it('simple', () => {
-	const tree = phrasesToTree(segmenterUtils, [
-		'wowwd',
-		'hewwo wowwd!',
-		'wowwd hewwo',
-		'hewwo',
-		'worldo?',
-	]);
+	const tree = parseTree(`\
+wowwd
+hewwo wowwd!
+wowwd hewwo
+hewwo
+worldo?`);
 
 	// will match phrase `hewwo`
 	expect(getMatchedPhrase(segmenterUtils, tree, ['hello', 'hewwo'])).toBeTruthy();
@@ -33,14 +34,14 @@ it('simple', () => {
 
 it('partial', () => {
 	{
-		const tree = phrasesToTree(segmenterUtils, ['свою смерть']);
+		const tree = parseTree('свою смерть');
 		expect(
 			getMatchedPhrase(segmenterUtils, tree, ['еретики примите свою смерть достойно']),
 		).toBeTruthy();
 	}
 
 	{
-		const tree = phrasesToTree(segmenterUtils, ['🥶']);
+		const tree = parseTree('🥶');
 		expect(getMatchedPhrase(segmenterUtils, tree, ['🥶'])).toBeTruthy();
 		expect(getMatchedPhrase(segmenterUtils, tree, ['🥶 winter is coming'])).toBeTruthy();
 		expect(getMatchedPhrase(segmenterUtils, tree, ['winter is coming 🥶'])).toBeTruthy();

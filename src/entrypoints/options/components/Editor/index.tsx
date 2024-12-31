@@ -21,6 +21,7 @@ import { tomorrow } from 'thememirror';
 import { truthyFilter } from '@/helpers/truthyFilter';
 import { SettingsContext } from '@/options/components/SettingsProvider/context';
 import { Theme } from '@/storage/settings/types';
+import { highlightLineEffect, highlightLineField } from './lineHighlighting';
 
 import styles from './styles.module.scss';
 
@@ -34,6 +35,7 @@ interface Props {
 	readOnly?: boolean;
 	lineWrapping?: boolean;
 	isModifiedSignal?: Signal<boolean>;
+	lineHighlighting?: boolean;
 	save: (value: string) => void;
 }
 
@@ -45,6 +47,7 @@ export namespace Editor {
 	export interface Ref {
 		getValue: () => string | undefined;
 		setValue: (value: string) => void;
+		highlightLine: (from: number | undefined) => void;
 	}
 }
 
@@ -56,6 +59,7 @@ export const Editor: FunctionComponent<Props> = ({
 	linter,
 	readOnly = false,
 	lineWrapping,
+	lineHighlighting,
 	isModifiedSignal,
 	save,
 }) => {
@@ -112,13 +116,14 @@ export const Editor: FunctionComponent<Props> = ({
 						preventDefault: true,
 					},
 				]),
+				lineHighlighting && highlightLineField,
 				// theme
 				theme === Theme.DARK ? aura : tomorrow,
 				// languages
 				language,
 				linter,
 			].filter(truthyFilter),
-		[language, linter, readOnly, lineWrapping, theme, save],
+		[language, linter, readOnly, lineWrapping, theme, lineHighlighting, save],
 	);
 
 	const state = useMemo(
@@ -142,13 +147,21 @@ export const Editor: FunctionComponent<Props> = ({
 		stateRef as Ref<Editor.Ref>,
 		(): Editor.Ref => ({
 			getValue: () => (view ? view.state.doc.toString() : undefined),
-			setValue: (value: string) => {
+			setValue: value => {
 				view?.dispatch({
 					changes: {
 						from: 0,
 						to: view.state.doc.toString().length,
 						insert: value,
 					},
+				});
+			},
+			highlightLine: from => {
+				view?.dispatch({
+					effects: [
+						highlightLineEffect.of(from),
+						typeof from === 'number' && EditorView.scrollIntoView(from),
+					].filter(truthyFilter),
 				});
 			},
 		}),

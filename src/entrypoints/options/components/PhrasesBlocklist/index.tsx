@@ -1,5 +1,6 @@
 import { Localized } from '@fluent/react';
 import { Button } from '@nextui-org/button';
+import { Input } from '@nextui-org/input';
 import { useDisclosure } from '@nextui-org/modal';
 import { useSignal } from '@preact/signals';
 import cx from 'clsx';
@@ -10,9 +11,11 @@ import { usePrevious } from '@/hooks/usePrevious';
 import { Confirm } from '@/options/components/Confirm';
 import { Editor } from '@/options/components/Editor';
 import { ErrorCode } from '@/options/components/ErrorCode';
+import { HintTooltip } from '@/options/components/HintTooltip';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
 import type { PhrasesBlocklistStorage } from '@/storage/phrasesBlocklist';
 import { phrasesBlocklist, phrasesBlocklistLinter } from './grammar';
+import { useTestPhrasesBlocklist } from './hooks/useTestPhrasesBlocklist';
 
 import styles from './styles.module.scss';
 
@@ -31,6 +34,13 @@ export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage }) => {
 
 	const storageRaw = storageState.status === StorageHookState.Loaded && storageState.data.raw;
 	const prevStorageRaw = usePrevious(storageRaw);
+
+	const { testQuery, isTestQueryMatched, handleTestQueryInput, clearTestQuery } =
+		useTestPhrasesBlocklist({
+			storage,
+			raw: storageRaw,
+			onMatch: pos => editorRef.current?.highlightLine(pos),
+		});
 
 	const save = useCallback((value: string) => {
 		setIsSaving(true);
@@ -75,6 +85,7 @@ export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage }) => {
 					className={cx('h-0 w-full flex-grow', styles['phrases-blocklist__editor'])}
 					defaultValue={storageState.data.raw}
 					lineWrapping
+					lineHighlighting
 					isModifiedSignal={isModified}
 					language={lang}
 					linter={phrasesBlocklistLinter}
@@ -103,25 +114,57 @@ export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage }) => {
 		<section className="flex h-full w-full flex-col items-start">
 			{content}
 
-			<footer className="mt-4 flex flex-shrink-0 items-center gap-4">
-				<Button
-					className="min-w-24"
-					color={isModified.value ? 'success' : undefined}
-					isLoading={isSaving}
-					isDisabled={isSaving || !isModified.value}
-					onPress={handleSaveClick}
-				>
-					<Localized id="save" />
-				</Button>
+			<footer className="mt-4 flex w-full flex-shrink-0 justify-between gap-4">
+				<section className="flex flex-shrink-0 items-center gap-4">
+					<Button
+						className="min-w-24"
+						color={isModified.value ? 'success' : undefined}
+						isLoading={isSaving}
+						isDisabled={isSaving || !isModified.value}
+						onPress={handleSaveClick}
+					>
+						<Localized id="save" />
+					</Button>
 
-				<Button
-					color={isModified.value ? 'danger' : undefined}
-					variant="light"
-					isDisabled={isSaving || !isModified.value}
-					onPress={onOpen}
-				>
-					<Localized id="revert-changes" />
-				</Button>
+					<Button
+						color={isModified.value ? 'danger' : undefined}
+						variant="light"
+						isDisabled={isSaving || !isModified.value}
+						onPress={onOpen}
+					>
+						<Localized id="revert-changes" />
+					</Button>
+				</section>
+
+				<section className="flex grow items-baseline justify-end gap-2">
+					<Localized id="phrases-tester" attrs={{ placeholder: true }}>
+						<Input
+							classNames={{
+								base: 'w-auto grow justify-end',
+								mainWrapper: 'min-w-[min(theme(spacing.96),100%)]',
+							}}
+							name="test"
+							labelPlacement="outside-left"
+							fullWidth={false}
+							isClearable
+							value={testQuery}
+							color={
+								testQuery && !isModified.value
+									? isTestQueryMatched
+										? 'success'
+										: 'danger'
+									: undefined
+							}
+							isDisabled={isModified.value}
+							onValueChange={handleTestQueryInput}
+							onClear={clearTestQuery}
+						/>
+					</Localized>
+
+					<HintTooltip className="shrink-0" placement="left">
+						<Localized id="phrases-tester-description" />
+					</HintTooltip>
+				</section>
 
 				<Confirm
 					title={<Localized id="revert-changes-confirmation-title" />}

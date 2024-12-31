@@ -7,6 +7,7 @@ import type { IsCoubBlockedByTitle } from '@/storage/blockedCoubTitles';
 import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
 import type { ReadonlyBlocklist } from '@/storage/blocklist';
 
+import type { MatchedBlocklistPhrase } from '@/storage/phrasesBlocklist/types';
 import type { Context } from '../ctx';
 import type { StoriesResponseStory } from '../stories';
 import type { TimelineResponseCoub } from '../timeline';
@@ -85,10 +86,10 @@ class BlocklistChecker {
 			return [true, CoubExclusionReason.CHANNEL_BLOCKED];
 		}
 
-		let blockedByPattern: string | undefined;
+		let blockedByPattern: MatchedBlocklistPhrase | undefined;
 
 		if (typeof coub.title === 'string' && (blockedByPattern = this.#isBlockedByTitle(coub.title))) {
-			return [true, CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern];
+			return [true, CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern[0]];
 		}
 
 		if (
@@ -98,7 +99,7 @@ class BlocklistChecker {
 			typeof coub.tags[0].title === 'string' &&
 			(blockedByPattern = this.#isHaveBlockedTags(imap(coub.tags, tag => tag.title)))
 		) {
-			return [true, CoubExclusionReason.TAG_BLOCKED, blockedByPattern];
+			return [true, CoubExclusionReason.TAG_BLOCKED, blockedByPattern[0]];
 		}
 
 		return [false];

@@ -36,6 +36,11 @@ error-boundary-exception = Ну, что-то сломалось. Вы может
 revert-changes = Откатить изменения
 revert-changes-confirmation-title = Откат изменений
 revert-changes-confirmation-description = Вы уверены, что хотите откатить все изменения до момента последнего сохранения?
+phrases-tester =
+  .placeholder = Поиск соответствий
+phrases-tester-description =
+  Позволяет проверить блок-лист. Введите в это поле фразу, и если она совпадёт с одним из шаблонов блокировки,
+  этот шаблон будет подсвечен, а поле окрасится в зелёный. Не забудьте сохранить блок-лист перед проверкой!
 
 ## options / blocked channels
 blocked-channels = Заблокированные каналы

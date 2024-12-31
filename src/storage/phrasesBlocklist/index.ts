@@ -10,7 +10,7 @@ import { mergePhrasesBlocklist } from './helpers/mergePhrasesBlocklist';
 import { parsePhrasesBlocklist } from './helpers/parsePhrasesBlocklist';
 import { addPhraseToTree } from './helpers/phrasesTree';
 import { type SegmenterUtils, loadSegmenterUtils } from './helpers/segmenterUtils';
-import type { PhrasesBlocklist, RawPhrasesBlocklist } from './types';
+import type { MatchedBlocklistPhrase, PhrasesBlocklist, RawPhrasesBlocklist } from './types';
 
 export type { PhrasesBlocklist, RawPhrasesBlocklist } from './types';
 
@@ -19,7 +19,7 @@ export interface PhrasesBlocklistMeta extends StorageMeta {}
 export type ReadonlyPhrasesBlocklist = ToReadonly<PhrasesBlocklist>;
 
 /** if one of values is blocked, returns the pattern by which it is blocked */
-export type IsBlockedFn = (value: string | Iterable<string>) => string | undefined;
+export type IsBlockedFn = (value: string | Iterable<string>) => MatchedBlocklistPhrase | undefined;
 
 let segmenterUtils: SegmenterUtils;
 
@@ -59,12 +59,15 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 	block = async (value: string) => {
 		const state = await this.getValue();
 
-		!this.#isBlocked(state, value) &&
+		if (!this.#isBlocked(state, value)) {
+			const newRawWithoutValue = state.raw.endsWith('\n') ? state.raw : `${state.raw}\n`;
+
 			this.setParsedValue({
 				...state,
-				raw: state.raw.endsWith('\n') ? state.raw + value : `${state.raw}\n${value}`,
-				phrases: addPhraseToTree(segmenterUtils, state.phrases, value),
+				raw: newRawWithoutValue + value,
+				phrases: addPhraseToTree(segmenterUtils, state.phrases, value, newRawWithoutValue.length),
 			});
+		}
 	};
 
 	setRaw = (raw: RawPhrasesBlocklist) => this.setValue(raw);
@@ -79,9 +82,9 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 		}
 
 		for (const v of valuesArr) {
-			for (const regex of state.regexps) {
+			for (const [regex, pos] of state.regexps) {
 				if (regex.test(v)) {
-					return String(regex);
+					return [String(regex), pos];
 				}
 			}
 		}
