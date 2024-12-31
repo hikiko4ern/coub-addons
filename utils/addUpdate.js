@@ -90,7 +90,7 @@ const newUpdates = {
 		[process.env.VITE_GECKO_ID]: {
 			...oldExtUpdates,
 			updates: oldExtUpdates.updates.toSpliced(
-				sameVersionOldUpdate,
+				sameVersionOldUpdate === -1 ? oldExtUpdates.updates.length : sameVersionOldUpdate,
 				sameVersionOldUpdate === -1 ? 0 : 1,
 				newUpdate,
 			),
