@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.29] - 2024-12-31
+
+### Bug Fixes
+
+- add a year to the dates only if more than 72 hours have passed
+
 ## [0.1.28] - 2024-12-31
 
 ### Features
