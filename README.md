@@ -46,6 +46,9 @@ Minimum supported browser versions:
   | toggle fullscreen mode    | <kbd>F</kbd> (<ins>F</ins>ullscreen) |
   | copy link to coub         | —                                    |
 
+<!-- features end -->
+<!-- features start -->
+
 Also fixes some bugs/weirdnesses:
 
 - adds a year to last year's dates that occurred less than a year ago

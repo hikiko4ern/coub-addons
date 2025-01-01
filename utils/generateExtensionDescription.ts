@@ -1,6 +1,6 @@
 /** @file generates addon's description for AMO */
 
-import type { Nodes as HastNodes } from 'hast';
+import type { Element, ElementContent, Nodes as HastNodes, Root, RootContent, Text } from 'hast';
 import { toHtml } from 'hast-util-to-html';
 import { h } from 'hastscript';
 import type { List, ListItem } from 'mdast';
@@ -78,10 +78,27 @@ export function generateExtensionDescription(content: string) {
 		}
 
 		descriptionSections.push(
-			nodes.map(node => {
+			nodes.flatMap(node => {
 				const el = toHast(node);
-				el.type === 'element' && minifyHtml(el as never); // minifier is fine with `Element`s
-				return el;
+				const trimLfFor = new Set<Root | Element>();
+				let isMinify = true;
+
+				visit(el, { type: 'element', tagName: 'p' }, (node, index, parent) => {
+					if (parent && typeof index === 'number') {
+						isMinify = false;
+						trimLfFor.add(parent);
+						parent.children.splice(index, 1, ...node.children, lf());
+						return [SKIP, index + node.children.length + 1];
+					}
+				});
+
+				for (const node of trimLfFor) {
+					trimLf(node);
+				}
+
+				const tree = el.type === 'element' && el.tagName === 'p' ? [...el.children, lf2()] : el;
+				isMinify && el.type === 'element' && minifyHtml(tree as never); // minifier is fine with `Element`s
+				return tree;
 			}),
 		);
 	});
@@ -96,12 +113,7 @@ export function generateExtensionDescription(content: string) {
 		);
 	});
 
-	return toHtml(
-		h(
-			null,
-			Array.from(joinSections(descriptionSections.values(), { type: 'text', value: '\n\n' })),
-		),
-	);
+	return toHtml(h(null, Array.from(joinSections(descriptionSections.values(), lf2()))));
 }
 
 function* joinSections<T>(iter: IterableIterator<T[]>, joiner: NoInfer<T>) {
@@ -118,4 +130,31 @@ function* joinSections<T>(iter: IterableIterator<T[]>, joiner: NoInfer<T>) {
 	}
 
 	return next.value;
+}
+
+function lf(): Text {
+	return { type: 'text', value: '\n' };
+}
+
+function lf2(): Text {
+	return { type: 'text', value: '\n\n' };
+}
+
+function trimLf(node: Root | Element) {
+	const firstNonLf = node.children.findIndex(node => !isLf(node));
+
+	if (firstNonLf === -1) {
+		node.children = [];
+		return;
+	}
+
+	const lastNonLf = node.children.findLastIndex(node => !isLf(node));
+
+	if (firstNonLf !== 0 || lastNonLf !== node.children.length - 1) {
+		node.children = node.children.slice(firstNonLf, lastNonLf + 1);
+	}
+}
+
+function isLf(node: RootContent | ElementContent) {
+	return node.type === 'text' && node.value === '\n';
 }
