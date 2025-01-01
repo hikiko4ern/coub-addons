@@ -129,17 +129,32 @@ If something doesn't work, see [Testing Automatic Updating](https://extensionwor
 
 At the moment releases are done manually. To create a release, run `pnpm bump`.
 
-This will automatically bump up the version based on new commits added since the previous tag, generate a [`CHANGELOG.md`](./CHANGELOG.md), build and package the extension for Firefox, creating two files in the `.output` directory:
+This will automatically bump up the version based on new commits added since the previous tag and generate a [`CHANGELOG.md`](./CHANGELOG.md).
 
-- `coub-addons-x.x.x-firefox.zip` - unsigned extension
-- `coub-addons-x.x.x-sources.zip` - source code of the extension for [review in <abbr title="addons.mozilla.org">AMO</abbr>](https://extensionworkshop.com/documentation/publish/source-code-submission/)
+To publish a release:
 
-where `x.x.x` is the new version of the extension after `bump` (e.g. `0.1.20`).
+1. run `pnpm release-build` to build a release version of the extension
+   this will create two files in the `.output` directory:
 
-To publish a release, run:
+   - `coub-addons-x.x.x-firefox.zip` - unsigned extension
+   - `coub-addons-x.x.x-sources.zip` - source code of the extension for [review in <abbr title="addons.mozilla.org">AMO</abbr>](https://extensionworkshop.com/documentation/publish/source-code-submission/)
 
-1. `pnpm release-build`
-2. `pnpm tsx ./utils/upload/index.ts`
+   where `x.x.x` is the new version of the extension after `bump` (e.g. `0.1.20`).
+2. run `pnpm tsx ./utils/upload/index.ts` to publish a new version to <abbr title="addons.mozilla.org">AMO</abbr>
+3. wait for the new version to be approved by the AMO
+4. download the signed `.xpi` from AMO
+5. create new releases in [`GitHub`](https://github.com/hikiko4ern/coub-addons) and [Codeberg](https://codeberg.org/hikiko4ern/coub-addons)
+
+   run `pnpm -s release-notes` to generate a release description
+
+   attach 2 files to the release:
+   - `coub-addons-x.x.x-firefox.xpi` - signed extension downloaded from AMO
+   - `coub-addons-x.x.x-sources.zip` - source code of the extension
+6. run `pnpm add-update --file /path/to/coub-addons-x.x.x-firefox.xpi` to add a new release to `updates.json`
+7. commit the changes with the next message and push them to the `master`:
+   ```sh
+   chore(release): add `v0.1.20` to `updates.json` # change the version to a newly created one
+   ```
 
 <!-- links -->
 

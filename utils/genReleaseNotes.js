@@ -4,13 +4,13 @@
  * Usage:
  *
  * 1. generate for the latest version:
- * 		node ./utils/genReleaseNotes.js
+ * 		pnpm release-notes
  *
  * 2. generate for a specific version:
- * 		node ./utils/genReleaseNotes.js -v 0.1.26
+ * 		pnpm release-notes -v 0.1.26
  *
  * 3. generate for a specific version with a custom range:
- * 		node ./utils/genReleaseNotes.js -v 0.1.26 --range v0.1.25..v0.1.26
+ * 		pnpm release-notes -v 0.1.26 --range v0.1.25..v0.1.26
  */
 
 // @ts-check
