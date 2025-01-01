@@ -27,14 +27,14 @@
 		"test": "vitest"
 	},
 	"dependencies": {
-		"@go-task/cli": "^3.40.0",
-		"binaryen": "^118.0.0",
+		"@go-task/cli": "^3.40.1",
+		"binaryen": "^121.0.0",
 		"rimraf": "^6.0.1",
 		"streamsearch": "^1.1.0"
 	},
 	"devDependencies": {
 		"@types/streamsearch": "^1.1.2",
-		"vitest": "^2.1.6"
+		"vitest": "^2.1.8"
 	},
 	"repository": {
 		"type": "git",

@@ -5,6 +5,7 @@
 import type { JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
+import { useWatchingRef } from '@/hooks/useWatchingRef';
 import { getActiveKeyboardEventModifiers } from '@/hotkey/getActiveKeyboardEventModifiers';
 import { getUniversalHotkeyKey } from '@/hotkey/getUniversalHotkeyKey';
 import type { ReadonlyHotkey, ReadonlyPartialHotkey } from '@/hotkey/types';

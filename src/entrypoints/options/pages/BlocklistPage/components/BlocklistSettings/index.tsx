@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'preact/hooks';
 import { toast } from 'react-toastify';
 import type { Permissions } from 'wxt/browser';
 
+import { useWatchingRef } from '@/hooks/useWatchingRef';
 import { logger } from '@/options/constants';
 import {
 	ARE_COMMENTS_ON_DIFFERENT_HOST,

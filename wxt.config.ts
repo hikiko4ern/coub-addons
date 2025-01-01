@@ -1,7 +1,5 @@
 import 'dotenv-flow/config';
 
-import { copyFile } from 'node:fs/promises';
-import path from 'node:path';
 import type {} from '@coub-addons/wxt-svg-icon';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
@@ -35,7 +33,7 @@ export default defineConfig({
 		// internal
 		'@/options': 'src/entrypoints/options',
 	},
-	manifest: {
+	manifest: env => ({
 		name: '__MSG_extName__',
 		description: '__MSG_extDescription__',
 		default_locale: 'en',
@@ -46,10 +44,12 @@ export default defineConfig({
 			'webRequestBlocking',
 			'webRequestFilterResponse',
 			'menus',
-			COUB_HOST,
 		],
+		host_permissions: [COUB_HOST],
 		...(ARE_COMMENTS_ON_DIFFERENT_HOST && {
-			optional_permissions: [COMMENTS_GRAPHQL_HOST],
+			[env.manifestVersion === 3 ? 'optional_host_permissions' : 'optional_permissions']: [
+				COMMENTS_GRAPHQL_HOST,
+			],
 		}),
 		browser_action: {},
 		browser_specific_settings: {
@@ -59,10 +59,12 @@ export default defineConfig({
 				strict_min_version: '101.0',
 			},
 		},
-		// don't forget to reload the extension after changing the hash!
-		content_security_policy:
-			"script-src 'self' 'wasm-unsafe-eval' 'sha256-tommjNcTFgpLYmOWXGx1CR0O2Eh5jNbwvUsWT6+GO4Q='; object-src 'self'",
-	},
+		content_security_policy: {
+			// don't forget to reload the extension after changing the hash!
+			extension_pages:
+				"script-src 'self' 'wasm-unsafe-eval' 'sha256-tommjNcTFgpLYmOWXGx1CR0O2Eh5jNbwvUsWT6+GO4Q='; object-src 'self'",
+		},
+	}),
 	zip: {
 		includeSources: [
 			'.env',
@@ -99,11 +101,11 @@ export default defineConfig({
 				delete manifest.browser_specific_settings;
 			}
 		},
-		async 'build:done'(wxt) {
-			await copyFile(
-				require.resolve('@coub-addons/segmenter-utils/wasm'),
-				path.resolve(wxt.config.outDir, SEGMENTER_UTILS_ASSET),
-			);
+		'build:publicAssets'(_wxt, files) {
+			files.push({
+				relativeDest: SEGMENTER_UTILS_ASSET,
+				absoluteSrc: require.resolve('@coub-addons/segmenter-utils/wasm'),
+			});
 		},
 	},
 	vite: () =>

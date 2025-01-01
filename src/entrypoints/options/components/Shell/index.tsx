@@ -4,7 +4,7 @@ import { Navbar, NavbarContent, NavbarItem } from '@nextui-org/navbar';
 import type { FunctionComponent } from 'preact';
 import { useContext, useLayoutEffect } from 'preact/hooks';
 import { ToastContainer } from 'react-toastify';
-import { Link as WLink, useLocation } from 'wouter-preact';
+import { Link as RouterLink, useLocation } from 'wouter-preact';
 
 import { ErrorBoundary } from '@/options/components/ErrorBoundary';
 import { SettingsContext } from '@/options/components/SettingsProvider/context';
@@ -45,7 +45,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 
 						return (
 							<NavbarItem key={path} className="whitespace-normal" isActive={isActive}>
-								<WLink href={path} asChild>
+								<RouterLink href={path} asChild>
 									<Link
 										className="w-full items-baseline font-medium"
 										isBlock
@@ -60,7 +60,7 @@ export const Shell: FunctionComponent = ({ children }) => {
 										<Icon className="relative top-[2px] mr-2 shrink-0" height="1em" />
 										<Localized id={title} />
 									</Link>
-								</WLink>
+								</RouterLink>
 							</NavbarItem>
 						);
 					})}
