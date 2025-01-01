@@ -59,7 +59,7 @@ commit_parsers = [
 	{ sha = "00bc3be2e3ab07e561d1a20728f9317d5259b44a", skip = true }, # chore: remove `test-extension` from sources zip
 
 	# groups
-	{ message = "^chore\\((build|changelog|dev|deps|release|utils|internal)(\\)|,)", skip = true },
+	{ message = "^[a-z]+\\((build|changelog|dev|deps|release|utils|internal)(\\)|,)", skip = true },
 	{ message = "^fix", group = "<!-- 1 -->Bug Fixes" },
 	{ message = "^feat", group = "<!-- 2 -->Features" },
 	{ message = "^docs", group = "Documentation", skip = true },
