@@ -200,7 +200,10 @@ export const ImportExport: FunctionComponent = () => {
 												? 'import-merge-backup-confirmation-message'
 												: 'import-backup-confirmation-message'
 										}
-									/>
+										elems={{ danger: <strong className="font-semibold text-danger" /> }}
+									>
+										<span />
+									</Localized>
 								</ModalBody>
 
 								<ModalFooter>

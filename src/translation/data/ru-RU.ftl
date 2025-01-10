@@ -133,7 +133,7 @@ file-content-is-not-a-valid-backup = Содержимое файла не явл
 ### options / settings / import
 import-backup = Импортировать резервную копию
 import-backup-confirmation-header = Вы уверены?
-import-backup-confirmation-message = Все существующие данные будут перезаписаны резервной копией. Продолжить?
+import-backup-confirmation-message = Все существующие данные будут <danger>перезаписаны</danger> резервной копией. Продолжить?
 ### options / settings / import-merge
 import-merge-backup = Импортировать резервную копию и объединить с текущими настройками
 import-merge-backup-confirmation-message = Существующие данные будут объединены с резервной копией. Продолжить?

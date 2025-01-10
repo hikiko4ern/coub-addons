@@ -132,7 +132,7 @@ file-content-is-not-a-valid-backup = The contents of the file are not a valid ba
 ### options / settings / import
 import-backup = Import backup
 import-backup-confirmation-header = Are you sure?
-import-backup-confirmation-message = All your existing data will be overwritten by the backup. Continue?
+import-backup-confirmation-message = All your existing data will be <danger>overwritten</danger> by the backup. Continue?
 ### options / settings / import-merge
 import-merge-backup = Import backup and merge with current settings
 import-merge-backup-confirmation-message = Your existing data will be merged with backup. Continue?
