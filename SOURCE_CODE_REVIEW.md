@@ -23,10 +23,11 @@ To build the extension or zip it:
         cargo install --locked cargo-run-bin
         ```
 
-   2. remove artifacts from the previous build:
+   2. remove artifacts from the previous build and rebuild:
 
       ```sh
       pnpm su clean
+      pnpm su postinstall
       ```
 
 3. ```sh
