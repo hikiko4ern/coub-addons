@@ -20,18 +20,20 @@ type InnerState<State> =
 
 interface Options<
 	Key extends string,
+	MetaKey extends `${Key}$`,
 	State,
 	TMetadata extends StorageMeta,
 	RawState,
 	ListenerArgs extends unknown[],
 > {
-	storage: StorageBase<Key, State, TMetadata, RawState, ListenerArgs>;
+	storage: StorageBase<Key, MetaKey, State, TMetadata, RawState, ListenerArgs>;
 	onInit?: (state: ToReadonly<State>) => void;
 	onUpdate?: (state: ToReadonly<State>, ...args: ListenerArgs) => void;
 }
 
 export const useStorageState = <
 	Key extends string,
+	MetaKey extends `${Key}$`,
 	State,
 	TMetadata extends StorageMeta,
 	RawState,
@@ -40,7 +42,9 @@ export const useStorageState = <
 	storage,
 	onInit,
 	onUpdate,
-}: Options<Key, State, TMetadata, RawState, ListenerArgs>): Readonly<InnerState<State>> => {
+}: Options<Key, MetaKey, State, TMetadata, RawState, ListenerArgs>): Readonly<
+	InnerState<State>
+> => {
 	const initialValue = useMemo(() => storage.getValue(), []);
 	const [state, setState] = useState<InnerState<State>>(() =>
 		isPromise(initialValue)

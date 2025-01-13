@@ -15,6 +15,7 @@ export interface BlockedTagsMeta extends StorageMeta {}
 export type ReadonlyBlockedTags = ToReadonly<BlockedTags>;
 
 const key = 'blockedTags' as const,
+	metaKey = `${key}$` as const,
 	version = 1;
 
 const fallbackValue: RawBlockedTags = '';
@@ -24,9 +25,9 @@ const blockedTagsItem = storage.defineItem<RawBlockedTags, BlockedTagsMeta>(`loc
 	fallback: fallbackValue,
 });
 
-export class BlockedTagsStorage extends PhrasesBlocklistStorage<typeof key> {
+export class BlockedTagsStorage extends PhrasesBlocklistStorage<typeof key, typeof metaKey> {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = blockedTagsItem;
 	static readonly MIGRATIONS = undefined;
 	protected readonly logger: Logger;
@@ -34,7 +35,7 @@ export class BlockedTagsStorage extends PhrasesBlocklistStorage<typeof key> {
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('BlockedTagsStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

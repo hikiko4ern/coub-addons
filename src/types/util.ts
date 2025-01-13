@@ -23,3 +23,7 @@ export type ExtractFunction<T> =
 export type SetNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
 	[Key in keyof BaseType]: Key extends Keys ? BaseType[Key] | null | undefined : BaseType[Key];
 };
+
+export type ObjectEntries<T extends object> = {
+	[key in keyof T]: [key, T[key]];
+}[keyof T][];

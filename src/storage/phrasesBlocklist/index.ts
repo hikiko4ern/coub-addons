@@ -19,12 +19,10 @@ export type ReadonlyPhrasesBlocklist = ToReadonly<PhrasesBlocklist>;
 /** if one of values is blocked, returns the pattern by which it is blocked */
 export type IsBlockedFn = (value: string | Iterable<string>) => MatchedBlocklistPhrase | undefined;
 
-export abstract class PhrasesBlocklistStorage<Key extends string> extends StorageBase<
-	Key,
-	PhrasesBlocklist,
-	PhrasesBlocklistMeta,
-	RawPhrasesBlocklist
-> {
+export abstract class PhrasesBlocklistStorage<
+	Key extends string,
+	MetaKey extends `${Key}$`,
+> extends StorageBase<Key, MetaKey, PhrasesBlocklist, PhrasesBlocklistMeta, RawPhrasesBlocklist> {
 	static readonly merge = mergePhrasesBlocklist;
 
 	isBlocked: Asyncify<IsBlockedFn> = async value => this.#isBlocked(await this.getValue(), value);

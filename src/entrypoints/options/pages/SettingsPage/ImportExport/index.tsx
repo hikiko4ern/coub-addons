@@ -18,13 +18,8 @@ import { toast } from 'react-toastify';
 
 import { CardSection } from '@/options/components/CardSection';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
-import {
-	type Backup,
-	type ImportBackupData,
-	TranslatableError,
-	createBackup,
-	restoreBackup,
-} from '@/storage/backup';
+import { type Backup, type ImportBackupData, createBackup, restoreBackup } from '@/storage/backup';
+import { TranslatableError } from '@/storage/errors';
 import type { ExtractFunction } from '@/types/util';
 
 import { name } from '../../../../../../package.json';

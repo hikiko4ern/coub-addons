@@ -18,6 +18,7 @@ export interface BlockedCoubTitlesMeta extends StorageMeta {}
 export type ReadonlyBlockedCoubTitles = ToReadonly<BlockedCoubTitles>;
 
 const key = 'blockedCoubTitles' as const,
+	metaKey = `${key}$` as const,
 	version = 1;
 
 const fallbackValue: RawBlockedCoubTitles = '';
@@ -30,9 +31,9 @@ const blockedCoubTitlesItem = storage.defineItem<RawBlockedCoubTitles, BlockedCo
 	},
 );
 
-export class BlockedCoubTitlesStorage extends PhrasesBlocklistStorage<typeof key> {
+export class BlockedCoubTitlesStorage extends PhrasesBlocklistStorage<typeof key, typeof metaKey> {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = blockedCoubTitlesItem;
 	static readonly MIGRATIONS = undefined;
 	protected readonly logger: Logger;
@@ -40,7 +41,7 @@ export class BlockedCoubTitlesStorage extends PhrasesBlocklistStorage<typeof key
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('BlockedCoubTitlesStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

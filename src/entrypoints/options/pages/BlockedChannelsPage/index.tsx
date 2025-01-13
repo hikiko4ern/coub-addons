@@ -8,8 +8,10 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { useWatchingRef } from '@/hooks/useWatchingRef';
 import { ErrorCode } from '@/options/components/ErrorCode';
+import { PerStorageSync } from '@/options/components/PerStorageSync';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
+import { BlockedChannelsStorage } from '@/storage/blockedChannels';
 
 import {
 	BlockedChannelsTable,
@@ -92,11 +94,12 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 	}
 
 	return (
-		<div className="flex w-full flex-col items-start gap-4">
+		<div className="flex w-full shrink-0 flex-col items-start gap-4">
 			<div className="flex w-full justify-between gap-4">
 				<Localized id="blocked-channels-search" attrs={{ placeholder: true }}>
 					<Input
 						classNames={{
+							base: 'w-auto grow',
 							mainWrapper: 'min-w-[min(theme(spacing.96),100%)]',
 						}}
 						name="search"
@@ -111,6 +114,8 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 				</Localized>
 
 				<ClearBlockedChannels className="flex-shrink-0" clear={clearBlocklist} />
+
+				<PerStorageSync storage={blockedChannelsStorage} storageClass={BlockedChannelsStorage} />
 			</div>
 
 			{content}

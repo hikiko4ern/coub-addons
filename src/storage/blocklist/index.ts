@@ -19,6 +19,7 @@ export interface BlocklistMeta extends StorageMeta {}
 export type ReadonlyBlocklist = ToReadonly<Blocklist>;
 
 const key = 'blocklist' as const,
+	metaKey = `${key}$` as const,
 	version = 5;
 
 const fallbackValue: Blocklist = {
@@ -34,9 +35,14 @@ const blocklistItem = storage.defineItem<Blocklist, BlocklistMeta>(`local:${key}
 	migrations: blocklistMigrations,
 });
 
-export class BlocklistStorage extends StorageBase<typeof key, Blocklist, BlocklistMeta> {
+export class BlocklistStorage extends StorageBase<
+	typeof key,
+	typeof metaKey,
+	Blocklist,
+	BlocklistMeta
+> {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = blocklistItem;
 	static readonly MIGRATIONS = blocklistMigrations;
 	protected readonly logger: Logger;
@@ -44,7 +50,7 @@ export class BlocklistStorage extends StorageBase<typeof key, Blocklist, Blockli
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('BlocklistStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

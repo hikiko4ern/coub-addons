@@ -15,6 +15,7 @@ export interface PlayerSettingsMeta extends StorageMeta {}
 export type ReadonlyPlayerSettings = ToReadonly<PlayerSettings>;
 
 const key = 'playerSettings' as const,
+	metaKey = `${key}$` as const,
 	version = 4;
 
 const fallbackValue: PlayerSettings = {
@@ -41,11 +42,12 @@ const playerSettingsItem = storage.defineItem<PlayerSettings, PlayerSettingsMeta
 
 export class PlayerSettingsStorage extends StorageBase<
 	typeof key,
+	typeof metaKey,
 	PlayerSettings,
 	PlayerSettingsMeta
 > {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = playerSettingsItem;
 	static readonly MIGRATIONS = playerSettingsMigrations;
 	protected readonly logger: Logger;
@@ -53,7 +55,7 @@ export class PlayerSettingsStorage extends StorageBase<
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('PlayerSettingsStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}

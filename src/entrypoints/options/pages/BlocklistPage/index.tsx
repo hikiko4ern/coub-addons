@@ -1,9 +1,11 @@
 import { Localized } from '@fluent/react';
-import type { FunctionComponent } from 'preact';
+import type { FunctionComponent, VNode } from 'preact';
 
 import { ErrorCode } from '@/options/components/ErrorCode';
+import { PerStorageSync } from '@/options/components/PerStorageSync';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
+import { BlocklistStorage } from '@/storage/blocklist';
 
 import { BlocklistSettings } from './components/BlocklistSettings';
 
@@ -11,14 +13,27 @@ export const BlocklistPage: FunctionComponent = () => {
 	const { blocklistStorage } = useLazyStorages();
 	const blocklist = useStorageState({ storage: blocklistStorage });
 
+	let content: string | VNode;
+
 	switch (blocklist.status) {
 		case StorageHookState.Loaded:
-			return <BlocklistSettings storage={blocklistStorage} state={blocklist.data} />;
+			content = <BlocklistSettings storage={blocklistStorage} state={blocklist.data} />;
+			break;
 
 		case StorageHookState.Loading:
-			return <Localized id="loading" />;
+			content = <Localized id="loading" />;
+			break;
 
 		case StorageHookState.Error:
-			return <ErrorCode data={blocklist.error} />;
+			content = <ErrorCode data={blocklist.error} />;
+			break;
 	}
+
+	return (
+		<>
+			<PerStorageSync className="mb-4" storage={blocklistStorage} storageClass={BlocklistStorage} />
+
+			{content}
+		</>
+	);
 };

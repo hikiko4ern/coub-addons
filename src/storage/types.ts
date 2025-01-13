@@ -44,8 +44,8 @@ interface StorageEventBase<Key extends string, State, RawState> {
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: `any` is required here
-export type ToStorageEvent<T extends StorageBase<string, any, any, any, any>> =
+export type ToStorageEvent<T extends StorageBase<string, any, any, any, any, any>> =
 	// biome-ignore lint/suspicious/noExplicitAny: `any` is required here
-	T extends StorageBase<infer Key, infer State, any, infer RawState, any>
+	T extends StorageBase<infer Key, any, infer State, any, infer RawState, any>
 		? StorageEventBase<Key, State, RawState>
 		: never;

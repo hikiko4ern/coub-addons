@@ -1,4 +1,4 @@
-import type { OmitIndexSignature } from 'type-fest';
+import type { IterableElement, OmitIndexSignature } from 'type-fest';
 import { storage } from 'wxt/storage';
 
 import { logger } from '@/options/constants';
@@ -15,6 +15,7 @@ import {
 } from '../blockedCoubTitles';
 import { type BlockedTagsMeta, BlockedTagsStorage, type RawBlockedTags } from '../blockedTags';
 import { type Blocklist, type BlocklistMeta, BlocklistStorage } from '../blocklist';
+import type { TranslatableError } from '../errors';
 import {
 	type PlayerSettings,
 	type PlayerSettingsMeta,
@@ -30,10 +31,7 @@ import {
 	StorageMergeFailed,
 	StorageMergesFailed,
 	StorageMigrationsFailed,
-	type TranslatableError,
 } from './errors';
-
-export { TranslatableError } from './errors';
 
 export interface Backup {
 	[BlockedChannelsStorage.KEY]: RawBlockedChannels;
@@ -55,6 +53,8 @@ export interface ImportBackupData {
 	isMerge: boolean;
 }
 
+export type StorageToBackup = IterableElement<typeof storagesToBackup>;
+
 const storagesToBackup = [
 	BlockedChannelsStorage,
 	BlockedTagsStorage,
@@ -62,7 +62,7 @@ const storagesToBackup = [
 	BlocklistStorage,
 	PlayerSettingsStorage,
 	SettingsStorage,
-] as const;
+];
 
 export const createBackup = async () => JSON.stringify(await createSnapshot());
 
@@ -74,12 +74,18 @@ export const restoreBackup = async ({ data, isMerge }: ImportBackupData) => {
 	}
 
 	await storage.restoreSnapshot('local', data);
+	await migrateStorages(storagesToBackup, () => storage.restoreSnapshot('local', currentState));
+};
 
+export const migrateStorages = async (
+	storages: typeof storagesToBackup,
+	restore: () => Promise<void>,
+) => {
 	type MigrationFailureReason = [key: string, reason: unknown];
 
 	const failedMigrations = (
 		await Promise.allSettled(
-			storagesToBackup.map(storage =>
+			storages.map(storage =>
 				storage.STORAGE.migrate().catch(reason => {
 					const res: MigrationFailureReason = [storage.KEY, reason];
 					throw res;
@@ -102,7 +108,7 @@ export const restoreBackup = async ({ data, isMerge }: ImportBackupData) => {
 
 	if (failedMigrations.keys.length) {
 		try {
-			await storage.restoreSnapshot('local', currentState);
+			await restore();
 		} catch (err) {
 			logger.error('failed to restore snapshot after failed migrations', err);
 		}

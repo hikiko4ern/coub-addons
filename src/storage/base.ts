@@ -1,4 +1,5 @@
-import type { Unwatch, WxtStorageItem } from 'wxt/storage';
+import type { IsNever } from 'type-fest';
+import type { StorageItemKey, Unwatch, WxtStorageItem } from 'wxt/storage';
 
 import { EventDispatcher, EventListener } from '@/events';
 import type { ToReadonly } from '@/types/util';
@@ -13,15 +14,26 @@ import {
 } from './types';
 
 // biome-ignore lint/suspicious/noExplicitAny: old state is untyped
-export type AnyStorageBase = StorageBase<any, any, any, any, any>;
+export type AnyStorageBase = StorageBase<any, any, any, any, any, any>;
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
 	state: ToReadonly<State>,
 	...args: ListenerArgs
 ) => void;
 
+export interface StorageItem<Value> {
+	key: StorageItemKey;
+	value: Value;
+}
+
+export interface StorageShard<Prefix extends string = never> {
+	key: IsNever<Prefix> extends true ? string : `${Prefix}:${string}`;
+	value: unknown;
+}
+
 export abstract class StorageBase<
 	Key extends string,
+	MetaKey extends `${Key}$`,
 	State,
 	TMetadata extends StorageMeta = StorageMeta,
 	RawState = State,
@@ -31,9 +43,11 @@ export abstract class StorageBase<
 	protected abstract readonly logger: Logger;
 	protected abstract readonly version: number;
 
+	key: Key;
 	readonly [storageStateType]?: NoInfer<State>;
 	readonly [storageListenerArgs]?: NoInfer<ListenerArgs>;
 	readonly #key;
+	readonly #metaKey;
 	readonly #storage;
 	readonly #source;
 	readonly #tabId;
@@ -49,11 +63,13 @@ export abstract class StorageBase<
 		source: string,
 		logger: Logger,
 		key: Key,
+		metaKey: MetaKey,
 		storage: WxtStorageItem<RawState, TMetadata>,
 	) {
 		this.#tabId = tabId;
 		this.#source = source;
-		this.#key = key;
+		this.key = this.#key = key;
+		this.#metaKey = metaKey;
 		this.#storage = storage;
 
 		this.initialize();
@@ -73,7 +89,7 @@ export abstract class StorageBase<
 
 			if (isOutsideUpdate || msg.data.trigger === StorageEventTrigger.SetValue) {
 				if (isOutsideUpdate) {
-					// we don't have to clone `state` as it's already `structuredClone` (and also it's immutable)
+					// we don't have to clone `state` as it's already `structuredClone`d (and also it's immutable)
 					// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Chrome_incompatibilities#data_cloning_algorithm
 					this.#state = msg.data.state as ToReadonly<State>;
 				}
@@ -108,13 +124,66 @@ export abstract class StorageBase<
 		return this.#state;
 	}
 
+	async getItems(): Promise<[state: StorageItem<RawState>, meta: StorageItem<TMetadata>]> {
+		const [state, meta] = await storage.getItems([this.#storage.key, `${this.#storage.key}$`]);
+		return [state, meta];
+	}
+
+	async getSyncItems(): Promise<StorageShard<'sync'>[]> {
+		const [state, meta] = await this.getItems();
+
+		const shards: StorageShard<'sync'>[] = [
+			{
+				key: `sync:${this.#metaKey}`,
+				value: meta.value,
+			},
+		];
+
+		if (this instanceof ShardedStorage) {
+			shards.push(
+				...this.shardRawValue(`${this.#key}:`, state.value).map(
+					(shard): StorageShard<'sync'> => ({
+						...shard,
+						key: `sync:${this.#key}:${shard.key}`,
+					}),
+				),
+			);
+		} else {
+			shards.push({
+				key: `sync:${this.#key}`,
+				value: state.value,
+			});
+		}
+
+		return shards;
+	}
+
+	async restoreFromSync() {
+		const [state, meta] =
+			this instanceof ShardedStorage
+				? await (
+						this as ShardedStorage<Key, MetaKey, State, TMetadata, RawState, ListenerArgs>
+					).recoverRawValueFromShards()
+				: await this.defaultGetRawValueFromSync();
+
+		await storage.setItems([
+			{ key: this.#storage.key, value: state },
+			{ key: `${this.#storage.key}$`, value: meta },
+		]);
+	}
+
+	private async defaultGetRawValueFromSync(): Promise<[RawState, TMetadata]> {
+		const [state, meta] = await storage.getItems([`sync:${this.#key}`, `sync:${this.#metaKey}`]);
+		return [state.value as RawState, meta.value as TMetadata];
+	}
+
 	watch(cb: StorageWatchCallback<State, ListenerArgs>): Unwatch {
 		this.#watchers.add(cb);
 		return () => void this.#watchers.delete(cb);
 	}
 
 	clear() {
-		return this.setValue(structuredClone(this.#storage.defaultValue) as ToReadonly<RawState>);
+		return this.setValue(structuredClone(this.#storage.fallback) as ToReadonly<RawState>);
 	}
 
 	#notifyWatchers(
@@ -207,4 +276,25 @@ export abstract class StorageBase<
 		this.#eventListener[Symbol.dispose]();
 		this.#unwatch();
 	}
+}
+
+export abstract class ShardedStorage<
+	Key extends string,
+	MetaKey extends `${Key}$`,
+	State,
+	TMetadata extends StorageMeta = StorageMeta,
+	RawState = State,
+	ListenerArgs extends unknown[] = [],
+> extends StorageBase<Key, MetaKey, State, TMetadata, RawState, ListenerArgs> {
+	/**
+	 * shards value into the smaller pieces
+	 *
+	 * can be used to mitigate the standard 8 KB/item sync storage limit
+	 *
+	 * f.e., on the realistic list of blocked channels I exceeded the limit
+	 * on 192 channels with the one-key-per-object approach, and
+	 * on 365 channels with the one-key-per-field approach
+	 */
+	abstract shardRawValue(keyPrefix: string, raw: RawState): StorageShard<never>[];
+	abstract recoverRawValueFromShards(): Promise<[RawState, TMetadata]>;
 }

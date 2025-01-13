@@ -139,11 +139,11 @@ locale-setting-en-US = English
 ### options / settings / export
 export-backup = Экспортировать резервную копию
 backup-creation-error = Произошла ошибка при создании резервной копии:<br/>{$error}
-file-content-is-not-a-valid-backup = Содержимое файла не является валидной резервной копией
 ### options / settings / import
 import-backup = Импортировать резервную копию
 import-backup-confirmation-header = Вы уверены?
 import-backup-confirmation-message = Все существующие данные будут <danger>перезаписаны</danger> резервной копией. Продолжить?
+file-content-is-not-a-valid-backup = Содержимое файла не является валидной резервной копией
 ### options / settings / import-merge
 import-merge-backup = Импортировать резервную копию и объединить с текущими настройками
 import-merge-backup-confirmation-message = Существующие данные будут объединены с резервной копией. Продолжить?
@@ -165,3 +165,11 @@ backup-restoration-error = Произошла ошибка при импорти
 backup-migrations-failed = Не удалось выполнить миграции для {$keys}: {$error}
 backup-imported-successfully = Резервная копия успешно импортирована
 backup-imported-successfully-but-reinitialization-failed = Резервная копия была успешно импортирована, но обновить состояние не удалось. Расширение будет автоматически перезапущено.
+
+## options / sharded backup
+missing-backup-shards = Отсутствуют части резервной копии: {$missing}
+mismatched-backup-shards-lengths = Длины частей резервной копии не совпадают: {$lengths}
+
+## options / sync backup
+sync-backup-exported = Резервная копия экспортирована в синхронизируемое хранилище
+sync-backup-export-error = Не удалось экспортировать резервную копию:<br/>{$error}

@@ -138,11 +138,11 @@ locale-setting-en-US = English
 ### options / settings / export
 export-backup = Export backup
 backup-creation-error = Failed to create backup:<br/>{$error}
-file-content-is-not-a-valid-backup = The contents of the file are not a valid backup
 ### options / settings / import
 import-backup = Import backup
 import-backup-confirmation-header = Are you sure?
 import-backup-confirmation-message = All your existing data will be <danger>overwritten</danger> by the backup. Continue?
+file-content-is-not-a-valid-backup = The contents of the file are not a valid backup
 ### options / settings / import-merge
 import-merge-backup = Import backup and merge with current settings
 import-merge-backup-confirmation-message = Your existing data will be merged with backup. Continue?
@@ -164,3 +164,11 @@ backup-restoration-error = Failed to import backup:<br/><pre>{$error}</pre>
 backup-migrations-failed = Migrations for {$keys} failed: {$error}
 backup-imported-successfully = Backup imported successfully
 backup-imported-successfully-but-reinitialization-failed = The backup was successfully imported, but the state could not be updated. The extension will be automatically reloaded.
+
+## options / sharded backup
+missing-backup-shards = Missing backup shards: {$missing}
+mismatched-backup-shards-lengths = The lengths of the backup shards don't match: {$lengths}
+
+## options / sync backup
+sync-backup-exported = Backup exported to sync storage
+sync-backup-export-error = Failed to export backup:<br/>{$error}

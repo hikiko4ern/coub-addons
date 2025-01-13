@@ -17,6 +17,7 @@ export interface SettingsMeta extends StorageMeta {}
 export type ReadonlySettings = ToReadonly<Settings>;
 
 const key = 'settings' as const,
+	metaKey = `${key}$` as const,
 	version = 1;
 
 const fallbackValue: Settings = {
@@ -29,9 +30,14 @@ const settingsItem = storage.defineItem<Settings, SettingsMeta>(`local:${key}`, 
 	fallback: fallbackValue,
 });
 
-export class SettingsStorage extends StorageBase<typeof key, Settings, SettingsMeta> {
+export class SettingsStorage extends StorageBase<
+	typeof key,
+	typeof metaKey,
+	Settings,
+	SettingsMeta
+> {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = settingsItem;
 	static readonly MIGRATIONS = undefined;
 	protected readonly logger: Logger;
@@ -39,7 +45,7 @@ export class SettingsStorage extends StorageBase<typeof key, Settings, SettingsM
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('SettingsStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}
