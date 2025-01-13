@@ -1,3 +1,4 @@
+import { recoverUint32Shard } from '@/helpers/shards/uint32';
 import type { ObjectEntries } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
@@ -25,17 +26,31 @@ export const recoverBlockedChannelsFromShards = (
 		permalink: [],
 	};
 
-	for (const { key: fullKey, value } of shards) {
+	for (const { key: fullKey, value: rawValue } of shards) {
 		const match = fullKey.match(KEY_RE);
 
 		if (!match) {
-			logger.warn('unmatched shard', fullKey, value);
+			logger.warn('unmatched shard', fullKey, rawValue);
 			continue;
 		}
 
-		const [, key, indexStr] = match;
+		const [, _key, indexStr] = match;
+		const key = _key as keyof RawBlockedChannels;
 		const index = indexStr ? Number.parseInt(indexStr, 10) : 0;
-		arrays[key as keyof RawBlockedChannels][index] = value;
+
+		let value: RawBlockedChannels[keyof RawBlockedChannels];
+
+		switch (key) {
+			case 'id':
+				value = recoverUint32Shard(rawValue);
+				break;
+
+			default:
+				value = rawValue;
+				break;
+		}
+
+		arrays[key][index] = value;
 	}
 
 	assertNotSparse(arrays);

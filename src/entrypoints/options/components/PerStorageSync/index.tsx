@@ -8,11 +8,11 @@ import { useCallback, useMemo } from 'preact/hooks';
 import { toast } from 'react-toastify';
 import { storage as wxtStorage } from 'wxt/storage';
 
+import { byteSize } from '@/helpers/byteSize';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
 import { type StorageToBackup, migrateStorages } from '@/storage/backup';
 import { type AnyStorageBase, ShardedStorage, type StorageShard } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
-import { getStorageByteSize } from '@/storage/helpers/getStorageByteSize';
 
 // @ts-expect-error
 window.wxtStorage = storage;
@@ -51,7 +51,7 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, s
 		let sum = 0;
 
 		const sizes = shards.map(kv => {
-			const size = kv.key.length + getStorageByteSize(kv.value);
+			const size = kv.key.length + byteSize(JSON.stringify(kv.value));
 			sum += size;
 			const prefix =
 				kv.key === storage.key

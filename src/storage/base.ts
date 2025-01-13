@@ -26,9 +26,9 @@ export interface StorageItem<Value> {
 	value: Value;
 }
 
-export interface StorageShard<Prefix extends string = never> {
+export interface StorageShard<Prefix extends string = never, Value = unknown> {
 	key: IsNever<Prefix> extends true ? string : `${Prefix}:${string}`;
-	value: unknown;
+	value: Value;
 }
 
 export abstract class StorageBase<

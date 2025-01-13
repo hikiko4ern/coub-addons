@@ -173,7 +173,7 @@ export class BlockedChannelsStorage extends ShardedStorage<
 	}
 
 	shardRawValue(keyPrefix: string, raw: RawBlockedChannels): StorageShard<never>[] {
-		return shardBlockedChannels(keyPrefix, raw);
+		return shardBlockedChannels(this.logger, keyPrefix, raw);
 	}
 
 	async recoverRawValueFromShards(): Promise<[RawBlockedChannels, BlockedChannelsMeta]> {

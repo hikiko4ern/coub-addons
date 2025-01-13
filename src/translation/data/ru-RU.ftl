@@ -169,6 +169,9 @@ backup-imported-successfully-but-reinitialization-failed = Резервная к
 ## options / sharded backup
 missing-backup-shards = Отсутствуют части резервной копии: {$missing}
 mismatched-backup-shards-lengths = Длины частей резервной копии не совпадают: {$lengths}
+unknown-uint32-prefix = Неизвестный префикс Uint32: {$prefix}
+invalid-uint32-buffer-size = Размер буфера {$size} невалиден для Uint32
+unknown-uint32-value = Неизвестное для Uint32 значение типа {$type}: {$value}
 
 ## options / sync backup
 sync-backup-exported = Резервная копия экспортирована в синхронизируемое хранилище
