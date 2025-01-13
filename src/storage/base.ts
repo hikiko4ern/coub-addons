@@ -1,27 +1,42 @@
-import type { Unwatch, WxtStorageItem } from 'wxt/storage';
+import type { IsNever } from 'type-fest';
+import type { StorageItemKey, Unwatch, WxtStorageItem } from 'wxt/storage';
 
 import { EventDispatcher, EventListener } from '@/events';
-import type { ToReadonly } from '@/types/util';
+import { filterMap } from '@/helpers/filterMap';
+import type { MaybePromise, ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
+import { NoShardsError } from './errors';
 import {
 	type StorageEvent,
 	StorageEventTrigger,
 	type StorageMeta,
+	type StorageSyncMeta,
 	storageListenerArgs,
 	storageStateType,
 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
-export type AnyStorageBase = StorageBase<any, any, any, any, any>;
+export type AnyStorageBase = StorageBase<any, any, any, any, any, any>;
+export type AnySyncableStorage = SyncableStorage<any, any, any, any, any, any>;
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
 	state: ToReadonly<State>,
 	...args: ListenerArgs
 ) => void;
 
+export interface StorageItem<Value> {
+	key: StorageItemKey;
+	value: Value;
+}
+
+export interface StorageShard<Prefix extends string = never, Value = unknown> {
+	key: IsNever<Prefix> extends true ? string | undefined : `${Prefix}:${string}`;
+	value: Value;
+}
+
 export abstract class StorageBase<
 	Key extends string,
+	MetaKey extends `${Key}$`,
 	State,
 	TMetadata extends StorageMeta = StorageMeta,
 	RawState = State,
@@ -31,9 +46,10 @@ export abstract class StorageBase<
 	protected abstract readonly logger: Logger;
 	protected abstract readonly version: number;
 
+	readonly key: Key;
+	readonly metaKey: MetaKey;
 	readonly [storageStateType]?: NoInfer<State>;
 	readonly [storageListenerArgs]?: NoInfer<ListenerArgs>;
-	readonly #key;
 	readonly #storage;
 	readonly #source;
 	readonly #tabId;
@@ -49,11 +65,13 @@ export abstract class StorageBase<
 		source: string,
 		logger: Logger,
 		key: Key,
+		metaKey: MetaKey,
 		storage: WxtStorageItem<RawState, TMetadata>,
 	) {
 		this.#tabId = tabId;
 		this.#source = source;
-		this.#key = key;
+		this.key = key;
+		this.metaKey = metaKey;
 		this.#storage = storage;
 
 		this.initialize();
@@ -65,7 +83,7 @@ export abstract class StorageBase<
 		});
 
 		this.#eventListener = new EventListener(logger, msg => {
-			if (msg.type !== 'StorageUpdatedEvent' || msg.data.key !== this.#key) {
+			if (msg.type !== 'StorageUpdatedEvent' || msg.data.key !== this.key) {
 				return;
 			}
 
@@ -73,7 +91,7 @@ export abstract class StorageBase<
 
 			if (isOutsideUpdate || msg.data.trigger === StorageEventTrigger.SetValue) {
 				if (isOutsideUpdate) {
-					// we don't have to clone `state` as it's already `structuredClone` (and also it's immutable)
+					// we don't have to clone `state` as it's already `structuredClone`d (and also it's immutable)
 					// https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Chrome_incompatibilities#data_cloning_algorithm
 					this.#state = msg.data.state as ToReadonly<State>;
 				}
@@ -108,13 +126,18 @@ export abstract class StorageBase<
 		return this.#state;
 	}
 
+	async getItems(): Promise<[state: StorageItem<RawState>, meta: StorageItem<TMetadata>]> {
+		const [state, meta] = await storage.getItems([this.#storage.key, `${this.#storage.key}$`]);
+		return [state, meta];
+	}
+
 	watch(cb: StorageWatchCallback<State, ListenerArgs>): Unwatch {
 		this.#watchers.add(cb);
 		return () => void this.#watchers.delete(cb);
 	}
 
 	clear() {
-		return this.setValue(structuredClone(this.#storage.defaultValue) as ToReadonly<RawState>);
+		return this.setValue(structuredClone(this.#storage.fallback) as ToReadonly<RawState>);
 	}
 
 	#notifyWatchers(
@@ -138,7 +161,7 @@ export abstract class StorageBase<
 			EventDispatcher.dispatchStorageUpdate({
 				tabId: this.#tabId,
 				source: this.#source,
-				key: this.#key,
+				key: this.key,
 				state,
 				oldState,
 				trigger: eventTrigger,
@@ -207,4 +230,126 @@ export abstract class StorageBase<
 		this.#eventListener[Symbol.dispose]();
 		this.#unwatch();
 	}
+}
+
+export abstract class SyncableStorage<
+	Key extends string,
+	MetaKey extends `${Key}$`,
+	State,
+	TMetadata extends StorageMeta & StorageSyncMeta = StorageMeta & StorageSyncMeta,
+	RawState = State,
+	ListenerArgs extends unknown[] = [],
+> extends StorageBase<Key, MetaKey, State, TMetadata, RawState, ListenerArgs> {
+	async getSyncItems(
+		syncMeta: StorageSyncMeta,
+	): Promise<[shards: StorageShard<'sync'>[], removeKeys: `sync:${string}`[]]> {
+		const [state, meta] = await this.getItems();
+
+		const syncShards: StorageShard<'sync'>[] = [
+			{
+				key: `sync:${this.metaKey}`,
+				value: {
+					...meta.value,
+					...syncMeta,
+				},
+			},
+		];
+		const removeKeys: `sync:${string}`[] = [];
+
+		if (this instanceof ShardedStorage) {
+			const rawShards = await this.shardRawValue(this.key, state.value);
+			this.logger.debug('generated shards', rawShards);
+
+			for (const shard of rawShards) {
+				const itemKey = `sync:${shard.key}` as const;
+
+				if (typeof shard.value === 'undefined') {
+					removeKeys.push(itemKey);
+				} else {
+					syncShards.push({
+						key: itemKey,
+						value: shard.value,
+					});
+				}
+			}
+		} else {
+			syncShards.push({
+				key: `sync:${this.key}`,
+				value: state.value,
+			});
+		}
+
+		return [syncShards, removeKeys];
+	}
+
+	async getShardsFromSync(
+		keepStoragePrefix?: boolean,
+	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]> {
+		const state = await browser.storage.sync.get();
+
+		const shards = filterMap(
+			Object.entries(state),
+			([key]) => key === this.key,
+			([key, value]): StorageShard<never> => ({
+				key: keepStoragePrefix ? key : undefined,
+				value,
+			}),
+		);
+
+		return [shards, state];
+	}
+
+	async restoreFromSync() {
+		const [state, meta] =
+			this instanceof ShardedStorage
+				? await this.recoverRawValueFromShards()
+				: await this.defaultGetRawValueFromSync();
+
+		return {
+			[this.key]: state,
+			[this.metaKey]: meta,
+		};
+	}
+
+	private async defaultGetRawValueFromSync(): Promise<[RawState, TMetadata]> {
+		const [state, meta] = await storage.getItems([`sync:${this.key}`, `sync:${this.metaKey}`]);
+
+		const missingKeys: string[] = [];
+
+		for (const { key, value } of [state, meta]) {
+			if (typeof value === 'undefined' || value === null) {
+				missingKeys.push(key);
+			}
+		}
+
+		if (missingKeys.length > 0) {
+			throw new NoShardsError(missingKeys);
+		}
+
+		return [state.value as RawState, meta.value as TMetadata];
+	}
+}
+
+export abstract class ShardedStorage<
+	Key extends string,
+	MetaKey extends `${Key}$`,
+	State,
+	TMetadata extends StorageMeta & StorageSyncMeta = StorageMeta & StorageSyncMeta,
+	RawState = State,
+	ListenerArgs extends unknown[] = [],
+> extends SyncableStorage<Key, MetaKey, State, TMetadata, RawState, ListenerArgs> {
+	/**
+	 * shards value into the smaller pieces
+	 *
+	 * can be used to mitigate the standard 8 KB/item sync storage limit
+	 *
+	 * f.e., on the realistic list of blocked channels I exceeded the limit
+	 * on 192 channels with the one-key-per-object approach, and
+	 * on 365 channels with the one-key-per-field approach
+	 */
+	abstract shardRawValue(keyPrefix: string, raw: RawState): MaybePromise<StorageShard<never>[]>;
+	abstract getShardsFromSync(
+		keepStoragePrefix?: boolean,
+	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]>;
+	abstract recoverRawValueFromShards(): Promise<[RawState, TMetadata]>;
 }

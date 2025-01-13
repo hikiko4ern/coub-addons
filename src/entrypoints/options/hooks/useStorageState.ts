@@ -13,25 +13,27 @@ export enum StorageHookState {
 	Error = 2,
 }
 
-type InnerState<State> =
+export type StorageState<State> =
 	| { status: StorageHookState.Loading }
 	| { status: StorageHookState.Loaded; data: ToReadonly<State> }
 	| { status: StorageHookState.Error; error: unknown };
 
 interface Options<
 	Key extends string,
+	MetaKey extends `${Key}$`,
 	State,
 	TMetadata extends StorageMeta,
 	RawState,
 	ListenerArgs extends unknown[],
 > {
-	storage: StorageBase<Key, State, TMetadata, RawState, ListenerArgs>;
+	storage: StorageBase<Key, MetaKey, State, TMetadata, RawState, ListenerArgs>;
 	onInit?: (state: ToReadonly<State>) => void;
 	onUpdate?: (state: ToReadonly<State>, ...args: ListenerArgs) => void;
 }
 
 export const useStorageState = <
 	Key extends string,
+	MetaKey extends `${Key}$`,
 	State,
 	TMetadata extends StorageMeta,
 	RawState,
@@ -40,9 +42,11 @@ export const useStorageState = <
 	storage,
 	onInit,
 	onUpdate,
-}: Options<Key, State, TMetadata, RawState, ListenerArgs>): Readonly<InnerState<State>> => {
+}: Options<Key, MetaKey, State, TMetadata, RawState, ListenerArgs>): Readonly<
+	StorageState<State>
+> => {
 	const initialValue = useMemo(() => storage.getValue(), []);
-	const [state, setState] = useState<InnerState<State>>(() =>
+	const [state, setState] = useState<StorageState<State>>(() =>
 		isPromise(initialValue)
 			? { status: StorageHookState.Loading }
 			: { status: StorageHookState.Loaded, data: initialValue as ToReadonly<State> },

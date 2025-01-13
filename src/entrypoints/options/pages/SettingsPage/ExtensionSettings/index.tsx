@@ -4,6 +4,7 @@ import LanguageIcon from '@heroicons/react/16/solid/LanguageIcon';
 import MoonIcon from '@heroicons/react/16/solid/MoonIcon';
 import PaintBrushIcon from '@heroicons/react/16/solid/PaintBrushIcon';
 import SunIcon from '@heroicons/react/16/solid/SunIcon';
+import { Checkbox } from '@nextui-org/checkbox';
 import { Select, SelectItem } from '@nextui-org/select';
 import type { Selection } from '@react-types/shared';
 import type { FunctionComponent, VNode } from 'preact';
@@ -13,6 +14,7 @@ import { CardSection } from '@/options/components/CardSection';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { HintTooltip } from '@/options/components/HintTooltip';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
+import { useStorageMergeCallback } from '@/options/hooks/useStorageMergeCallback';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
 import type { Settings, SettingsStorage } from '@/storage/settings';
 import { RawTheme, SYSTEM_LOCALE } from '@/storage/settings/types';
@@ -68,6 +70,7 @@ export const ExtensionSettings: FunctionComponent = () => {
 
 	const handleThemeChange = useMemo(() => createSelectionHandler(settingsStorage, 'theme'), []);
 	const handleLocaleChange = useMemo(() => createSelectionHandler(settingsStorage, 'locale'), []);
+	const handleIsDevModeChange = useStorageMergeCallback(settingsStorage, 'isDevMode');
 
 	const content = (() => {
 		switch (settings.status) {
@@ -117,6 +120,16 @@ export const ExtensionSettings: FunctionComponent = () => {
 								})}
 							</Select>
 						</Localized>
+
+						<div>
+							<Checkbox isSelected={settings.data.isDevMode} onValueChange={handleIsDevModeChange}>
+								<Localized id="dev-mode" />
+							</Checkbox>
+
+							<HintTooltip iconClassName="ml-2">
+								<Localized id="dev-mode-tooltip" />
+							</HintTooltip>
+						</div>
 					</>
 				);
 			}

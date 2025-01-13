@@ -1,26 +1,16 @@
-import type { OmitIndexSignature } from 'type-fest';
+import type { IterableElement, OmitIndexSignature, UnionToIntersection } from 'type-fest';
 import { storage } from 'wxt/storage';
 
 import { logger } from '@/options/constants';
 
-import {
-	type BlockedChannelsMeta,
-	BlockedChannelsStorage,
-	type RawBlockedChannels,
-} from '../blockedChannels';
-import {
-	type BlockedCoubTitlesMeta,
-	BlockedCoubTitlesStorage,
-	type RawBlockedCoubTitles,
-} from '../blockedCoubTitles';
-import { type BlockedTagsMeta, BlockedTagsStorage, type RawBlockedTags } from '../blockedTags';
-import { type Blocklist, type BlocklistMeta, BlocklistStorage } from '../blocklist';
-import {
-	type PlayerSettings,
-	type PlayerSettingsMeta,
-	PlayerSettingsStorage,
-} from '../playerSettings';
-import { type Settings, type SettingsMeta, SettingsStorage } from '../settings';
+import type { AnyStorageBase, StorageBase } from '../base';
+import { BlockedChannelsStorage } from '../blockedChannels';
+import { BlockedCoubTitlesStorage } from '../blockedCoubTitles';
+import { BlockedTagsStorage } from '../blockedTags';
+import { BlocklistStorage } from '../blocklist';
+import type { TranslatableError } from '../errors';
+import { PlayerSettingsStorage } from '../playerSettings';
+import { SettingsStorage } from '../settings';
 import { StatsStorage } from '../stats';
 import {
 	CurrentStateIsOlderThanBackup,
@@ -30,30 +20,30 @@ import {
 	StorageMergeFailed,
 	StorageMergesFailed,
 	StorageMigrationsFailed,
-	type TranslatableError,
 } from './errors';
 
-export { TranslatableError } from './errors';
+type ToBackup<Storage extends AnyStorageBase> = Storage extends StorageBase<
+	infer Key,
+	infer MetaKey,
+	any,
+	infer Meta,
+	infer RawState,
+	any
+>
+	? { [key in Key]?: RawState } & { [metaKey in MetaKey]?: OmitIndexSignature<Meta> }
+	: never;
 
-export interface Backup {
-	[BlockedChannelsStorage.KEY]: RawBlockedChannels;
-	[BlockedChannelsStorage.META_KEY]?: OmitIndexSignature<BlockedChannelsMeta>;
-	[BlockedTagsStorage.KEY]: RawBlockedTags;
-	[BlockedTagsStorage.META_KEY]?: OmitIndexSignature<BlockedTagsMeta>;
-	[BlockedCoubTitlesStorage.KEY]: RawBlockedCoubTitles;
-	[BlockedCoubTitlesStorage.META_KEY]?: OmitIndexSignature<BlockedCoubTitlesMeta>;
-	[BlocklistStorage.KEY]: Blocklist;
-	[BlocklistStorage.META_KEY]?: OmitIndexSignature<BlocklistMeta>;
-	[PlayerSettingsStorage.KEY]: PlayerSettings;
-	[PlayerSettingsStorage.META_KEY]?: OmitIndexSignature<PlayerSettingsMeta>;
-	[SettingsStorage.KEY]: Settings;
-	[SettingsStorage.META_KEY]?: OmitIndexSignature<SettingsMeta>;
-}
+export type Backup = UnionToIntersection<ToBackup<InstanceType<StorageToBackup>>>;
 
 export interface ImportBackupData {
+	storages?: Storages;
 	data: Backup;
 	isMerge: boolean;
 }
+
+type Storages = typeof storagesToBackup;
+
+export type StorageToBackup = IterableElement<Storages>;
 
 const storagesToBackup = [
 	BlockedChannelsStorage,
@@ -62,24 +52,33 @@ const storagesToBackup = [
 	BlocklistStorage,
 	PlayerSettingsStorage,
 	SettingsStorage,
-] as const;
+];
 
-export const createBackup = async () => JSON.stringify(await createSnapshot());
+export const createBackup = async () => JSON.stringify(await createSnapshot(storagesToBackup));
 
-export const restoreBackup = async ({ data, isMerge }: ImportBackupData) => {
-	const currentState = await createSnapshot();
+export const restoreBackup = async ({
+	storages = storagesToBackup,
+	data,
+	isMerge,
+}: ImportBackupData) => {
+	const currentState = await createSnapshot(storages);
+
+	removeSyncMeta(storages, data);
 
 	if (isMerge) {
-		data = mergeWithBackup(currentState, data);
+		data = mergeWithBackup(storages, currentState, data);
 	}
 
 	await storage.restoreSnapshot('local', data);
+	await migrateStorages(storages, () => storage.restoreSnapshot('local', currentState));
+};
 
+const migrateStorages = async (storages: Storages, restore: () => Promise<void>) => {
 	type MigrationFailureReason = [key: string, reason: unknown];
 
 	const failedMigrations = (
 		await Promise.allSettled(
-			storagesToBackup.map(storage =>
+			storages.map(storage =>
 				storage.STORAGE.migrate().catch(reason => {
 					const res: MigrationFailureReason = [storage.KEY, reason];
 					throw res;
@@ -102,7 +101,7 @@ export const restoreBackup = async ({ data, isMerge }: ImportBackupData) => {
 
 	if (failedMigrations.keys.length) {
 		try {
-			await storage.restoreSnapshot('local', currentState);
+			await restore();
 		} catch (err) {
 			logger.error('failed to restore snapshot after failed migrations', err);
 		}
@@ -114,14 +113,38 @@ export const restoreBackup = async ({ data, isMerge }: ImportBackupData) => {
 	}
 };
 
-const createSnapshot = () =>
-	storage.snapshot('local', { excludeKeys: [StatsStorage.KEY] }) as unknown as Promise<Backup>;
+const createSnapshot = async (storages: Storages) => {
+	const backup = (await storage.snapshot('local', {
+		excludeKeys: [StatsStorage.KEY],
+	})) as unknown as Backup;
+	const keepKeys = new Set(storages.flatMap(s => [s.KEY, s.META_KEY]));
 
-const mergeWithBackup = (currentState: Backup, backup: Backup): Backup => {
+	for (const key of Object.keys(backup) as (keyof typeof backup)[]) {
+		if (!keepKeys.has(key)) {
+			delete backup[key];
+		}
+	}
+
+	removeSyncMeta(storages, backup);
+
+	return backup;
+};
+
+const removeSyncMeta = (storages: Storages, data: Backup) => {
+	for (const storage of storages) {
+		const meta = data[storage.META_KEY];
+
+		if (meta) {
+			delete meta.lastSynced;
+		}
+	}
+};
+
+const mergeWithBackup = (storages: Storages, currentState: Backup, backup: Backup): Backup => {
 	const merged: Backup = { ...currentState };
 	const mergeErrors: TranslatableError[] = [];
 
-	storages: for (const storage of storagesToBackup) {
+	storages: for (const storage of storages) {
 		if (!(storage.KEY in currentState)) {
 			merged[storage.KEY] = backup[storage.KEY] as never;
 			merged[storage.META_KEY] = backup[storage.META_KEY] as never;

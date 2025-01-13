@@ -15,7 +15,6 @@ import type {
 	StatsV9,
 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 type Migrations = Record<2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, (stats: any) => unknown>;
 
 export const statsMigrations: Migrations = {

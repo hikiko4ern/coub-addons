@@ -1,21 +1,3 @@
-/*
-@use './components/Actions/vars.scss' as actionsVars;
-
-.blocked-channels-table__table-container {
-  height: 400px;
-}
-
-.blocked-channels-table__cell {
-  &:first-child {
-    min-width: 200px;
-  }
-
-  &:nth-child(2) {
-    min-width: actionsVars.$remove-icon-size;
-  }
-}
-*/
-
 .blocked-channels-table {
   th {
     text-transform: uppercase;

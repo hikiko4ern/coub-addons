@@ -1,7 +1,7 @@
 import type { KeysOfUnion, SetReturnType, UnknownRecord } from 'type-fest';
 import type { WebRequest } from 'wxt/browser';
 
-import { concatArrays } from '@/helpers/concatArrays';
+import { concatUint8Arrays } from '@/helpers/concatUint8Arrays';
 import { isObject } from '@/helpers/isObject';
 import type { GraphqlRequest, GraphqlResponse } from '@/types/graphql';
 import type { MaybePromise } from '@/types/util';
@@ -137,7 +137,7 @@ export class WebRequestExt implements Disposable {
 				};
 
 				filter.onstop = async () => {
-					const buf = concatArrays(buffers);
+					const buf = concatUint8Arrays(buffers);
 					let res: Uint8Array = buf;
 
 					if (buffers.length) {

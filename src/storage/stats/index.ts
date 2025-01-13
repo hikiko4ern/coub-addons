@@ -22,9 +22,10 @@ export interface StatsMeta extends StorageMeta {}
 export type ReadonlyStats = ToReadonly<Stats>;
 
 const key = 'stats' as const,
+	metaKey = `${key}$` as const,
 	version = 9;
 
-const defaultValue: Stats = {
+const fallbackValue: Stats = {
 	filteredChannels: Object.fromEntries(
 		Object.values(ChannelExclusionReason).map(reason => [reason, 0]),
 	) as Stats['filteredChannels'],
@@ -41,13 +42,13 @@ const defaultValue: Stats = {
 
 const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
 	version,
-	defaultValue,
+	fallback: fallbackValue,
 	migrations: statsMigrations,
 });
 
-export class StatsStorage extends StorageBase<typeof key, Stats, StatsMeta> {
+export class StatsStorage extends StorageBase<typeof key, typeof metaKey, Stats, StatsMeta> {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = statsItem;
 	static readonly MIGRATIONS = statsMigrations;
 	protected readonly logger: Logger;
@@ -55,7 +56,7 @@ export class StatsStorage extends StorageBase<typeof key, Stats, StatsMeta> {
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('StatsStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 

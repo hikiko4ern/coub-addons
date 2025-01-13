@@ -180,7 +180,6 @@ function normalizeExtensionId(id: string): string {
 	}
 
 	if (!id.startsWith('{')) {
-		// biome-ignore lint/style/useTemplate: template is useless here
 		id = '{' + id;
 	}
 

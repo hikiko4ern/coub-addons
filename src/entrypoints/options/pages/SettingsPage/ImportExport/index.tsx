@@ -17,19 +17,11 @@ import { useCallback, useRef } from 'preact/hooks';
 import { toast } from 'react-toastify';
 
 import { CardSection } from '@/options/components/CardSection';
+import { downloadBackup } from '@/options/helpers/downloadBackup';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
-import {
-	type Backup,
-	type ImportBackupData,
-	TranslatableError,
-	createBackup,
-	restoreBackup,
-} from '@/storage/backup';
+import { type Backup, type ImportBackupData, createBackup, restoreBackup } from '@/storage/backup';
+import { TranslatableError } from '@/storage/errors';
 import type { ExtractFunction } from '@/types/util';
-
-import { name } from '../../../../../../package.json';
-
-const pad = (value: number) => value.toString().padStart(2, '0');
 
 export const ImportExport: FunctionComponent = () => {
 	const restoreRef = useRef<ImportBackupData>();
@@ -46,19 +38,8 @@ export const ImportExport: FunctionComponent = () => {
 
 	const createAndDownloadBackup = useCallback(async () => {
 		try {
-			const backup = await createBackup(),
-				a = document.createElement('a'),
-				url = URL.createObjectURL(new Blob([backup])),
-				date = new Date();
-
-			a.href = url;
-			a.target = '_blank';
-			a.download = `${name}-backup_${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-				date.getDate(),
-			)}_${pad(date.getHours())}-${pad(date.getMinutes())}.json`;
-
-			a.click();
-			URL.revokeObjectURL(url);
+			const backup = await createBackup();
+			downloadBackup('backup', new Date(), backup);
 		} catch (err) {
 			toast.error(
 				<Localized id="backup-creation-error" elems={{ br: <br /> }} vars={{ error: String(err) }}>

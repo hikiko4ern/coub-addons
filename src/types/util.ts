@@ -1,4 +1,4 @@
-import type { ReadonlyDeep } from 'type-fest';
+import type { If, IsNever, ReadonlyDeep } from 'type-fest';
 
 export type ToReadonly<T> = T extends ReadonlyMap<infer Key, infer Value>
 	? ReadonlyMap<Key, Value>
@@ -16,10 +16,18 @@ export type Value<T> = T extends ReadonlySet<infer U>
 
 export type MaybePromise<T> = T | Promise<T>;
 
-export type ExtractFunction<T> =
-	// biome-ignore lint/suspicious/noExplicitAny: required for correct type inference
-	T extends unknown ? Extract<T, (...args: any) => any> : never;
+export type ExtractFunction<T> = T extends unknown ? Extract<T, (...args: any) => any> : never;
 
 export type SetNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
 	[Key in keyof BaseType]: Key extends Keys ? BaseType[Key] | null | undefined : BaseType[Key];
 };
+
+export type ObjectEntries<T extends object> = {
+	[key in keyof T]: [key, T[key]];
+}[keyof T][];
+
+export type ExtendableFromKeys<T extends object, Condition> = {
+	[Key in keyof T]-?: Condition extends T[Key]
+		? If<IsNever<T[Key]>, If<IsNever<Condition>, Key, never>, Key>
+		: never;
+}[keyof T];

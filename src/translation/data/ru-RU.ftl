@@ -14,6 +14,11 @@ revert = Откатить
 edit = Редактировать
 extension = Расширение
 id = ID
+index = Индекс
+total = итого
+size-in-bytes = Размер в байтах
+format = Формат
+total-def = Итого: {$total}
 
 ## Follow button
 
@@ -136,14 +141,16 @@ locale-setting =
 locale-setting-system = Системный
 locale-setting-ru-RU = Русский
 locale-setting-en-US = English
+dev-mode = Режим разработки
+dev-mode-tooltip = Тут обитают драконы. Добавляет функционал, предназначенный только для разработчиков. Такой функционал может быть изменён или удалён в любой момент без уведомления, а его использование потенциально может что-то сломать или безвозвратно стереть настройки расширения
 ### options / settings / export
 export-backup = Экспортировать резервную копию
 backup-creation-error = Произошла ошибка при создании резервной копии:<br/>{$error}
-file-content-is-not-a-valid-backup = Содержимое файла не является валидной резервной копией
 ### options / settings / import
 import-backup = Импортировать резервную копию
 import-backup-confirmation-header = Вы уверены?
 import-backup-confirmation-message = Все существующие данные будут <danger>перезаписаны</danger> резервной копией. Продолжить?
+file-content-is-not-a-valid-backup = Содержимое файла не является валидной резервной копией
 ### options / settings / import-merge
 import-merge-backup = Импортировать резервную копию и объединить с текущими настройками
 import-merge-backup-confirmation-message = Существующие данные будут объединены с резервной копией. Продолжить?
@@ -165,3 +172,37 @@ backup-restoration-error = Произошла ошибка при импорти
 backup-migrations-failed = Не удалось выполнить миграции для {$keys}: {$error}
 backup-imported-successfully = Резервная копия успешно импортирована
 backup-imported-successfully-but-reinitialization-failed = Резервная копия была успешно импортирована, но обновить состояние не удалось. Расширение будет автоматически перезапущено.
+### options / settings / sync
+sync-storage = Синхронизируемое хранилище
+device-name =
+  .label = Название устройства
+
+## options / sharded backup
+backup-have-no-shards = Нет данных резервной копии
+backup-have-no-shards-for = Для резервной копии не хватает {$keys}
+missing-backup-shards = Отсутствуют части резервной копии: {$missing}
+mismatched-backup-shards-lengths = Длины частей резервной копии не совпадают: {$lengths}
+unknown-uint32-prefix = Неизвестный префикс Uint32: {$prefix}
+invalid-uint32-buffer-size = Размер буфера {$size} невалиден для Uint32
+unknown-uint32-value = Неизвестное для Uint32 значение типа {$type}: {$value}
+unknown-array-prefix = Неизвестный префикс массива: {$prefix}
+unknown-array-value = Неизвестное для массива значение типа {$type}: {$value}
+
+## options / sync backup
+last-sync =
+  .title = Устройство, дата и время последней синхронизации
+sync-backup-export =
+  .title = Экспортировать в синхронизируемое хранилище
+sync-backup-import =
+  .title = Импортировать из синхронизируемого хранилища
+sync-backup-import-merge =
+  .title = Импортировать из синхронизируемого хранилища и объединить с текущим состоянием
+download-sync-backup =
+  .title = Скачать данные синхронизируемого хранилища (JSON)
+sync-backup-download-error = Произошла ошибка при сохранении данных синхронизируемого хранилища:<br/>{$error}
+sync-backup-exported = Резервная копия экспортирована в синхронизируемое хранилище
+sync-backup-export-error = Не удалось экспортировать резервную копию:<br/>{$error}
+### options / sync backup / storage details
+sync-backup-storage-open-details =
+  .title = Открыть детали хранилища
+sync-backup-storage-shards-title = Части хранилища `{$storage}`

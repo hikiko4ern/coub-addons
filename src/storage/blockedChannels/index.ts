@@ -2,23 +2,27 @@ import { chain, filter, imap } from 'itertools';
 import type { Asyncify } from 'type-fest';
 import { type Unwatch, storage } from 'wxt/storage';
 
+import { filterMap } from '@/helpers/filterMap';
 import { symmetricDifference } from '@/helpers/symmetricDifference';
-import type { ToReadonly } from '@/types/util';
+import type { MaybePromise, ToReadonly } from '@/types/util';
 import { Logger } from '@/utils/logger';
 
-import { StorageBase, type StorageWatchCallback } from '../base';
-import type { StorageMeta } from '../types';
+import { ShardedStorage, type StorageShard, type StorageWatchCallback } from '../base';
+import type { StorageMeta, StorageSyncMeta } from '../types';
 import { areBlockedChannelsEqual } from './helpers/areBlockedChannelEqual';
 import { blockedChannelsToRaw } from './helpers/blockedChannelsToRaw';
 import { iterRawBlockedChannels } from './helpers/iterRawBlockedChannels';
 import { mergeBlockedChannels } from './helpers/mergeBlockedChannels';
-import type { BlockedChannelData, RawBlockedChannels } from './types';
+import { recoverBlockedChannelsFromShards } from './helpers/recoverBlockedChannelsFromShards';
+import { shardBlockedChannels } from './helpers/shardBlockedChannels';
+import type { BlockedChannelData, RawBlockedChannels, RawBlockedChannelsShards } from './types';
 
 export type { BlockedChannelData, RawBlockedChannels } from './types';
 
-export interface BlockedChannelsMeta extends StorageMeta {}
+export interface BlockedChannelsMeta extends StorageMeta, StorageSyncMeta {}
 
 const key = 'blockedChannels' as const,
+	metaKey = `${key}$` as const,
 	version = 1;
 
 const fallbackValue: RawBlockedChannels = {
@@ -50,15 +54,16 @@ export type IsChannelPermalinkBlockedFn = (
 	permalink: NonNullable<BlockedChannelData['permalink']>,
 ) => boolean;
 
-export class BlockedChannelsStorage extends StorageBase<
+export class BlockedChannelsStorage extends ShardedStorage<
 	typeof key,
+	typeof metaKey,
 	BlockedChannels,
 	BlockedChannelsMeta,
 	RawBlockedChannels,
 	ListenerArgs
 > {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = blockedChannelsItem;
 	static readonly MIGRATIONS = undefined;
 	static readonly merge = mergeBlockedChannels;
@@ -69,7 +74,7 @@ export class BlockedChannelsStorage extends StorageBase<
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('BlockedChannelsStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}
@@ -165,6 +170,37 @@ export class BlockedChannelsStorage extends StorageBase<
 		if (newState) {
 			await this.setParsedValue(newState);
 		}
+	}
+
+	shardRawValue(keyPrefix: string, raw: RawBlockedChannels): MaybePromise<StorageShard<never>[]> {
+		return shardBlockedChannels(this.logger, keyPrefix, raw);
+	}
+
+	async getShardsFromSync(
+		keepStoragePrefix = false,
+	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]> {
+		const state = await browser.storage.sync.get();
+		const keyPrefix = `${this.key}:`;
+
+		const shards = filterMap(
+			Object.entries(state),
+			([key]) => key.startsWith(keyPrefix),
+			([key, value]): StorageShard<never> => ({
+				key: keepStoragePrefix ? key : key.slice(keyPrefix.length),
+				value,
+			}),
+		);
+
+		return [shards, state];
+	}
+
+	async recoverRawValueFromShards(): Promise<[RawBlockedChannels, BlockedChannelsMeta]> {
+		const [shards, state] = await this.getShardsFromSync();
+
+		return [
+			await recoverBlockedChannelsFromShards(this.logger, shards as RawBlockedChannelsShards),
+			state[metaKey] as BlockedChannelsMeta,
+		];
 	}
 
 	protected async notifyWatcher(

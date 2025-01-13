@@ -4,7 +4,6 @@ import type { Logger } from '@/utils/logger';
 
 export const saveOriginalMethod = <
 	Obj extends object,
-	// biome-ignore lint/suspicious/noExplicitAny: required for correct types inference
 	Key extends ConditionalKeys<NoInfer<Obj>, (...args: any[]) => any>,
 >(
 	logger: Logger,

@@ -1,0 +1,12 @@
+.sync-storage-details__table {
+  th {
+    text-transform: uppercase;
+  }
+
+  th,
+  td {
+    &::before {
+      pointer-events: none;
+    }
+  }
+}

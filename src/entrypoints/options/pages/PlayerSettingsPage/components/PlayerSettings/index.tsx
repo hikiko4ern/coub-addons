@@ -3,10 +3,10 @@ import { Checkbox } from '@nextui-org/checkbox';
 import { Divider } from '@nextui-org/divider';
 import { Kbd } from '@nextui-org/kbd';
 import type { FunctionComponent } from 'preact';
-import { useCallback } from 'preact/hooks';
 
 import { CardSection } from '@/options/components/CardSection';
 import { HintTooltip } from '@/options/components/HintTooltip';
+import { useStorageMergeCallback } from '@/options/hooks/useStorageMergeCallback';
 import type { PlayerSettingsStorage, ReadonlyPlayerSettings } from '@/storage/playerSettings';
 
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
@@ -17,9 +17,9 @@ interface Props {
 }
 
 export const PlayerSettings: FunctionComponent<Props> = ({ storage, state }) => {
-	const handleIsPreventPlaybackRateChange = useCallback(
-		(isPreventPlaybackRateChange: boolean) => storage.mergeWith({ isPreventPlaybackRateChange }),
-		[storage],
+	const handleIsPreventPlaybackRateChange = useStorageMergeCallback(
+		storage,
+		'isPreventPlaybackRateChange',
 	);
 
 	return (

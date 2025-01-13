@@ -5,7 +5,7 @@ import { logger as optionsLogger } from '@/options/constants';
 import type { IsBlockedFn, PhrasesBlocklistStorage } from '@/storage/phrasesBlocklist';
 
 interface Options {
-	storage: PhrasesBlocklistStorage<string>;
+	storage: PhrasesBlocklistStorage<string, `${string}$`>;
 	raw: string | false;
 	onMatch: (pos: number | undefined) => void;
 }

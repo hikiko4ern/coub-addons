@@ -127,7 +127,7 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 		switch (columnKey) {
 			case 'id':
 				return (
-					<TableCell className="text-right text-zinc-500 dark:text-zinc-400">
+					<TableCell className="text-right font-mono text-zinc-500 dark:text-zinc-400">
 						{channel.id}
 					</TableCell>
 				);

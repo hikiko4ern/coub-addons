@@ -1,0 +1,150 @@
+import type { ReactLocalization } from '@fluent/react';
+
+import type { StorageShard } from '@/storage/base';
+import { TranslatableError } from '@/storage/errors';
+import type { MaybePromise } from '@/types/util';
+import type { Logger } from '@/utils/logger';
+
+import { shardArray } from './array';
+import { gunzipBase64, gzipBase64 } from './compression';
+import { PER_KEY_BYTES_LIMIT } from './constants';
+import { ShardGenerator } from './generator';
+
+const MAX_U32 = 2 ** 32 - 1;
+const U32_SIZE = Uint32Array.BYTES_PER_ELEMENT;
+
+enum Uint32ShardType {
+	// `base64` of the `gzip`-compressed little-endian `Uint32Array`
+	// gzipping allows to save ~900 bytes (from `8166` to ~`7250`)
+	GZIP = 'gz:',
+}
+
+const MAX_PREFIX_LENGTH = Math.max(...Object.values(Uint32ShardType).map(p => p.length));
+
+export type Uint32Shard<Value> = StorageShard<never, Value>;
+
+/** shards the `uint32` array */
+export const shardUint32 = (
+	logger: Logger,
+	keyPrefix: string,
+	key: string | undefined,
+	values: number[],
+) => {
+	const nonU32 = values.find(v => v < 0 || v > MAX_U32);
+
+	if (typeof nonU32 === 'number') {
+		logger.error(key, 'contains non-uint32', nonU32, 'in', values);
+		return shardArray(keyPrefix, key, values, 'generic');
+	}
+
+	return asGzip(keyPrefix, key, values);
+};
+
+/** recovers the `uint32` array from shard */
+export const recoverUint32Shard = (logger: Logger, value: unknown): MaybePromise<number[]> => {
+	if (Array.isArray(value)) {
+		// it was JSON-stringified
+		return value;
+	}
+
+	if (typeof value === 'string') {
+		const prefix = value.slice(0, MAX_PREFIX_LENGTH);
+
+		switch (prefix) {
+			case Uint32ShardType.GZIP:
+				return fromGzip(value.slice(prefix.length));
+
+			default: {
+				const err = new UnknownUint32Prefix(prefix, value);
+				logger.error(err);
+				throw err;
+			}
+		}
+	}
+
+	throw new UnknownUint32Value(typeof value, JSON.stringify(value));
+};
+
+const asGzip = async (keyPrefix: string, key: string | undefined, values: number[]) => {
+	const valuePrefix = Uint32ShardType.GZIP,
+		shards = new ShardGenerator<`${typeof valuePrefix}${string}`>(keyPrefix, key),
+		baseLength = shards.baseLength + 2 + valuePrefix.length, // +2 for the string quotes ""
+		/** maximum amount of `uint32` that can fit into one key when converted to a base64 string */
+		capacity = Math.floor(((PER_KEY_BYTES_LIMIT - baseLength) * 3) / 4 / U32_SIZE);
+
+	for (let i = 0, length = values.length; i < length; i += capacity) {
+		const chunk = values.slice(i, i + capacity);
+		const buf = new ArrayBuffer(chunk.length * U32_SIZE);
+
+		{
+			const view = new DataView(buf);
+
+			for (
+				let j = 0, offset = 0, chunkLength = chunk.length;
+				j < chunkLength;
+				j++, offset += U32_SIZE
+			) {
+				view.setUint32(offset, chunk[j], true);
+			}
+		}
+
+		const base64 = await gzipBase64(buf);
+		shards.push(`${valuePrefix}${base64}`);
+	}
+
+	return shards.finish();
+};
+
+const fromGzip = async (value: string) => {
+	const buf = await gunzipBase64(value);
+
+	if (buf.byteLength % U32_SIZE !== 0) {
+		throw new InvalidUint32BufferSize(buf.byteLength);
+	}
+
+	const length = buf.byteLength / U32_SIZE,
+		arr = new Array<number>(length),
+		view = new DataView(buf);
+
+	for (let i = 0, offset = 0; i < length; i++, offset += U32_SIZE) {
+		arr[i] = view.getUint32(offset, true);
+	}
+
+	return arr;
+};
+
+export class UnknownUint32Prefix extends TranslatableError {
+	constructor(
+		private prefix: string,
+		value: string,
+	) {
+		super(`unknown Uint32 prefix ${prefix} of value ${value}`);
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
+
+	translate = (l10n: ReactLocalization) =>
+		l10n.getString('unknown-uint32-prefix', { prefix: this.prefix });
+}
+
+export class InvalidUint32BufferSize extends TranslatableError {
+	constructor(private size: number) {
+		super(`Uint32 buffer size ${size} is invalid`);
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
+
+	translate = (l10n: ReactLocalization) =>
+		l10n.getString('invalid-uint32-buffer-size', { size: this.size });
+}
+
+export class UnknownUint32Value extends TranslatableError {
+	constructor(
+		private type: string,
+		private value: string,
+	) {
+		super(`unknown Uint32 value of type ${type}: ${value}`);
+		Object.setPrototypeOf(this, new.target.prototype);
+	}
+
+	translate = (l10n: ReactLocalization) =>
+		l10n.getString('unknown-uint32-value', { type: this.type, value: this.value });
+}

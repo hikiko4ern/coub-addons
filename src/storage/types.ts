@@ -1,3 +1,5 @@
+import { type Infer, number, string, type } from 'superstruct';
+
 import type { ToReadonly } from '@/types/util';
 
 import type { StorageBase } from './base';
@@ -22,13 +24,23 @@ export interface StorageMeta {
 	[index: string]: unknown;
 }
 
+export interface StorageSyncMeta {
+	lastSynced?: StorageLastSynced | undefined;
+}
+
+export const StorageLastSynced = type({
+	atUtc: number(),
+	deviceName: string(),
+});
+
+export type StorageLastSynced = Infer<typeof StorageLastSynced>;
+
 export enum StorageEventTrigger {
 	SetValue = 'setValue',
 }
 
 export type StorageEvent = ToStorageEvent<BlockedChannelsStorage> | ToStorageEvent<StatsStorage>;
 
-// biome-ignore lint/suspicious/noExplicitAny: `any` is required here
 export type FnWithState<State, Fn extends (...args: any[]) => any> = (
 	state: ToReadonly<State>,
 	...args: Parameters<Fn>
@@ -43,9 +55,7 @@ interface StorageEventBase<Key extends string, State, RawState> {
 	trigger?: StorageEventTrigger;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: `any` is required here
-export type ToStorageEvent<T extends StorageBase<string, any, any, any, any>> =
-	// biome-ignore lint/suspicious/noExplicitAny: `any` is required here
-	T extends StorageBase<infer Key, infer State, any, infer RawState, any>
+export type ToStorageEvent<T extends StorageBase<string, any, any, any, any, any>> =
+	T extends StorageBase<infer Key, any, infer State, any, infer RawState, any>
 		? StorageEventBase<Key, State, RawState>
 		: never;

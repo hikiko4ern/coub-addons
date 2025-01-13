@@ -1,11 +1,12 @@
 import { Localized, useLocalization } from '@fluent/react';
 import type { FunctionComponent } from 'preact';
-import { useCallback, useMemo } from 'preact/hooks';
+import { useMemo } from 'preact/hooks';
 import type { ConditionalKeys } from 'type-fest';
 
 import { doHotkeysConflict } from '@/hotkey/doHotkeysConflict';
-import type { Hotkey, ReadonlyHotkey } from '@/hotkey/types';
+import type { Hotkey } from '@/hotkey/types';
 import { HotkeyInput } from '@/options/components/HotkeyInput';
+import { useStorageMergeCallback } from '@/options/hooks/useStorageMergeCallback';
 import type {
 	PlayerSettings,
 	PlayerSettingsStorage,
@@ -42,10 +43,7 @@ export const KeyboardShortcut: FunctionComponent<Props> = ({ storage, state, set
 		return actions.length ? actions : undefined;
 	}, [l10n, state, settingKey, hotkey]);
 
-	const handleChange = useCallback(
-		(hotkey: ReadonlyHotkey | undefined) => storage.mergeWith({ [settingKey]: hotkey }),
-		[storage, settingKey],
-	);
+	const handleChange = useStorageMergeCallback(storage, settingKey);
 
 	return (
 		<HotkeyInput

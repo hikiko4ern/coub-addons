@@ -14,6 +14,11 @@ revert = Revert
 edit = Edit
 extension = Extension
 id = ID
+index = Index
+total = total
+size-in-bytes = Size in bytes
+format = Format
+total-def = Total: {$total}
 
 ## follow button
 
@@ -135,14 +140,16 @@ locale-setting =
 locale-setting-system = System
 locale-setting-ru-RU = Русский
 locale-setting-en-US = English
+dev-mode = Dev mode
+dev-mode-tooltip = Here be dragons. Adds functionality intended for developers only. Such functionality can be changed or removed at any time without notice, and using it could potentially break something or irreversibly erase the extension settings
 ### options / settings / export
 export-backup = Export backup
 backup-creation-error = Failed to create backup:<br/>{$error}
-file-content-is-not-a-valid-backup = The contents of the file are not a valid backup
 ### options / settings / import
 import-backup = Import backup
 import-backup-confirmation-header = Are you sure?
 import-backup-confirmation-message = All your existing data will be <danger>overwritten</danger> by the backup. Continue?
+file-content-is-not-a-valid-backup = The contents of the file are not a valid backup
 ### options / settings / import-merge
 import-merge-backup = Import backup and merge with current settings
 import-merge-backup-confirmation-message = Your existing data will be merged with backup. Continue?
@@ -164,3 +171,37 @@ backup-restoration-error = Failed to import backup:<br/><pre>{$error}</pre>
 backup-migrations-failed = Migrations for {$keys} failed: {$error}
 backup-imported-successfully = Backup imported successfully
 backup-imported-successfully-but-reinitialization-failed = The backup was successfully imported, but the state could not be updated. The extension will be automatically reloaded.
+### options / settings / sync
+sync-storage = Sync storage
+device-name =
+  .label = Device name
+
+## options / sharded backup
+backup-have-no-shards = Have no backup data
+backup-have-no-shards-for = Have no backup shards for {$keys}
+missing-backup-shards = Missing backup shards: {$missing}
+mismatched-backup-shards-lengths = The lengths of the backup shards don't match: {$lengths}
+unknown-uint32-prefix = Unknown Uint32 prefix: {$prefix}
+invalid-uint32-buffer-size = Uint32 buffer size {$size} is invalid
+unknown-uint32-value = Unknown for Uint32 value of type {$type}: {$value}
+unknown-array-prefix = Unknown array prefix: {$prefix}
+unknown-array-value = Unknown for array value of type {$type}: {$value}
+
+## options / sync backup
+last-sync =
+  .title = Device, date, and time of last synchronization
+sync-backup-export =
+  .title = Export to the sync storage
+sync-backup-import =
+  .title = Import from the sync storage
+sync-backup-import-merge =
+  .title = Import from sync storage and merge with current state
+download-sync-backup =
+  .title = Download sync storage data (JSON)
+sync-backup-download-error = An error occurred while saving data from the sync storage:<br/>{$error}
+sync-backup-exported = Backup exported to sync storage
+sync-backup-export-error = Failed to export backup:<br/>{$error}
+### options / sync backup / storage details
+sync-backup-storage-open-details =
+  .title = Open details of the storage
+sync-backup-storage-shards-title = Shards of the `{$storage}` storage

@@ -103,7 +103,6 @@ export const registerChannelsHandlers = (ctx: Context) => {
 				filteredChannels.push(rawChannel as ResponseChannel);
 			}
 
-			// biome-ignore lint/suspicious/noExplicitAny: TS specifics
 			(data as UnionToIntersection<typeof data>)[key] = filteredChannels as any;
 			isModified = filteredChannels.length !== origAmount;
 

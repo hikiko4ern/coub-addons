@@ -1,11 +1,8 @@
 import { Localized, type ReactLocalization } from '@fluent/react';
-import type { VNode } from 'preact';
 
 import { FluentList } from '@/translation/intl';
 
-export abstract class TranslatableError extends Error {
-	abstract translate(l10n: ReactLocalization): string | VNode;
-}
+import { TranslatableError } from '../errors';
 
 export class StorageMigrationsFailed extends TranslatableError {
 	constructor(

@@ -9,7 +9,6 @@ import type {
 	PlayerSettingsV4,
 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 type Migrations = Record<2 | 3 | 4, (playerSettings: any) => unknown>;
 
 export const playerSettingsMigrations: Migrations = {

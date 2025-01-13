@@ -3,35 +3,42 @@ import { storage } from 'wxt/storage';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
-import { StorageBase } from '../base';
-import type { StorageMeta } from '../types';
-import { type RawLocale, RawTheme, SYSTEM_LOCALE } from './types';
+import { SyncableStorage } from '../base';
+import type { StorageMeta, StorageSyncMeta } from '../types';
+import { settingsMigrations } from './migrations';
+import { RawTheme, SYSTEM_LOCALE, type SettingsV2 as Settings } from './types';
 
-export interface Settings {
-	theme: RawTheme;
-	locale: RawLocale;
-}
+export type { Settings };
 
-export interface SettingsMeta extends StorageMeta {}
+export interface SettingsMeta extends StorageMeta, StorageSyncMeta {}
 
 export type ReadonlySettings = ToReadonly<Settings>;
 
 const key = 'settings' as const,
-	version = 1;
+	metaKey = `${key}$` as const,
+	version = 2;
 
 const fallbackValue: Settings = {
 	theme: RawTheme.SYSTEM,
 	locale: SYSTEM_LOCALE,
+	deviceName: navigator.platform,
+	isDevMode: false,
 };
 
 const settingsItem = storage.defineItem<Settings, SettingsMeta>(`local:${key}`, {
 	version,
 	fallback: fallbackValue,
+	migrations: settingsMigrations,
 });
 
-export class SettingsStorage extends StorageBase<typeof key, Settings, SettingsMeta> {
+export class SettingsStorage extends SyncableStorage<
+	typeof key,
+	typeof metaKey,
+	Settings,
+	SettingsMeta
+> {
 	static readonly KEY = key;
-	static readonly META_KEY = `${key}$` as const;
+	static readonly META_KEY = metaKey;
 	static readonly STORAGE = settingsItem;
 	static readonly MIGRATIONS = undefined;
 	protected readonly logger: Logger;
@@ -39,7 +46,7 @@ export class SettingsStorage extends StorageBase<typeof key, Settings, SettingsM
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('SettingsStorage');
-		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
+		super(tabId, source, childLogger, new.target.KEY, new.target.META_KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
 	}
