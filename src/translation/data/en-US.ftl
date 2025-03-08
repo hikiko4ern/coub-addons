@@ -170,7 +170,9 @@ missing-backup-shards = Missing backup shards: {$missing}
 mismatched-backup-shards-lengths = The lengths of the backup shards don't match: {$lengths}
 unknown-uint32-prefix = Unknown Uint32 prefix: {$prefix}
 invalid-uint32-buffer-size = Uint32 buffer size {$size} is invalid
-unknown-uint32-value = Unknown Uint32 value of type {$type}: {$value}
+unknown-uint32-value = Unknown for Uint32 value of type {$type}: {$value}
+unknown-array-prefix = Unknown array prefix: {$prefix}
+unknown-array-value = Unknown for array value of type {$type}: {$value}
 
 ## options / sync backup
 sync-backup-exported = Backup exported to sync storage

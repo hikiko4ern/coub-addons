@@ -45,7 +45,6 @@ export const toAmoMarkdown = (tree: Root) =>
 				}
 
 				const prevBullet = state.bulletCurrent;
-				// biome-ignore lint/style/useTemplate: template is less readable here
 				state.bulletCurrent = '  ' + state.bulletCurrent;
 
 				const str = defaultHandlers.listItem(node, parent, state, info);

@@ -1,12 +1,13 @@
+import { arraySparseIndexes } from '@/helpers/arraySparseIndexes';
+import { recoverArrayShard } from '@/helpers/shards/array';
 import { recoverUint32Shard } from '@/helpers/shards/uint32';
+import { MissingShardsError, type MissingShardsKey } from '@/storage/errors';
 import type { ObjectEntries } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
 import {
 	type MismatchedBlockedChannelsShardLength,
 	MismatchedBlockedChannelsShardsLengths,
-	MissingBlockedChannelsShards,
-	type MissingBlockedChannelsShardsKey,
 } from '../errors';
 import type { RawBlockedChannels, RawBlockedChannelsShards } from '../types';
 
@@ -16,10 +17,10 @@ type RawBlockedChannelsArrays = {
 	[key in keyof RawBlockedChannels]: RawBlockedChannels[key][];
 };
 
-export const recoverBlockedChannelsFromShards = (
+export const recoverBlockedChannelsFromShards = async (
 	logger: Logger,
 	shards: RawBlockedChannelsShards,
-): RawBlockedChannels => {
+): Promise<RawBlockedChannels> => {
 	const arrays: RawBlockedChannelsArrays = {
 		id: [],
 		title: [],
@@ -42,11 +43,12 @@ export const recoverBlockedChannelsFromShards = (
 
 		switch (key) {
 			case 'id':
-				value = recoverUint32Shard(rawValue);
+				value = recoverUint32Shard(logger, rawValue);
 				break;
 
-			default:
-				value = rawValue;
+			case 'title':
+			case 'permalink':
+				value = await recoverArrayShard<string>(logger, rawValue);
 				break;
 		}
 
@@ -67,10 +69,10 @@ export const recoverBlockedChannelsFromShards = (
 };
 
 const assertNotSparse = (arrays: RawBlockedChannelsArrays) => {
-	const missingShards: MissingBlockedChannelsShardsKey[] = [];
+	const missingShards: MissingShardsKey[] = [];
 
 	for (const [key, value] of Object.entries(arrays) as ObjectEntries<typeof arrays>) {
-		const indexes = sparseIndexes(value);
+		const indexes = arraySparseIndexes(value);
 
 		if (indexes.length > 0) {
 			missingShards.push([key, indexes]);
@@ -78,20 +80,8 @@ const assertNotSparse = (arrays: RawBlockedChannelsArrays) => {
 	}
 
 	if (missingShards.length > 0) {
-		throw new MissingBlockedChannelsShards(missingShards);
+		throw new MissingShardsError(missingShards);
 	}
-};
-
-const sparseIndexes = (arr: unknown[]): number[] => {
-	const indexes: number[] = [];
-
-	for (let i = 0, length = arr.length; i < length; i++) {
-		if (!(i in arr)) {
-			indexes.push(i);
-		}
-	}
-
-	return indexes;
 };
 
 const assertLengthsAreEqual = (raw: RawBlockedChannels) => {

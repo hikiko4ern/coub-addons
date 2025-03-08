@@ -12,11 +12,12 @@ import type { BlockedChannelData } from '@/storage/blockedChannels';
 import type { Context } from './ctx';
 import { CoubExclusionReason, type FilteredOutCoubForStats } from './types/coub';
 
-interface TimelineResponseCoubs {
+export interface TimelineResponseCoubs {
 	page: number;
 	per_page: number;
 	total_pages: number;
 	coubs: TimelineResponseCoub[];
+	next?: number;
 }
 
 export interface TimelineResponseCoub {

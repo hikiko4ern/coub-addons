@@ -5,12 +5,13 @@ import type { Logger } from '@/utils/logger';
 
 import type { RawBlockedChannels } from '../types';
 
-export const shardBlockedChannels = (
+export const shardBlockedChannels = async (
 	logger: Logger,
 	keyPrefix: string,
 	raw: RawBlockedChannels,
-) => [
-	...shardUint32(logger, keyPrefix, 'id', raw.id),
-	...shardArray(keyPrefix, 'title', raw.title, byteSize),
-	...shardArray(keyPrefix, 'permalink', raw.permalink, byteSize),
-];
+) =>
+	Promise.all([
+		shardUint32(logger, keyPrefix, 'id', raw.id),
+		shardArray(keyPrefix, 'title', raw.title, 'string', byteSize),
+		shardArray(keyPrefix, 'permalink', raw.permalink, 'string', byteSize),
+	]).then(arr => arr.flat());

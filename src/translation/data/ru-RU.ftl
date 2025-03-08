@@ -172,6 +172,8 @@ mismatched-backup-shards-lengths = Длины частей резервной к
 unknown-uint32-prefix = Неизвестный префикс Uint32: {$prefix}
 invalid-uint32-buffer-size = Размер буфера {$size} невалиден для Uint32
 unknown-uint32-value = Неизвестное для Uint32 значение типа {$type}: {$value}
+unknown-array-prefix = Неизвестный префикс массива: {$prefix}
+unknown-array-value = Неизвестное для массива значение типа {$type}: {$value}
 
 ## options / sync backup
 sync-backup-exported = Резервная копия экспортирована в синхронизируемое хранилище

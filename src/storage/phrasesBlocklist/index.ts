@@ -1,14 +1,23 @@
 import type { Asyncify } from 'type-fest';
 
-import type { ToReadonly } from '@/types/util';
+import { byteSize } from '@/helpers/byteSize';
+import { filterMap } from '@/helpers/filterMap';
+import { shardArray } from '@/helpers/shards/array';
+import type { MaybePromise, ToReadonly } from '@/types/util';
 
-import { StorageBase } from '../base';
+import { ShardedStorage, type StorageShard } from '../base';
 import type { FnWithState, StorageMeta } from '../types';
 import { getMatchedPhrase } from './helpers/getMatchedPhrase';
 import { mergePhrasesBlocklist } from './helpers/mergePhrasesBlocklist';
 import { parsePhrasesBlocklist } from './helpers/parsePhrasesBlocklist';
 import { addPhraseToTree } from './helpers/phrasesTree';
-import type { MatchedBlocklistPhrase, PhrasesBlocklist, RawPhrasesBlocklist } from './types';
+import { recoverPhrasesBlocklistFromShards } from './helpers/recoverPhrasesBlocklistFromShards';
+import type {
+	MatchedBlocklistPhrase,
+	PhrasesBlocklist,
+	RawPhrasesBlocklist,
+	RawPhrasesBlocklistShards,
+} from './types';
 
 export type { PhrasesBlocklist, RawPhrasesBlocklist } from './types';
 
@@ -22,7 +31,13 @@ export type IsBlockedFn = (value: string | Iterable<string>) => MatchedBlocklist
 export abstract class PhrasesBlocklistStorage<
 	Key extends string,
 	MetaKey extends `${Key}$`,
-> extends StorageBase<Key, MetaKey, PhrasesBlocklist, PhrasesBlocklistMeta, RawPhrasesBlocklist> {
+> extends ShardedStorage<
+	Key,
+	MetaKey,
+	PhrasesBlocklist,
+	PhrasesBlocklistMeta,
+	RawPhrasesBlocklist
+> {
 	static readonly merge = mergePhrasesBlocklist;
 
 	isBlocked: Asyncify<IsBlockedFn> = async value => this.#isBlocked(await this.getValue(), value);
@@ -65,6 +80,29 @@ export abstract class PhrasesBlocklistStorage<
 			}
 		}
 	};
+
+	shardRawValue(keyPrefix: string, raw: RawPhrasesBlocklist): MaybePromise<StorageShard<never>[]> {
+		return shardArray(keyPrefix, undefined, raw.split('\n'), 'string', byteSize);
+	}
+
+	async recoverRawValueFromShards(): Promise<[RawPhrasesBlocklist, PhrasesBlocklistMeta]> {
+		const state = await browser.storage.sync.get();
+		const keyPrefix = `${this.key}#`;
+
+		const shards = filterMap(
+			Object.entries(state),
+			([key]) => key === this.key || key.startsWith(keyPrefix),
+			([key, value]): StorageShard<never> => ({
+				key: key === this.key ? undefined : key.slice(keyPrefix.length - 1),
+				value,
+			}),
+		);
+
+		return [
+			await recoverPhrasesBlocklistFromShards(this.logger, shards as RawPhrasesBlocklistShards),
+			state[this.metaKey] as PhrasesBlocklistMeta,
+		];
+	}
 
 	protected parseRawValue(raw: RawPhrasesBlocklist): PhrasesBlocklist {
 		return parsePhrasesBlocklist(this.logger, raw);

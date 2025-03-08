@@ -6,8 +6,8 @@ import { TranslatableError } from '@/storage/errors';
 import type { Logger } from '@/utils/logger';
 
 import { shardArray } from './array';
-import { ShardGenerator } from './gen';
-import { PER_KEY_BYTES_LIMIT, getBaseLength } from './shardUtils';
+import { PER_KEY_BYTES_LIMIT } from './constants';
+import { ShardGenerator } from './generator';
 
 const MAX_U32 = 2 ** 32 - 1;
 const U32_SIZE = Uint32Array.BYTES_PER_ELEMENT;
@@ -22,19 +22,24 @@ const MAX_PREFIX_LENGTH = Math.max(...Object.values(Uint32ShardType).map(p => p.
 export type Uint32Shard<Value> = StorageShard<never, Value>;
 
 /** shards the `uint32` array */
-export const shardUint32 = (logger: Logger, keyPrefix: string, key: string, values: number[]) => {
+export const shardUint32 = (
+	logger: Logger,
+	keyPrefix: string,
+	key: string | undefined,
+	values: number[],
+) => {
 	const nonU32 = values.find(v => v < 0 || v > MAX_U32);
 
 	if (typeof nonU32 === 'number') {
 		logger.error(key, 'contains non-uint32', nonU32, 'in', values);
-		return shardArray(keyPrefix, key, values);
+		return shardArray(keyPrefix, key, values, 'generic');
 	}
 
 	return asBase64(keyPrefix, key, values);
 };
 
 /** recovers the `uint32` array from shard */
-export const recoverUint32Shard = (value: unknown): number[] => {
+export const recoverUint32Shard = (logger: Logger, value: unknown): number[] => {
 	if (Array.isArray(value)) {
 		// it was JSON-stringified
 		return value;
@@ -47,22 +52,23 @@ export const recoverUint32Shard = (value: unknown): number[] => {
 			case Uint32ShardType.BASE64:
 				return fromBase64(value.slice(prefix.length));
 
-			default:
-				throw new UnknownUint32Prefix(prefix, value);
+			default: {
+				const err = new UnknownUint32Prefix(prefix, value);
+				logger.error(err);
+				throw err;
+			}
 		}
 	}
 
 	throw new UnknownUint32Value(typeof value, JSON.stringify(value));
 };
 
-const asBase64 = (keyPrefix: string, key: string, values: number[]) => {
-	const valuePrefix = Uint32ShardType.BASE64;
-	const baseLength = getBaseLength(keyPrefix, key) + 2 + valuePrefix.length; // +2 for the string quotes ""
-
-	/** maximum amount of `uint32` that can fit into one key when converted to a base64 string */
-	const capacity = Math.floor(((PER_KEY_BYTES_LIMIT - baseLength) * 3) / 4 / U32_SIZE);
-
-	const shards = new ShardGenerator<`${typeof valuePrefix}${string}`>(key);
+const asBase64 = (keyPrefix: string, key: string | undefined, values: number[]) => {
+	const valuePrefix = Uint32ShardType.BASE64,
+		shards = new ShardGenerator<`${typeof valuePrefix}${string}`>(keyPrefix, key),
+		baseLength = shards.baseLength + 2 + valuePrefix.length, // +2 for the string quotes ""
+		/** maximum amount of `uint32` that can fit into one key when converted to a base64 string */
+		capacity = Math.floor(((PER_KEY_BYTES_LIMIT - baseLength) * 3) / 4 / U32_SIZE);
 
 	for (let i = 0, length = values.length; i < length; i += capacity) {
 		const chunk = values.slice(i, i + capacity);

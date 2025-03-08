@@ -2,7 +2,7 @@ import type { IsNever } from 'type-fest';
 import type { StorageItemKey, Unwatch, WxtStorageItem } from 'wxt/storage';
 
 import { EventDispatcher, EventListener } from '@/events';
-import type { ToReadonly } from '@/types/util';
+import type { MaybePromise, ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
 import {
@@ -27,7 +27,7 @@ export interface StorageItem<Value> {
 }
 
 export interface StorageShard<Prefix extends string = never, Value = unknown> {
-	key: IsNever<Prefix> extends true ? string : `${Prefix}:${string}`;
+	key: IsNever<Prefix> extends true ? string | undefined : `${Prefix}:${string}`;
 	value: Value;
 }
 
@@ -43,11 +43,10 @@ export abstract class StorageBase<
 	protected abstract readonly logger: Logger;
 	protected abstract readonly version: number;
 
-	key: Key;
+	readonly key: Key;
+	readonly metaKey: MetaKey;
 	readonly [storageStateType]?: NoInfer<State>;
 	readonly [storageListenerArgs]?: NoInfer<ListenerArgs>;
-	readonly #key;
-	readonly #metaKey;
 	readonly #storage;
 	readonly #source;
 	readonly #tabId;
@@ -68,8 +67,8 @@ export abstract class StorageBase<
 	) {
 		this.#tabId = tabId;
 		this.#source = source;
-		this.key = this.#key = key;
-		this.#metaKey = metaKey;
+		this.key = key;
+		this.metaKey = metaKey;
 		this.#storage = storage;
 
 		this.initialize();
@@ -81,7 +80,7 @@ export abstract class StorageBase<
 		});
 
 		this.#eventListener = new EventListener(logger, msg => {
-			if (msg.type !== 'StorageUpdatedEvent' || msg.data.key !== this.#key) {
+			if (msg.type !== 'StorageUpdatedEvent' || msg.data.key !== this.key) {
 				return;
 			}
 
@@ -129,33 +128,41 @@ export abstract class StorageBase<
 		return [state, meta];
 	}
 
-	async getSyncItems(): Promise<StorageShard<'sync'>[]> {
+	async getSyncItems(): Promise<[shards: StorageShard<'sync'>[], removeKeys: `sync:${string}`[]]> {
 		const [state, meta] = await this.getItems();
 
-		const shards: StorageShard<'sync'>[] = [
+		const syncShards: StorageShard<'sync'>[] = [
 			{
-				key: `sync:${this.#metaKey}`,
+				key: `sync:${this.metaKey}`,
 				value: meta.value,
 			},
 		];
+		const removeKeys: `sync:${string}`[] = [];
 
 		if (this instanceof ShardedStorage) {
-			shards.push(
-				...this.shardRawValue(`${this.#key}:`, state.value).map(
-					(shard): StorageShard<'sync'> => ({
-						...shard,
-						key: `sync:${this.#key}:${shard.key}`,
-					}),
-				),
-			);
+			const rawShards = await this.shardRawValue(this.key, state.value);
+			this.logger.debug('generated shards', rawShards);
+
+			for (const shard of rawShards) {
+				const itemKey = `sync:${shard.key}` as const;
+
+				if (typeof shard.value === 'undefined') {
+					removeKeys.push(itemKey);
+				} else {
+					syncShards.push({
+						key: itemKey,
+						value: shard.value,
+					});
+				}
+			}
 		} else {
-			shards.push({
-				key: `sync:${this.#key}`,
+			syncShards.push({
+				key: `sync:${this.key}`,
 				value: state.value,
 			});
 		}
 
-		return shards;
+		return [syncShards, removeKeys];
 	}
 
 	async restoreFromSync() {
@@ -173,7 +180,7 @@ export abstract class StorageBase<
 	}
 
 	private async defaultGetRawValueFromSync(): Promise<[RawState, TMetadata]> {
-		const [state, meta] = await storage.getItems([`sync:${this.#key}`, `sync:${this.#metaKey}`]);
+		const [state, meta] = await storage.getItems([`sync:${this.key}`, `sync:${this.metaKey}`]);
 		return [state.value as RawState, meta.value as TMetadata];
 	}
 
@@ -207,7 +214,7 @@ export abstract class StorageBase<
 			EventDispatcher.dispatchStorageUpdate({
 				tabId: this.#tabId,
 				source: this.#source,
-				key: this.#key,
+				key: this.key,
 				state,
 				oldState,
 				trigger: eventTrigger,
@@ -295,6 +302,6 @@ export abstract class ShardedStorage<
 	 * on 192 channels with the one-key-per-object approach, and
 	 * on 365 channels with the one-key-per-field approach
 	 */
-	abstract shardRawValue(keyPrefix: string, raw: RawState): StorageShard<never>[];
+	abstract shardRawValue(keyPrefix: string, raw: RawState): MaybePromise<StorageShard<never>[]>;
 	abstract recoverRawValueFromShards(): Promise<[RawState, TMetadata]>;
 }

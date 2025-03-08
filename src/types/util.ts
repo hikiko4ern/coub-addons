@@ -1,4 +1,4 @@
-import type { ReadonlyDeep } from 'type-fest';
+import type { If, IsNever, ReadonlyDeep } from 'type-fest';
 
 export type ToReadonly<T> = T extends ReadonlyMap<infer Key, infer Value>
 	? ReadonlyMap<Key, Value>
@@ -27,3 +27,9 @@ export type SetNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> 
 export type ObjectEntries<T extends object> = {
 	[key in keyof T]: [key, T[key]];
 }[keyof T][];
+
+export type ExtendableFromKeys<T extends object, Condition> = {
+	[Key in keyof T]-?: Condition extends T[Key]
+		? If<IsNever<T[Key]>, If<IsNever<Condition>, Key, never>, Key>
+		: never;
+}[keyof T];

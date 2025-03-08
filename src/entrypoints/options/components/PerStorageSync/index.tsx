@@ -2,16 +2,18 @@ import { Localized, useLocalization } from '@fluent/react';
 import CloudArrowDownIcon from '@heroicons/react/24/outline/CloudArrowDownIcon';
 import CloudArrowUpIcon from '@heroicons/react/24/outline/CloudArrowUpIcon';
 import { Button, ButtonGroup } from '@nextui-org/button';
+import { useSignal } from '@preact/signals';
 import cx from 'clsx';
 import type { FunctionComponent } from 'preact';
-import { useCallback, useMemo } from 'preact/hooks';
+import { useCallback, useEffect } from 'preact/hooks';
 import { toast } from 'react-toastify';
 import { storage as wxtStorage } from 'wxt/storage';
 
 import { byteSize } from '@/helpers/byteSize';
+import { logger } from '@/options/constants';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
 import { type StorageToBackup, migrateStorages } from '@/storage/backup';
-import { type AnyStorageBase, ShardedStorage, type StorageShard } from '@/storage/base';
+import type { AnyStorageBase } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
 
 // @ts-expect-error
@@ -26,50 +28,47 @@ interface Props {
 export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, storageClass }) => {
 	const { l10n } = useLocalization();
 	const state = useStorageState({ storage });
+	const storageSize = useSignal<number | string>();
 
 	// TODO: move to a modal
-	const storageSize = useMemo((): number | string => {
+	useEffect(() => {
 		if (state.status !== StorageHookState.Loaded) {
-			return 0;
+			storageSize.value = 0;
+			return;
 		}
 
-		// @ts-expect-error
-		const raw = storage.toRawValue(state.data);
+		(async () => {
+			const [shards] = await storage.getSyncItems();
 
-		const shards: StorageShard<never>[] = [{ key: `${storage.key}$`, value: { v: 1 } }];
+			let sum = 0;
 
-		if (storage instanceof ShardedStorage) {
-			shards.unshift(
-				...storage
-					.shardRawValue(`${storage.key}:`, raw)
-					.map((kv): typeof kv => ({ ...kv, key: `${storage.key}:${kv.key}` })),
-			);
-		} else {
-			shards.unshift({ key: storage.key, value: raw });
-		}
+			const sizes = shards.map(shard => {
+				const storageKey = shard.key.slice('sync:'.length);
 
-		let sum = 0;
+				const size = storageKey.length + byteSize(JSON.stringify(shard.value));
+				sum += size;
 
-		const sizes = shards.map(kv => {
-			const size = kv.key.length + byteSize(JSON.stringify(kv.value));
-			sum += size;
-			const prefix =
-				kv.key === storage.key
-					? '.'
-					: kv.key.endsWith('$')
-						? 'meta'
-						: kv.key.slice(storage.key.length + 1);
-			return `(${prefix}) ${size}`;
-		});
-		sizes.push(`(total) ${sum}`);
+				const prefix =
+					storageKey === storage.key
+						? '.'
+						: storageKey.endsWith('$')
+							? 'meta'
+							: storageKey.slice(storage.key.length + 1);
 
-		return sizes.join(' / ');
+				return `(${prefix}) ${size}`;
+			});
+
+			sizes.push(`(total) ${sum}`);
+
+			storageSize.value = sizes.join(' / ');
+		})();
 	}, [state]);
 
 	const exportToCloud = useCallback(async () => {
 		try {
-			const items = await storage.getSyncItems();
-			await wxtStorage.setItems(items);
+			const [shards, removeKeys] = await storage.getSyncItems();
+			logger.debug('exporting', { shards, removeKeys });
+			await Promise.all([wxtStorage.setItems(shards), wxtStorage.removeItems(removeKeys)]);
 			toast.success(<Localized id="sync-backup-exported" />);
 		} catch (err) {
 			const translatedError = err instanceof TranslatableError ? err.translate(l10n) : String(err);
@@ -107,6 +106,7 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, s
 				});
 			}
 		} catch (err) {
+			logger.error('failed to import backup:', err);
 			const translatedError = err instanceof TranslatableError ? err.translate(l10n) : String(err);
 
 			toast.error(

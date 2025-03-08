@@ -1,3 +1,4 @@
+import type { StorageShard } from '../base';
 import type { PhrasesTree } from './helpers/phrasesTree';
 
 export interface PhrasesBlocklist {
@@ -9,3 +10,5 @@ export interface PhrasesBlocklist {
 export type RawPhrasesBlocklist = string;
 
 export type MatchedBlocklistPhrase = [pattern: string, rawPosition: number];
+
+export type RawPhrasesBlocklistShards = StorageShard<never, string>[];

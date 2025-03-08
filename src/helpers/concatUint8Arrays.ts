@@ -1,4 +1,4 @@
-export const concatArrays = (arrays: readonly Uint8Array[]) => {
+export const concatUint8Arrays = (arrays: readonly Uint8Array[]) => {
 	let length = 0;
 
 	for (const arr of arrays) {

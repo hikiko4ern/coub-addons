@@ -141,7 +141,6 @@
 				"useNumberNamespace": "warn",
 				"useSelfClosingElements": "warn",
 				"useShorthandAssign": "warn",
-				"useTemplate": "warn",
 				"useConsistentArrayType": { "level": "warn", "options": { "syntax": "shorthand" } }
 			},
 			"suspicious": {

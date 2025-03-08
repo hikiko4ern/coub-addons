@@ -4,7 +4,7 @@ import { type Unwatch, storage } from 'wxt/storage';
 
 import { filterMap } from '@/helpers/filterMap';
 import { symmetricDifference } from '@/helpers/symmetricDifference';
-import type { ToReadonly } from '@/types/util';
+import type { MaybePromise, ToReadonly } from '@/types/util';
 import { Logger } from '@/utils/logger';
 
 import { ShardedStorage, type StorageShard, type StorageWatchCallback } from '../base';
@@ -172,7 +172,7 @@ export class BlockedChannelsStorage extends ShardedStorage<
 		}
 	}
 
-	shardRawValue(keyPrefix: string, raw: RawBlockedChannels): StorageShard<never>[] {
+	shardRawValue(keyPrefix: string, raw: RawBlockedChannels): MaybePromise<StorageShard<never>[]> {
 		return shardBlockedChannels(this.logger, keyPrefix, raw);
 	}
 
@@ -190,7 +190,7 @@ export class BlockedChannelsStorage extends ShardedStorage<
 		);
 
 		return [
-			recoverBlockedChannelsFromShards(this.logger, shards as RawBlockedChannelsShards),
+			await recoverBlockedChannelsFromShards(this.logger, shards as RawBlockedChannelsShards),
 			state[metaKey] as BlockedChannelsMeta,
 		];
 	}
