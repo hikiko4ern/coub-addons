@@ -14,6 +14,9 @@ revert = Revert
 edit = Edit
 extension = Extension
 id = ID
+index = Index
+total = total
+size-in-bytes = Size (B)
 
 ## follow button
 
@@ -175,5 +178,11 @@ unknown-array-prefix = Unknown array prefix: {$prefix}
 unknown-array-value = Unknown for array value of type {$type}: {$value}
 
 ## options / sync backup
+sync-backup-export = Export to the sync storage
+sync-backup-import = Import from the sync storage
+sync-backup-import-merge = Import from sync storage and merge with current settings
 sync-backup-exported = Backup exported to sync storage
 sync-backup-export-error = Failed to export backup:<br/>{$error}
+### options / sync backup / storage details
+sync-backup-storage-open-details = Open details of the storage
+sync-backup-storage-details-title = Details of the {$storage} storage

@@ -13,7 +13,7 @@ export enum StorageHookState {
 	Error = 2,
 }
 
-type InnerState<State> =
+export type StorageState<State> =
 	| { status: StorageHookState.Loading }
 	| { status: StorageHookState.Loaded; data: ToReadonly<State> }
 	| { status: StorageHookState.Error; error: unknown };
@@ -43,10 +43,10 @@ export const useStorageState = <
 	onInit,
 	onUpdate,
 }: Options<Key, MetaKey, State, TMetadata, RawState, ListenerArgs>): Readonly<
-	InnerState<State>
+	StorageState<State>
 > => {
 	const initialValue = useMemo(() => storage.getValue(), []);
-	const [state, setState] = useState<InnerState<State>>(() =>
+	const [state, setState] = useState<StorageState<State>>(() =>
 		isPromise(initialValue)
 			? { status: StorageHookState.Loading }
 			: { status: StorageHookState.Loaded, data: initialValue as ToReadonly<State> },

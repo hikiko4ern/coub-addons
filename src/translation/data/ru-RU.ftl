@@ -14,6 +14,9 @@ revert = Откатить
 edit = Редактировать
 extension = Расширение
 id = ID
+index = Индекс
+total = итого
+size-in-bytes = Размер (Б)
 
 ## Follow button
 
@@ -176,5 +179,11 @@ unknown-array-prefix = Неизвестный префикс массива: {$p
 unknown-array-value = Неизвестное для массива значение типа {$type}: {$value}
 
 ## options / sync backup
+sync-backup-export = Экспортировать в синхронизируемое хранилище
+sync-backup-import = Импортировать из синхронизируемого хранилища
+sync-backup-import-merge = Импортировать из синхронизируемого хранилища и объединить с текущими настройками
 sync-backup-exported = Резервная копия экспортирована в синхронизируемое хранилище
 sync-backup-export-error = Не удалось экспортировать резервную копию:<br/>{$error}
+### options / sync backup / storage details
+sync-backup-storage-open-details = Открыть детали хранилища
+sync-backup-storage-details-title = Детали хранилища {$storage}

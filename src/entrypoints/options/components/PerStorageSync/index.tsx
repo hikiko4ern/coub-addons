@@ -1,20 +1,21 @@
 import { Localized, useLocalization } from '@fluent/react';
 import CloudArrowDownIcon from '@heroicons/react/24/outline/CloudArrowDownIcon';
 import CloudArrowUpIcon from '@heroicons/react/24/outline/CloudArrowUpIcon';
+import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon';
 import { Button, ButtonGroup } from '@nextui-org/button';
-import { useSignal } from '@preact/signals';
+import { Modal, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
 import cx from 'clsx';
 import type { FunctionComponent } from 'preact';
-import { useCallback, useEffect } from 'preact/hooks';
+import { useCallback } from 'preact/hooks';
 import { toast } from 'react-toastify';
 import { storage as wxtStorage } from 'wxt/storage';
 
-import { byteSize } from '@/helpers/byteSize';
 import { logger } from '@/options/constants';
-import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
 import { type StorageToBackup, migrateStorages } from '@/storage/backup';
 import type { AnyStorageBase } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
+
+import { SyncStorageDetails } from './components/SyncStorageDetails';
 
 // @ts-expect-error
 window.wxtStorage = storage;
@@ -27,44 +28,13 @@ interface Props {
 
 export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, storageClass }) => {
 	const { l10n } = useLocalization();
-	const state = useStorageState({ storage });
-	const storageSize = useSignal<number | string>();
+	const {
+		isOpen: areDetailsOpen,
+		onOpenChange: onDetailsOpenChange,
+		onOpen: openDetails,
+	} = useDisclosure();
 
-	// TODO: move to a modal
-	useEffect(() => {
-		if (state.status !== StorageHookState.Loaded) {
-			storageSize.value = 0;
-			return;
-		}
-
-		(async () => {
-			const [shards] = await storage.getSyncItems();
-
-			let sum = 0;
-
-			const sizes = shards.map(shard => {
-				const storageKey = shard.key.slice('sync:'.length);
-
-				const size = storageKey.length + byteSize(JSON.stringify(shard.value));
-				sum += size;
-
-				const prefix =
-					storageKey === storage.key
-						? '.'
-						: storageKey.endsWith('$')
-							? 'meta'
-							: storageKey.slice(storage.key.length + 1);
-
-				return `(${prefix}) ${size}`;
-			});
-
-			sizes.push(`(total) ${sum}`);
-
-			storageSize.value = sizes.join(' / ');
-		})();
-	}, [state]);
-
-	const exportToCloud = useCallback(async () => {
+	const exportToSync = useCallback(async () => {
 		try {
 			const [shards, removeKeys] = await storage.getSyncItems();
 			logger.debug('exporting', { shards, removeKeys });
@@ -90,7 +60,7 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, s
 		}
 	}, [storage]);
 
-	const importFromCloud = useCallback(async () => {
+	const importFromSync = useCallback(async () => {
 		try {
 			const currentState = await storage.getItems();
 			await storage.restoreFromSync();
@@ -129,35 +99,50 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, s
 	return (
 		<div className={cx('flex shrink-0 items-center gap-4', className)}>
 			<ButtonGroup className="relative shrink-0">
-				<Button title={'export to cloud storage'} onPress={exportToCloud}>
+				<Button title={l10n.getString('sync-backup-export')} onPress={exportToSync}>
 					<CloudArrowUpIcon className="w-6" />
 				</Button>
 
-				<Button title={'import from cloud storage'} onPress={importFromCloud}>
+				<Button title={l10n.getString('sync-backup-import')} onPress={importFromSync}>
 					<CloudArrowDownIcon className="w-6" />
 				</Button>
 
 				<Button
-					title={'import from cloud storage and merge with current settings'}
+					title={l10n.getString('sync-backup-import-merge')}
 					onPress={() => alert('import with merge')}
 				>
-					{/* TODO: find a new icon pack with required icon (?) */}
+					{/* `Cloud` with plus sign from `PlusCircle` */}
 					<svg
-						xmlns="http://www.w3.org/2000/svg"
 						className="w-6"
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
 						viewBox="0 0 24 24"
-						role="img"
+						strokeWidth="1.5"
+						stroke="currentColor"
 						aria-hidden="true"
 					>
 						<path
-							fill="currentColor"
-							d="M14.82 21h-9.32c-3.037 0-5.5-2.463-5.5-5.5 0-2.702 1.951-4.945 4.521-5.408.212-3.951 3.473-7.092 7.479-7.092 3.975 0 7.212 3.093 7.47 7.001-.667.003-1.309.106-1.914.296-.315-3.176-2.55-5.297-5.556-5.297-3.359 0-5.734 2.562-5.567 6.78-1.954-.113-4.433.923-4.433 3.72 0 1.93 1.57 3.5 3.5 3.5h8.001c.313.749.765 1.424 1.319 2zm9.18-4.5c0 2.485-2.017 4.5-4.5 4.5s-4.5-2.015-4.5-4.5 2.017-4.5 4.5-4.5 4.5 2.015 4.5 4.5zm-2-.5h-2v-2h-1v2h-2v1h2v2h1v-2h2v-1z"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M2.237 15a4.5 4.5 0 0 0 4.5 4.5h11.25a3.75 3.75 0 0 0 1.332-7.256 3 3 0 0 0-3.758-3.848 5.25 5.25 0 0 0-10.233 2.33A4.502 4.502 0 0 0 2.237 15zm9.757-5.252v6m3-3h-6"
 						/>
 					</svg>
 				</Button>
+
+				<Button title={l10n.getString('sync-backup-storage-open-details')} onPress={openDetails}>
+					<InformationCircleIcon className="w-6" />
+				</Button>
 			</ButtonGroup>
 
-			<div className="shrink-0">Size: {storageSize}</div>
+			<Modal size="2xl" isOpen={areDetailsOpen} onOpenChange={onDetailsOpenChange}>
+				<ModalContent>
+					<ModalHeader className="flex flex-col gap-1">
+						<Localized id="sync-backup-storage-details-title" vars={{ storage: storage.key }} />
+					</ModalHeader>
+
+					<SyncStorageDetails storage={storage} />
+				</ModalContent>
+			</Modal>
 		</div>
 	);
 };
