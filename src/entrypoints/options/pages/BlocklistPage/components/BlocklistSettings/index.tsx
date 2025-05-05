@@ -9,21 +9,17 @@ import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { toast } from 'react-toastify';
 import type { Permissions } from 'wxt/browser';
 
-import { useWatchingRef } from '@/hooks/useWatchingRef';
 import { logger } from '@/options/constants';
 import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
+import { useStorageMergeCallback } from '@/options/hooks/useStorageMergeCallback';
 import { useT } from '@/options/hooks/useT';
 import {
 	ARE_COMMENTS_ON_DIFFERENT_HOST,
 	COMMENTS_GRAPHQL_HOST,
 	COMMENTS_GRAPHQL_PERMISSIONS,
 } from '@/permissions/constants';
-import {
-	type Blocklist,
-	type BlocklistStorage,
-	CommentFromBlockedChannelAction,
-	type ReadonlyBlocklist,
-} from '@/storage/blocklist';
+import type { BlocklistStorage, ReadonlyBlocklist } from '@/storage/blocklist';
+import { CommentFromBlockedChannelAction } from '@/storage/blocklist';
 
 interface Props {
 	storage: BlocklistStorage;
@@ -31,22 +27,6 @@ interface Props {
 }
 
 const COMMENT_FROM_BLOCKED_CHANNEL_ACTIONS = Object.values(CommentFromBlockedChannelAction);
-
-const useMergeCallback = <Key extends keyof Blocklist>(
-	storage: BlocklistStorage,
-	key: Key,
-	onChange?: (value: Blocklist[Key]) => void,
-) => {
-	const onChangeRef = useWatchingRef(onChange);
-
-	return useCallback(
-		(value: Blocklist[Key]) => {
-			storage.mergeWith({ [key]: value });
-			typeof onChangeRef.current === 'function' && onChangeRef.current(value);
-		},
-		[storage, key],
-	);
-};
 
 export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) => {
 	const t = useT();
@@ -98,13 +78,19 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 			}, [])
 		: undefined;
 
-	const handleIsBlockRecoubsChange = useMergeCallback(storage, 'isBlockRecoubs');
+	const handleIsBlockRecoubsChange = useStorageMergeCallback(storage, 'isBlockRecoubs');
 
-	const handleIsBlockRepostsOfCoubsChange = useMergeCallback(storage, 'isBlockRepostsOfCoubs');
+	const handleIsBlockRepostsOfCoubsChange = useStorageMergeCallback(
+		storage,
+		'isBlockRepostsOfCoubs',
+	);
 
-	const handleIsBlockRepostsOfStoriesChange = useMergeCallback(storage, 'isBlockRepostsOfStories');
+	const handleIsBlockRepostsOfStoriesChange = useStorageMergeCallback(
+		storage,
+		'isBlockRepostsOfStories',
+	);
 
-	const setCommentsFromBlockedChannels = useMergeCallback(
+	const setCommentsFromBlockedChannels = useStorageMergeCallback(
 		storage,
 		'commentsFromBlockedChannels',
 		typeof requestAccessToComments === 'function'

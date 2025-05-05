@@ -5,12 +5,10 @@ import type { Logger } from '@/utils/logger';
 
 import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
-import { type RawLocale, RawTheme, SYSTEM_LOCALE } from './types';
+import { settingsMigrations } from './migrations';
+import { RawTheme, SYSTEM_LOCALE, type SettingsV2 as Settings } from './types';
 
-export interface Settings {
-	theme: RawTheme;
-	locale: RawLocale;
-}
+export type { Settings };
 
 export interface SettingsMeta extends StorageMeta {}
 
@@ -18,16 +16,18 @@ export type ReadonlySettings = ToReadonly<Settings>;
 
 const key = 'settings' as const,
 	metaKey = `${key}$` as const,
-	version = 1;
+	version = 2;
 
 const fallbackValue: Settings = {
 	theme: RawTheme.SYSTEM,
 	locale: SYSTEM_LOCALE,
+	isDevMode: false,
 };
 
 const settingsItem = storage.defineItem<Settings, SettingsMeta>(`local:${key}`, {
 	version,
 	fallback: fallbackValue,
+	migrations: settingsMigrations,
 });
 
 export class SettingsStorage extends StorageBase<

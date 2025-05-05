@@ -3,7 +3,7 @@ import CloudArrowDownIcon from '@heroicons/react/24/outline/CloudArrowDownIcon';
 import CloudArrowUpIcon from '@heroicons/react/24/outline/CloudArrowUpIcon';
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon';
 import { Button, ButtonGroup } from '@nextui-org/button';
-import { Modal, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal';
+import { Modal, ModalContent, useDisclosure } from '@nextui-org/modal';
 import cx from 'clsx';
 import type { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 import { storage as wxtStorage } from 'wxt/storage';
 
 import { logger } from '@/options/constants';
+import { useIsDevMode } from '@/options/hooks/useIsDevMode';
 import { type StorageToBackup, restoreBackup } from '@/storage/backup';
 import type { AnyStorageBase } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
@@ -24,6 +25,7 @@ interface Props {
 
 export const PerStorageSync: FunctionComponent<Props> = ({ className, storage }) => {
 	const { l10n } = useLocalization();
+	const isDevMode = useIsDevMode();
 	const {
 		isOpen: areDetailsOpen,
 		onOpenChange: onDetailsOpenChange,
@@ -132,20 +134,20 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage })
 					</svg>
 				</Button>
 
-				<Button title={l10n.getString('sync-backup-storage-open-details')} onPress={openDetails}>
-					<InformationCircleIcon className="w-6" />
-				</Button>
+				{isDevMode && (
+					<Button title={l10n.getString('sync-backup-storage-open-details')} onPress={openDetails}>
+						<InformationCircleIcon className="w-6" />
+					</Button>
+				)}
 			</ButtonGroup>
 
-			<Modal size="2xl" isOpen={areDetailsOpen} onOpenChange={onDetailsOpenChange}>
-				<ModalContent>
-					<ModalHeader className="flex flex-col gap-1">
-						<Localized id="sync-backup-storage-details-title" vars={{ storage: storage.key }} />
-					</ModalHeader>
-
-					<SyncStorageDetails storage={storage} />
-				</ModalContent>
-			</Modal>
+			{(isDevMode || areDetailsOpen) && (
+				<Modal size="2xl" isOpen={areDetailsOpen} onOpenChange={onDetailsOpenChange}>
+					<ModalContent>
+						<SyncStorageDetails storage={storage} />
+					</ModalContent>
+				</Modal>
+			)}
 		</div>
 	);
 };

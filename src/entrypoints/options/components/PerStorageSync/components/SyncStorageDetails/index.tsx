@@ -1,6 +1,6 @@
 import { Localized, useLocalization } from '@fluent/react';
 import { Button } from '@nextui-org/button';
-import { ModalBody, ModalFooter } from '@nextui-org/modal';
+import { ModalBody, ModalFooter, ModalHeader } from '@nextui-org/modal';
 import {
 	Table,
 	TableBody,
@@ -12,12 +12,13 @@ import {
 } from '@nextui-org/table';
 import cx from 'clsx';
 import { type ComponentChildren, type FunctionComponent } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 
 import { byteSize } from '@/helpers/byteSize';
 import { CardSection } from '@/options/components/CardSection';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { logger } from '@/options/constants';
+import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
 import {
 	StorageHookState,
 	type StorageState,
@@ -29,6 +30,11 @@ import styles from './styles.module.scss';
 
 interface Props {
 	storage: AnyStorageBase;
+}
+
+interface Details {
+	shards: ShardDetails[];
+	totalByteSize: number;
 }
 
 interface ShardDetails {
@@ -44,6 +50,7 @@ interface ShardDetail {
 	key: number | TOTAL_KEY;
 	index: number | TOTAL_KEY | undefined;
 	byteSize: number;
+	format: string | null;
 }
 
 interface Column extends Pick<TableColumnProps<unknown>, 'className' | 'align' | 'width'> {
@@ -61,6 +68,13 @@ const columns = [
 	},
 	{
 		className: 'text-right',
+		key: 'format',
+		titleKey: 'format',
+		align: 'end',
+		width: 1,
+	},
+	{
+		className: 'text-right',
 		key: 'byteSize',
 		titleKey: 'size-in-bytes',
 		align: 'end',
@@ -72,10 +86,25 @@ type ColumnKey = (typeof columns)[number]['key'];
 
 const KEY_RE = /^(?<key>[^#]+)(?:#(?<index>\d+))?$/;
 
+const getDataSample = (value: unknown): ShardDetail['format'] => {
+	if (typeof value !== 'string') {
+		return null;
+	}
+
+	const firstBytes = value.slice(0, 5);
+	return firstBytes.split(':')[0] || firstBytes + '...';
+};
+
 export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
+	const { locale } = useLocalizationContext();
 	const { l10n } = useLocalization();
+	const numberFormat = useMemo(() => new Intl.NumberFormat(locale), [locale]);
+	const byteNumberFormat = useMemo(
+		() => new Intl.NumberFormat(locale, { style: 'unit', unit: 'byte', unitDisplay: 'narrow' }),
+		[locale],
+	);
 	const state = useStorageState({ storage });
-	const [shardsDetails, setShardsDetails] = useState<StorageState<ShardDetails[]>>(() => ({
+	const [shardsDetails, setShardsDetails] = useState<StorageState<Details>>(() => ({
 		status: StorageHookState.Loading,
 	}));
 
@@ -121,24 +150,30 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 					key: index || 0,
 					index,
 					byteSize: size,
+					format: getDataSample(shard.value),
 				});
 			}
 
 			const detailsValues = Object.values(details);
 
+			// fill `total` for multiple keys
 			for (const v of detailsValues) {
 				if (v.details.length > 1) {
 					v.details.push({
 						key: TOTAL_KEY,
 						index: TOTAL_KEY,
 						byteSize: v.totalByteSize,
+						format: null,
 					});
 				}
 			}
 
 			setShardsDetails({
 				status: StorageHookState.Loaded,
-				data: detailsValues,
+				data: {
+					shards: detailsValues,
+					totalByteSize: detailsValues.reduce((total, details) => total + details.totalByteSize, 0),
+				},
 			});
 		})();
 	}, [state]);
@@ -151,7 +186,7 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 		try {
 			await navigator.clipboard.writeText(
 				JSON.stringify(
-					shardsDetails.data.reduce<Record<string, unknown>>((obj, { key, details }) => {
+					shardsDetails.data.shards.reduce<Record<string, unknown>>((obj, { key, details }) => {
 						obj[key] = details.map(({ key, index, ...rest }) => ({
 							...rest,
 							index: index ?? null,
@@ -194,6 +229,8 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 									<span>
 										<Localized id={TOTAL_KEY} />
 									</span>
+								) : typeof detail.index === 'number' ? (
+									numberFormat.format(detail.index)
 								) : (
 									detail.index
 								)}
@@ -201,19 +238,27 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 						);
 					}
 
+					case 'format':
+						return (
+							<TableCell className="text-right font-mono text-zinc-500 dark:text-zinc-400">
+								{detail.format}
+							</TableCell>
+						);
+
 					case 'byteSize':
-						return <TableCell className="text-right font-mono">{detail.byteSize}</TableCell>;
+						return (
+							<TableCell className="text-right font-mono">
+								{numberFormat.format(detail.byteSize)}
+							</TableCell>
+						);
 				}
 			};
 
+			const { shards, totalByteSize } = shardsDetails.data;
+
 			content = (
-				<div
-					className={cx(
-						'grid gap-4',
-						shardsDetails.data.length > 4 ? 'grid-cols-3' : 'grid-cols-2',
-					)}
-				>
-					{shardsDetails.data.map(({ key, details }) => (
+				<div className={cx('grid gap-4', shards.length > 4 ? 'grid-cols-3' : 'grid-cols-2')}>
+					{shards.map(({ key, details }) => (
 						<CardSection key={key} bodyClassName="w-full" title={key}>
 							<Table
 								classNames={{ table: styles['sync-storage-details__table'] }}
@@ -255,15 +300,28 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 				</div>
 			);
 
-			footer = <Button onPress={copyAsJson}>JSON</Button>;
+			footer = (
+				<>
+					<div className="text-zinc-500 dark:text-zinc-400">
+						<Localized id="total-def" vars={{ total: byteNumberFormat.format(totalByteSize) }} />
+					</div>
+
+					<Button onPress={copyAsJson}>JSON</Button>
+				</>
+			);
 			break;
 		}
 	}
 
 	return (
 		<>
+			<ModalHeader className="flex flex-col gap-1">
+				<Localized id="sync-backup-storage-shards-title" vars={{ storage: storage.key }} />
+			</ModalHeader>
+
 			<ModalBody>{content}</ModalBody>
-			{footer && <ModalFooter>{footer}</ModalFooter>}
+
+			{footer && <ModalFooter className="flex items-center justify-between">{footer}</ModalFooter>}
 		</>
 	);
 };

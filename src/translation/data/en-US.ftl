@@ -16,7 +16,9 @@ extension = Extension
 id = ID
 index = Index
 total = total
-size-in-bytes = Size (B)
+size-in-bytes = Size in bytes
+format = Format
+total-def = Total: {$total}
 
 ## follow button
 
@@ -138,6 +140,8 @@ locale-setting =
 locale-setting-system = System
 locale-setting-ru-RU = Русский
 locale-setting-en-US = English
+i-am-a-developer = I am a developer
+i-am-a-developer-tooltip = Here be dragons. Adds functionality intended for developers only. Such functionality can be changed or removed at any time without notice, and using it could potentially break something or irreversibly erase the extension settings
 ### options / settings / export
 export-backup = Export backup
 backup-creation-error = Failed to create backup:<br/>{$error}
@@ -185,4 +189,4 @@ sync-backup-exported = Backup exported to sync storage
 sync-backup-export-error = Failed to export backup:<br/>{$error}
 ### options / sync backup / storage details
 sync-backup-storage-open-details = Open details of the storage
-sync-backup-storage-details-title = Details of the {$storage} storage
+sync-backup-storage-shards-title = Shards of the `{$storage}` storage
