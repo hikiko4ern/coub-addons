@@ -5,7 +5,6 @@ import { ErrorCode } from '@/options/components/ErrorCode';
 import { PerStorageSync } from '@/options/components/PerStorageSync';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import { PlayerSettingsStorage } from '@/storage/playerSettings';
 
 import { PlayerSettings } from './components/PlayerSettings';
 
@@ -31,11 +30,7 @@ export const PlayerSettingsPage: FunctionComponent = () => {
 
 	return (
 		<>
-			<PerStorageSync
-				className="mb-4"
-				storage={playerSettingsStorage}
-				storageClass={PlayerSettingsStorage}
-			/>
+			<PerStorageSync className="mb-4" storage={playerSettingsStorage} />
 
 			{content}
 		</>

@@ -13,7 +13,6 @@ import { Editor } from '@/options/components/Editor';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { HintTooltip } from '@/options/components/HintTooltip';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import type { StorageToBackup } from '@/storage/backup';
 import type { PhrasesBlocklistStorage } from '@/storage/phrasesBlocklist';
 
 import { PerStorageSync } from '../PerStorageSync';
@@ -26,11 +25,9 @@ const lang = phrasesBlocklist();
 
 interface Props {
 	storage: PhrasesBlocklistStorage<string, `${string}$`>;
-	// TODO: use prototype-like property of the `storage`?
-	storageClass: StorageToBackup;
 }
 
-export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage, storageClass }) => {
+export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage }) => {
 	const editorRef = useRef<Editor.Ref>(null);
 	const storageState = useStorageState({ storage });
 	const isModified = useSignal(false);
@@ -119,7 +116,7 @@ export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage, storageCla
 
 	return (
 		<section className="flex h-full w-full flex-col items-start">
-			<PerStorageSync className="mb-4" storage={storage} storageClass={storageClass} />
+			<PerStorageSync className="mb-4" storage={storage} />
 
 			{content}
 

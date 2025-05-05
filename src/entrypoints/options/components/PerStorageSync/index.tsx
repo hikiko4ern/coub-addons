@@ -11,22 +11,18 @@ import { toast } from 'react-toastify';
 import { storage as wxtStorage } from 'wxt/storage';
 
 import { logger } from '@/options/constants';
-import { type StorageToBackup, migrateStorages } from '@/storage/backup';
+import { type StorageToBackup, restoreBackup } from '@/storage/backup';
 import type { AnyStorageBase } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
 
 import { SyncStorageDetails } from './components/SyncStorageDetails';
 
-// @ts-expect-error
-window.wxtStorage = storage;
-
 interface Props {
 	className?: string;
 	storage: AnyStorageBase;
-	storageClass: StorageToBackup;
 }
 
-export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, storageClass }) => {
+export const PerStorageSync: FunctionComponent<Props> = ({ className, storage }) => {
 	const { l10n } = useLocalization();
 	const {
 		isOpen: areDetailsOpen,
@@ -60,41 +56,51 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, s
 		}
 	}, [storage]);
 
-	const importFromSync = useCallback(async () => {
-		try {
-			const currentState = await storage.getItems();
-			await storage.restoreFromSync();
-			await migrateStorages([storageClass], () => wxtStorage.setItems(currentState));
-
+	const importFromSync = useCallback(
+		async (isMerge: boolean) => {
 			try {
-				await storage.reinitialize();
-				toast.success(<Localized id="backup-imported-successfully" />);
-			} catch {
-				toast.warn(<Localized id="backup-imported-successfully-but-reinitialization-failed" />, {
-					autoClose: 10000,
-					onClose: () => browser.runtime.reload(),
+				await restoreBackup({
+					storages: [storage.constructor as StorageToBackup],
+					data: await storage.restoreFromSync(),
+					isMerge,
 				});
-			}
-		} catch (err) {
-			logger.error('failed to import backup:', err);
-			const translatedError = err instanceof TranslatableError ? err.translate(l10n) : String(err);
 
-			toast.error(
-				typeof translatedError === 'string' ? (
-					<Localized
-						id="backup-restoration-error"
-						elems={{ br: <br />, pre: <span className="whitespace-pre-line" /> }}
-						vars={{ error: translatedError }}
-					>
-						<span />
-					</Localized>
-				) : (
-					translatedError
-				),
-				{ autoClose: false },
-			);
-		}
-	}, [storage]);
+				try {
+					await storage.reinitialize();
+					toast.success(<Localized id="backup-imported-successfully" />);
+				} catch {
+					toast.warn(<Localized id="backup-imported-successfully-but-reinitialization-failed" />, {
+						autoClose: 10000,
+						onClose: () => browser.runtime.reload(),
+					});
+				}
+			} catch (err) {
+				logger.error('failed to import backup:', err);
+
+				const translatedError =
+					err instanceof TranslatableError ? err.translate(l10n) : String(err);
+
+				toast.error(
+					typeof translatedError === 'string' ? (
+						<Localized
+							id="backup-restoration-error"
+							elems={{ br: <br />, pre: <span className="whitespace-pre-line" /> }}
+							vars={{ error: translatedError }}
+						>
+							<span />
+						</Localized>
+					) : (
+						translatedError
+					),
+					{ autoClose: false },
+				);
+			}
+		},
+		[l10n, storage],
+	);
+
+	const importWithOverwrite = useCallback(() => importFromSync(false), [importFromSync]);
+	const importWithMerge = useCallback(() => importFromSync(true), [importFromSync]);
 
 	return (
 		<div className={cx('flex shrink-0 items-center gap-4', className)}>
@@ -103,14 +109,11 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage, s
 					<CloudArrowUpIcon className="w-6" />
 				</Button>
 
-				<Button title={l10n.getString('sync-backup-import')} onPress={importFromSync}>
+				<Button title={l10n.getString('sync-backup-import')} onPress={importWithOverwrite}>
 					<CloudArrowDownIcon className="w-6" />
 				</Button>
 
-				<Button
-					title={l10n.getString('sync-backup-import-merge')}
-					onPress={() => alert('import with merge')}
-				>
+				<Button title={l10n.getString('sync-backup-import-merge')} onPress={importWithMerge}>
 					{/* `Cloud` with plus sign from `PlusCircle` */}
 					<svg
 						className="w-6"

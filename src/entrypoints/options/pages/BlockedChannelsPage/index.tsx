@@ -11,7 +11,6 @@ import { ErrorCode } from '@/options/components/ErrorCode';
 import { PerStorageSync } from '@/options/components/PerStorageSync';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import { BlockedChannelsStorage } from '@/storage/blockedChannels';
 
 import {
 	BlockedChannelsTable,
@@ -115,7 +114,7 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 
 				<ClearBlockedChannels className="flex-shrink-0" clear={clearBlocklist} />
 
-				<PerStorageSync storage={blockedChannelsStorage} storageClass={BlockedChannelsStorage} />
+				<PerStorageSync storage={blockedChannelsStorage} />
 			</div>
 
 			{content}

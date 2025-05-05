@@ -28,7 +28,6 @@ export enum StorageEventTrigger {
 
 export type StorageEvent = ToStorageEvent<BlockedChannelsStorage> | ToStorageEvent<StatsStorage>;
 
-// biome-ignore lint/suspicious/noExplicitAny: `any` is required here
 export type FnWithState<State, Fn extends (...args: any[]) => any> = (
 	state: ToReadonly<State>,
 	...args: Parameters<Fn>
@@ -43,9 +42,7 @@ interface StorageEventBase<Key extends string, State, RawState> {
 	trigger?: StorageEventTrigger;
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: `any` is required here
 export type ToStorageEvent<T extends StorageBase<string, any, any, any, any, any>> =
-	// biome-ignore lint/suspicious/noExplicitAny: `any` is required here
 	T extends StorageBase<infer Key, any, infer State, any, infer RawState, any>
 		? StorageEventBase<Key, State, RawState>
 		: never;

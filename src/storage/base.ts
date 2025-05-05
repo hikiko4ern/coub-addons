@@ -13,7 +13,6 @@ import {
 	storageStateType,
 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 export type AnyStorageBase = StorageBase<any, any, any, any, any, any>;
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
@@ -173,10 +172,10 @@ export abstract class StorageBase<
 					).recoverRawValueFromShards()
 				: await this.defaultGetRawValueFromSync();
 
-		await storage.setItems([
-			{ key: this.#storage.key, value: state },
-			{ key: `${this.#storage.key}$`, value: meta },
-		]);
+		return {
+			[this.key]: state,
+			[this.metaKey]: meta,
+		};
 	}
 
 	private async defaultGetRawValueFromSync(): Promise<[RawState, TMetadata]> {

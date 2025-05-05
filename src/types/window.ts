@@ -162,7 +162,6 @@ declare global {
 
 	// Gecko's Xray-specific functions
 	var cloneInto: <T>(value: T, ctx: unknown, options?: { cloneFunctions?: boolean }) => T;
-	// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 	var exportFunction: <T extends (...args: any[]) => any, Ctx>(
 		fn: T,
 		ctx: Ctx,

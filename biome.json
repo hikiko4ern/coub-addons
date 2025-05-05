@@ -152,7 +152,6 @@
 				"noDebugger": "warn",
 				"noDoubleEquals": "error",
 				"noEmptyInterface": "warn",
-				"noExplicitAny": "error",
 				"noExtraNonNullAssertion": "warn",
 				"noFallthroughSwitchClause": "error",
 				"noGlobalIsFinite": "error",

@@ -4,7 +4,6 @@ export type SerializableArg =
 	| boolean
 	| number
 	| string
-	// biome-ignore lint/suspicious/noExplicitAny: required for correct types inference
 	| ((...args: any[]) => any)
 	| SerializableArg[];
 

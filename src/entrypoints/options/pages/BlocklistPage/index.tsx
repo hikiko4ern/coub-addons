@@ -5,7 +5,6 @@ import { ErrorCode } from '@/options/components/ErrorCode';
 import { PerStorageSync } from '@/options/components/PerStorageSync';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import { BlocklistStorage } from '@/storage/blocklist';
 
 import { BlocklistSettings } from './components/BlocklistSettings';
 
@@ -31,7 +30,7 @@ export const BlocklistPage: FunctionComponent = () => {
 
 	return (
 		<>
-			<PerStorageSync className="mb-4" storage={blocklistStorage} storageClass={BlocklistStorage} />
+			<PerStorageSync className="mb-4" storage={blocklistStorage} />
 
 			{content}
 		</>
