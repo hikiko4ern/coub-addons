@@ -81,7 +81,7 @@ After installing the extension (and sometimes updating it) you need to refresh [
 
 1. on [Codeberg](https://codeberg.org) - [hikiko4ern/coub-addons](https://codeberg.org/hikiko4ern/coub-addons) (with releases)
 2. on [SourceHut](https://sourcehut.org) - [~hikiko4ern/coub-addons](https://git.sr.ht/~hikiko4ern/coub-addons) (code only)
-3. on [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/ash.radicle.garden/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (code only)
+3. on [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/rosa.radicle.xyz/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (code only)
 
 </details>
 
