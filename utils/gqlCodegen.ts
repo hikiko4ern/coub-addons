@@ -15,7 +15,9 @@ const typescriptConfig: TypeScriptPluginConfig = {
 	strictScalars: true,
 	defaultScalarType: 'unknown',
 	scalars: {
+		ISO8601Date: 'string',
 		ISO8601DateTime: 'string',
+		JSON: 'unknown',
 	},
 	skipTypename: true,
 	useTypeImports: true,
