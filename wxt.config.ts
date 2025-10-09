@@ -108,6 +108,9 @@ export default defineConfig({
 			});
 		},
 	},
+	runner: {
+		disabled: true,
+	},
 	vite: () =>
 		({
 			build: {
