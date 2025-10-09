@@ -3,17 +3,17 @@ pre-commit:
   commands:
     biome:
       glob: '*.{js,jsx,cjs,mjs,ts,tsx,cts,mts}'
-      run: pnpm biome check --write --error-on-warnings {staged_files}
+      run: pnpm biome check --write --error-on-warnings "{staged_files}"
       stage_fixed: true
     dprint:
       glob: '*.{json,jsonc,json5,md,toml}'
-      run: pnpm dprint fmt {staged_files}
+      run: pnpm dprint fmt --allow-no-files "{staged_files}"
       stage_fixed: true
     prettier:
       glob: '*.{css,scss,html,yml,yaml}'
-      run: pnpm prettier -w {staged_files}
+      run: pnpm prettier -w "{staged_files}"
       stage_fixed: true
     type-check:
       run: pnpm tsc --noEmit
     spell-check:
-      run: pnpm cspell lint --no-progress --no-summary --no-must-find-files {staged_files}
+      run: pnpm cspell lint --no-progress --no-summary --no-must-find-files "{staged_files}"
