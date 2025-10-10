@@ -12,8 +12,8 @@ import {
 	TableRow,
 } from '@nextui-org/table';
 import type { Selection } from '@react-types/shared';
-import type { FunctionComponent } from 'preact';
-import { useCallback, useMemo, useState } from 'preact/hooks';
+import type { FunctionComponent, Ref } from 'preact';
+import { useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'preact/hooks';
 
 import type {
 	BlockedChannelData,
@@ -24,10 +24,14 @@ import type {
 import { Actions } from './components/Actions';
 import styles from './styles.module.scss';
 
+export interface BlockedChannelsTableControls {
+	setPage: (page: number) => void;
+}
+
 interface Props {
+	controlsRef: Ref<BlockedChannelsTableControls>;
 	storage: BlockedChannelsStorage;
 	data: BlockedChannelData[] | ReadonlyBlockedChannels['channels'];
-	globalTotal: number;
 	isSearchApplied: boolean;
 	onRemove: (id: number) => Promise<void>;
 }
@@ -65,9 +69,9 @@ type ColumnKey = (typeof columns)[number]['key'];
 type RowsPerPage = (typeof rowsPerPage)[number];
 
 export const BlockedChannelsTable: FunctionComponent<Props> = ({
+	controlsRef,
 	storage,
 	data,
-	globalTotal,
 	isSearchApplied,
 	onRemove,
 }) => {
@@ -76,8 +80,22 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 	const [perPage, setPerPage] = useState<RowsPerPage>(defaultRowsPerPage);
 	const perPageSelectedKeys = useMemo(() => [perPage], [perPage]);
 
+	useImperativeHandle(
+		controlsRef,
+		() => ({
+			setPage,
+		}),
+		[],
+	);
+
 	const total = Array.isArray(data) ? data.length : data.size;
 	const totalPages = Math.ceil(total / perPage);
+
+	useEffect(() => {
+		if (page > totalPages) {
+			setPage(totalPages || 1);
+		}
+	}, [totalPages]);
 
 	const dataAsArray = useMemo(
 		() => (Array.isArray(data) ? data : Array.from(data.values())),
@@ -174,7 +192,7 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 				isStriped
 				aria-label={l10n.getString('blocked-channels-list')}
 				bottomContent={
-					globalTotal > 0 && (
+					total > 0 && (
 						<div className="flex w-full justify-center">
 							<Pagination
 								isCompact

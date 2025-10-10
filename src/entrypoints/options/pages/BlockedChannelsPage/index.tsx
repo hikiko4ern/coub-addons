@@ -3,14 +3,17 @@ import MagnifyingGlassIcon from '@heroicons/react/24/outline/MagnifyingGlassIcon
 import { Input } from '@nextui-org/input';
 import { useSignal } from '@preact/signals';
 import type { FunctionComponent, VNode } from 'preact';
-import { useCallback } from 'preact/hooks';
+import { useCallback, useRef } from 'preact/hooks';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useWatchingRef } from '@/hooks/useWatchingRef';
 import { ErrorCode } from '@/options/components/ErrorCode';
 import { useLazyStorages } from '@/options/hooks/useLazyStorages';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
-import { BlockedChannelsTable } from './components/BlockedChannelsTable';
+import {
+	BlockedChannelsTable,
+	type BlockedChannelsTableControls,
+} from './components/BlockedChannelsTable';
 import { ClearBlockedChannels } from './components/ClearBlockedChannels';
 import { useSearch } from './hooks/useSearch';
 
@@ -28,7 +31,9 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 		onInit: initialize,
 		onUpdate: update,
 	});
+
 	const query = useSignal('');
+	const tableControlsRef = useRef<BlockedChannelsTableControls>(null);
 
 	const clearBlocklist = useCallback(() => blockedChannelsStorage.clear(), []);
 
@@ -45,6 +50,7 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 	const handleSearchInput = useCallback(
 		(newQuery: string) => {
 			query.value = newQuery;
+			tableControlsRef.current?.setPage(1);
 			// TODO: delay query until initialized?
 			blockedChannelsDataRef.current && debouncedSearch(blockedChannelsDataRef.current, newQuery);
 		},
@@ -63,10 +69,10 @@ export const BlockedChannelsPage: FunctionComponent = () => {
 		case StorageHookState.Loaded: {
 			content = (
 				<BlockedChannelsTable
+					controlsRef={tableControlsRef}
 					storage={blockedChannelsStorage}
 					data={searchResult.value || blockedChannels.data.channels}
-					globalTotal={blockedChannels.data.channels.size}
-					isSearchApplied={!!searchResult}
+					isSearchApplied={!!searchResult.value}
 					onRemove={removeFromBlocklist}
 				/>
 			);
