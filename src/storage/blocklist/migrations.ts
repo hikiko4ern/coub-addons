@@ -1,7 +1,7 @@
-import type { BlocklistV1, BlocklistV2, BlocklistV3 } from './types';
+import type { BlocklistV1, BlocklistV2, BlocklistV3, BlocklistV4 } from './types';
 
 // biome-ignore lint/suspicious/noExplicitAny:
-type Migrations = Record<2 | 3, (blocklist: any) => unknown>;
+type Migrations = Record<2 | 3 | 4, (blocklist: any) => unknown>;
 
 export const blocklistMigrations: Migrations = {
 	2: (blocklist: BlocklistV1): BlocklistV2 => ({
@@ -11,5 +11,9 @@ export const blocklistMigrations: Migrations = {
 	3: (blocklist: BlocklistV2): BlocklistV3 => ({
 		...blocklist,
 		isBlockRepostsOfStories: false,
+	}),
+	4: (blocklist: BlocklistV3): BlocklistV4 => ({
+		...blocklist,
+		isBlockRepostsOfCoubs: false,
 	}),
 };

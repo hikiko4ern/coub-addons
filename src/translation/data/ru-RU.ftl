@@ -74,6 +74,7 @@ blocked-coub-titles = Заблокированные названия коубо
 ## options / blocklist
 blocklist = Блок-лист
 block-recoubs = Блокировать рекоубы
+block-reposts-of-coubs = Блокировать репосты коубов
 block-reposts-of-stories = Блокировать репосты историй
 hide-comments-from-blocked-channels = Скрывать комментарии от заблокированных каналов
 grant-permissions = Предоставить разрешения

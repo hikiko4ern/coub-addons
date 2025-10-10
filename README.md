@@ -29,7 +29,7 @@ Minimum supported browser versions:
 - hiding disliked coubs
 - hiding coubs, stories and comments from blocked channels
 - hiding coubs by title and tags containing specified phrases or matching regular expressions
-- hiding recoubs and reposted stories
+- hiding recoubs and reposted coubs and stories
 - quick tag copy/block via context menu
 - displaying the date of coub publication in “Popular” and communities
 - integration with [Media Session API](https://developer.mozilla.org/en-US/docs/Web/API/Media_Session_API):

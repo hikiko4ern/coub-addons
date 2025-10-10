@@ -4,6 +4,7 @@ export enum CoubExclusionReason {
 	TAG_BLOCKED = 'tag-is-blocked',
 	COUB_TITLE_BLOCKED = 'coub-title-is-blocked',
 	RECOUBS_BLOCKED = 'recoubs-are-blocked',
+	REPOSTS_BLOCKED = 'reposts-are-blocked',
 }
 
 export interface FilteredOutCoubForStats {

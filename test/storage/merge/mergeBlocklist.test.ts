@@ -14,12 +14,15 @@ it('should merge blocklist', ({ expect }) => {
 
 	t({ isBlockRecoubs: true });
 
+	t({ isBlockRepostsOfCoubs: true });
+
 	t({ isHideCommentsFromBlockedChannels: false });
 
 	t({ isBlockRepostsOfStories: true });
 
 	t({
 		isBlockRecoubs: true,
+		isBlockRepostsOfCoubs: true,
 		isHideCommentsFromBlockedChannels: false,
 		isBlockRepostsOfStories: true,
 	});

@@ -37,6 +37,8 @@ export interface TimelineResponseCoub {
 	media_blocks: TimelineResponseCoubMediaBlocks;
 	/** URL of the preview displayed in the timeline */
 	timeline_picture: string;
+	/** original coub, if this coub is a repost */
+	recoub_to: TimelineResponseCoub | null;
 }
 
 interface TimelineResponseTag {
@@ -64,6 +66,7 @@ const EXCLUSION_REASON_TEXT: Record<CoubExclusionReason, string> = {
 	[CoubExclusionReason.TAG_BLOCKED]: 'tag is blocked',
 	[CoubExclusionReason.COUB_TITLE_BLOCKED]: "blocked by coub's title",
 	[CoubExclusionReason.RECOUBS_BLOCKED]: 'recoubs are blocked',
+	[CoubExclusionReason.REPOSTS_BLOCKED]: 'reposts are blocked',
 };
 
 export const registerTimelineHandlers = (ctx: Context) => {

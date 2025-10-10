@@ -15,3 +15,9 @@ export interface BlocklistV2 extends BlocklistV1 {
 export interface BlocklistV3 extends BlocklistV2 {
 	isBlockRepostsOfStories: boolean;
 }
+
+// v4
+
+export interface BlocklistV4 extends BlocklistV3 {
+	isBlockRepostsOfCoubs: boolean;
+}

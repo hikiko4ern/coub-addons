@@ -6,7 +6,7 @@ import type { Logger } from '@/utils/logger';
 import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
 import { blocklistMigrations } from './migrations';
-import type { BlocklistV3 as Blocklist } from './types';
+import type { BlocklistV4 as Blocklist } from './types';
 
 export type { Blocklist };
 
@@ -18,12 +18,13 @@ const key = 'blocklist' as const;
 
 const fallbackValue: Blocklist = {
 	isBlockRecoubs: false,
+	isBlockRepostsOfCoubs: false,
 	isHideCommentsFromBlockedChannels: true,
 	isBlockRepostsOfStories: false,
 };
 
 const blocklistItem = storage.defineItem<Blocklist, BlocklistMeta>(`local:${key}`, {
-	version: 3,
+	version: 4,
 	fallback: fallbackValue,
 	migrations: blocklistMigrations,
 });

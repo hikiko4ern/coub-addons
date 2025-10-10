@@ -73,6 +73,7 @@ blocked-coub-titles = Blocked coub titles
 ## options / blocklist
 blocklist = Blocklist
 block-recoubs = Block recoubs
+block-reposts-of-coubs = Block reposts of coubs
 block-reposts-of-stories = Block reposts of stories
 hide-comments-from-blocked-channels = Hide comments from blocked channels
 grant-permissions = Grant permissions

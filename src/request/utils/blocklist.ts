@@ -86,6 +86,10 @@ class BlocklistChecker {
 			return [true, CoubExclusionReason.CHANNEL_BLOCKED];
 		}
 
+		if (this.#blocklist.isBlockRepostsOfCoubs && coub.recoub_to != null) {
+			return [true, CoubExclusionReason.REPOSTS_BLOCKED];
+		}
+
 		let blockedByPattern: MatchedBlocklistPhrase | undefined;
 
 		if (typeof coub.title === 'string' && (blockedByPattern = this.#isBlockedByTitle(coub.title))) {
