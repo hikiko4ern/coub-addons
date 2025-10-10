@@ -25,6 +25,9 @@ block = Block
 blocked = Blocked
 unblock = Unblock
 
+## comments
+hidden-comment-message = This message was hidden
+
 ## context menu / tags
 copy-tag = Copy tag
 block-tag = Block tag
@@ -75,7 +78,11 @@ blocklist = Blocklist
 block-recoubs = Block recoubs
 block-reposts-of-coubs = Block reposts of coubs
 block-reposts-of-stories = Block reposts of stories
-hide-comments-from-blocked-channels = Hide comments from blocked channels
+comments-from-blocked-channels =
+  .label = Comments from blocked channels:
+  .show = show
+  .hide-message = hide message
+  .remove-with-replies = hide comment and replies to it
 grant-permissions = Grant permissions
 permissions-must-be-granted-for-this-functionality-to-work = Permissions must be granted for this functionality to work
 
@@ -101,8 +108,8 @@ filtered-out-coubs = Filtered out coubs
 statistics-of-filtered-out-coubs = Statistics of filtered out coubs
 filtered-out-stories = Filtered out stories
 statistics-of-filtered-out-stories = Statistics of filtered out stories
-filtered-out-comments = Filtered out comments
-statistics-of-filtered-out-comments = Statistics of filtered out comments
+changed-comments = Changed comments
+statistics-of-changed-comments = Statistics of changed comments
 filtered-out-channels = Filtered out channels
 statistics-of-filtered-out-channels = Statistics of filtered out channels
 count = Count

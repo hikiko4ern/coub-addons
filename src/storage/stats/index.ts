@@ -1,7 +1,7 @@
 import type { ConditionalKeys } from 'type-fest';
 import { storage } from 'wxt/storage';
 
-import { CommentExclusionReason } from '@/request/types/comment';
+import { CommentHandlingReason } from '@/request/types/comment';
 import { CoubExclusionReason } from '@/request/types/coub';
 import { StoryExclusionReason } from '@/request/types/story';
 import type { ToReadonly } from '@/types/util';
@@ -34,7 +34,7 @@ const defaultValue: Stats = {
 		Object.values(StoryExclusionReason).map(reason => [reason, 0]),
 	) as Stats['filteredStories'],
 	filteredComments: Object.fromEntries(
-		Object.values(CommentExclusionReason).map(reason => [reason, 0]),
+		Object.values(CommentHandlingReason).map(reason => [reason, 0]),
 	) as Stats['filteredComments'],
 };
 
@@ -59,7 +59,7 @@ export class StatsStorage extends StorageBase<typeof key, Stats, StatsMeta> {
 
 		this.countFilteredOutCoubs = this.countFilteredOutCoubs.bind(this);
 		this.countFilteredOutStories = this.countFilteredOutStories.bind(this);
-		this.countFilteredOutComments = this.countFilteredOutComments.bind(this);
+		this.countHandledComments = this.countHandledComments.bind(this);
 	}
 
 	countFilteredOutChannels = createCountFilteredOut(
@@ -80,10 +80,10 @@ export class StatsStorage extends StorageBase<typeof key, Stats, StatsMeta> {
 		StoryExclusionReason.CHANNEL_BLOCKED,
 	);
 
-	countFilteredOutComments = createCountFilteredOut(
+	countHandledComments = createCountFilteredOut(
 		'comments',
 		'filteredComments',
-		CommentExclusionReason.CHANNEL_BLOCKED,
+		CommentHandlingReason.CHANNEL_BLOCKED,
 	);
 }
 

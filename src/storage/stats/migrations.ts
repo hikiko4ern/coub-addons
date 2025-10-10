@@ -1,5 +1,5 @@
 import { ChannelExclusionReason } from '@/request/types/channel';
-import { CommentExclusionReason } from '@/request/types/comment';
+import { CommentHandlingReason } from '@/request/types/comment';
 import { CoubExclusionReason } from '@/request/types/coub';
 import { StoryExclusionReason } from '@/request/types/story';
 import type {
@@ -43,7 +43,7 @@ export const statsMigrations: Migrations = {
 		...stats,
 		filteredCoubs: stats.filtered,
 		filteredComments: {
-			[CommentExclusionReason.CHANNEL_BLOCKED]: 0,
+			[CommentHandlingReason.CHANNEL_BLOCKED]: 0,
 		},
 	}),
 	6: (stats: StatsV5): StatsV6 => ({

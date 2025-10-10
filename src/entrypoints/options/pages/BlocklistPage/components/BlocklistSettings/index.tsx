@@ -1,25 +1,36 @@
 import { Localized } from '@fluent/react';
 import { Button } from '@nextui-org/button';
 import { Checkbox } from '@nextui-org/checkbox';
+import { Select, SelectItem } from '@nextui-org/select';
+import type { Selection } from '@react-types/shared';
 import cx from 'clsx';
 import type { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 import { toast } from 'react-toastify';
 import type { Permissions } from 'wxt/browser';
 
 import { useWatchingRef } from '@/hooks/useWatchingRef';
 import { logger } from '@/options/constants';
+import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
+import { useT } from '@/options/hooks/useT';
 import {
 	ARE_COMMENTS_ON_DIFFERENT_HOST,
 	COMMENTS_GRAPHQL_HOST,
 	COMMENTS_GRAPHQL_PERMISSIONS,
 } from '@/permissions/constants';
-import type { Blocklist, BlocklistStorage, ReadonlyBlocklist } from '@/storage/blocklist';
+import {
+	type Blocklist,
+	type BlocklistStorage,
+	CommentFromBlockedChannelAction,
+	type ReadonlyBlocklist,
+} from '@/storage/blocklist';
 
 interface Props {
 	storage: BlocklistStorage;
 	state: ReadonlyBlocklist;
 }
+
+const COMMENT_FROM_BLOCKED_CHANNEL_ACTIONS = Object.values(CommentFromBlockedChannelAction);
 
 const useMergeCallback = <Key extends keyof Blocklist>(
 	storage: BlocklistStorage,
@@ -38,7 +49,14 @@ const useMergeCallback = <Key extends keyof Blocklist>(
 };
 
 export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) => {
+	const t = useT();
+	const { locale } = useLocalizationContext();
+
 	const [haveAccessToComments, setHaveAccessToComments] = useState<boolean>();
+	const commentsFromBlockedChannelsSelectedKeys = useMemo(
+		() => [state.commentsFromBlockedChannels],
+		[state.commentsFromBlockedChannels],
+	);
 
 	if (ARE_COMMENTS_ON_DIFFERENT_HOST) {
 		useEffect(() => {
@@ -86,14 +104,33 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 
 	const handleIsBlockRepostsOfStoriesChange = useMergeCallback(storage, 'isBlockRepostsOfStories');
 
-	const handleIsHideCommentsFromBlockedChannelsChange = useMergeCallback(
+	const setCommentsFromBlockedChannels = useMergeCallback(
 		storage,
-		'isHideCommentsFromBlockedChannels',
+		'commentsFromBlockedChannels',
 		typeof requestAccessToComments === 'function'
-			? isHide => {
-					isHide && !haveAccessToComments && requestAccessToComments();
+			? action => {
+					action !== CommentFromBlockedChannelAction.Show &&
+						!haveAccessToComments &&
+						requestAccessToComments();
 				}
 			: undefined,
+	);
+
+	const handleCommentsFromBlockedChannelsChange = useCallback(
+		(keys: Selection) => {
+			if (keys === 'all') {
+				return;
+			}
+
+			const item = keys.values().next();
+
+			if (item.done) {
+				return;
+			}
+
+			setCommentsFromBlockedChannels(item.value as CommentFromBlockedChannelAction);
+		},
+		[setCommentsFromBlockedChannels],
 	);
 
 	return (
@@ -121,15 +158,30 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 					'min-h-8': haveAccessToComments === false,
 				})}
 			>
-				<Checkbox
-					isSelected={state.isHideCommentsFromBlockedChannels}
-					onValueChange={handleIsHideCommentsFromBlockedChannelsChange}
-				>
-					<Localized id="hide-comments-from-blocked-channels" />
-				</Checkbox>
+				<Localized id="comments-from-blocked-channels" attrs={{ label: true }}>
+					<Select
+						className="items-center"
+						classNames={{
+							mainWrapper: cx('w-[calc(theme(spacing.60)+theme(spacing.2))]', {
+								'!w-[calc(theme(spacing.80)+theme(spacing.2))]': locale === 'ru-RU',
+							}),
+						}}
+						labelPlacement="outside-left"
+						fullWidth={false}
+						selectedKeys={commentsFromBlockedChannelsSelectedKeys}
+						scrollShadowProps={{ isEnabled: false }}
+						onSelectionChange={handleCommentsFromBlockedChannelsChange}
+					>
+						{COMMENT_FROM_BLOCKED_CHANNEL_ACTIONS.map(value => (
+							<SelectItem key={value} value={value}>
+								{t('comments-from-blocked-channels', { attr: value })}
+							</SelectItem>
+						))}
+					</Select>
+				</Localized>
 
 				{ARE_COMMENTS_ON_DIFFERENT_HOST &&
-					state.isHideCommentsFromBlockedChannels &&
+					state.commentsFromBlockedChannels !== CommentFromBlockedChannelAction.Show &&
 					haveAccessToComments === false && (
 						<Button color="warning" variant="flat" size="sm" onPress={requestAccessToComments}>
 							<Localized id="grant-permissions" />

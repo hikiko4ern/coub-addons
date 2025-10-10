@@ -1,6 +1,10 @@
 import { it } from 'vitest';
 
-import { type Blocklist, BlocklistStorage } from '@/storage/blocklist';
+import {
+	type Blocklist,
+	BlocklistStorage,
+	CommentFromBlockedChannelAction,
+} from '@/storage/blocklist';
 
 const mergeBlocklist = BlocklistStorage.merge;
 
@@ -16,14 +20,14 @@ it('should merge blocklist', ({ expect }) => {
 
 	t({ isBlockRepostsOfCoubs: true });
 
-	t({ isHideCommentsFromBlockedChannels: false });
+	t({ commentsFromBlockedChannels: CommentFromBlockedChannelAction.RemoveWithReplies });
 
 	t({ isBlockRepostsOfStories: true });
 
 	t({
 		isBlockRecoubs: true,
 		isBlockRepostsOfCoubs: true,
-		isHideCommentsFromBlockedChannels: false,
 		isBlockRepostsOfStories: true,
+		commentsFromBlockedChannels: CommentFromBlockedChannelAction.RemoveWithReplies,
 	});
 });

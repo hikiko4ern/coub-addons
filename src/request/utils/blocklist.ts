@@ -14,7 +14,7 @@ import type { Context } from '../ctx';
 import type { StoriesResponseStory } from '../stories';
 import type { TimelineResponseCoub } from '../timeline';
 import { ChannelExclusionReason } from '../types/channel';
-import { ChannelToCommentExclusionReason, CommentExclusionReason } from '../types/comment';
+import { ChannelToCommentHandlingReason, CommentHandlingReason } from '../types/comment';
 import { ChannelToCoubExclusionReason, CoubExclusionReason } from '../types/coub';
 import { ChannelToStoryExclusionReason, StoryExclusionReason } from '../types/story';
 
@@ -166,9 +166,9 @@ class BlocklistChecker {
 		return [false];
 	};
 
-	isExcludeComment = (
+	isHandleComment = (
 		comment: CommentFieldsFragment,
-	): [isExclude: true, reason: CommentExclusionReason] | [isExclude: false] => {
+	): [isExclude: true, reason: CommentHandlingReason] | [isExclude: false] => {
 		if (!isObject(comment)) {
 			return [false];
 		}
@@ -184,7 +184,7 @@ class BlocklistChecker {
 				});
 
 				if (isExcludeChannel) {
-					return [true, ChannelToCommentExclusionReason[reason]];
+					return [true, ChannelToCommentHandlingReason[reason]];
 				}
 			}
 		}

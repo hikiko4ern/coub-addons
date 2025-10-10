@@ -25,6 +25,9 @@ block = Блокировать
 blocked = Заблокирован
 unblock = Разблокировать
 
+## comments
+hidden-comment-message = Сообщение было скрыто
+
 ## context menu / tags
 copy-tag = Скопировать тег
 block-tag = Заблокировать тег
@@ -76,7 +79,11 @@ blocklist = Блок-лист
 block-recoubs = Блокировать рекоубы
 block-reposts-of-coubs = Блокировать репосты коубов
 block-reposts-of-stories = Блокировать репосты историй
-hide-comments-from-blocked-channels = Скрывать комментарии от заблокированных каналов
+comments-from-blocked-channels =
+  .label = Комментарии от заблокированных каналов:
+  .show = отображать
+  .hide-message = скрывать сообщение
+  .remove-with-replies = скрывать комментарий и ответы на него
 grant-permissions = Предоставить разрешения
 permissions-must-be-granted-for-this-functionality-to-work = Для работы этого функционала необходимо предоставить разрешения
 
@@ -102,8 +109,8 @@ filtered-out-coubs = Скрытые коубы
 statistics-of-filtered-out-coubs = Статистика отфильтрованных коубов
 filtered-out-stories = Скрытые истории
 statistics-of-filtered-out-stories = Статистика отфильтрованных историй
-filtered-out-comments = Скрытые комментарии
-statistics-of-filtered-out-comments = Статистика отфильтрованных комментариев
+changed-comments = Изменённые комментарии
+statistics-of-changed-comments = Статистика изменённых комментариев
 filtered-out-channels = Скрытые каналы
 statistics-of-filtered-out-channels = Статистика отфильтрованных каналов
 count = Количество

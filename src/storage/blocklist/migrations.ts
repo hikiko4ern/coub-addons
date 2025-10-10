@@ -1,7 +1,14 @@
-import type { BlocklistV1, BlocklistV2, BlocklistV3, BlocklistV4 } from './types';
+import {
+	type BlocklistV1,
+	type BlocklistV2,
+	type BlocklistV3,
+	type BlocklistV4,
+	type BlocklistV5,
+	CommentFromBlockedChannelActionV5,
+} from './types';
 
 // biome-ignore lint/suspicious/noExplicitAny:
-type Migrations = Record<2 | 3 | 4, (blocklist: any) => unknown>;
+type Migrations = Record<2 | 3 | 4 | 5, (blocklist: any) => unknown>;
 
 export const blocklistMigrations: Migrations = {
 	2: (blocklist: BlocklistV1): BlocklistV2 => ({
@@ -15,5 +22,11 @@ export const blocklistMigrations: Migrations = {
 	4: (blocklist: BlocklistV3): BlocklistV4 => ({
 		...blocklist,
 		isBlockRepostsOfCoubs: false,
+	}),
+	5: (blocklist: BlocklistV4): BlocklistV5 => ({
+		...blocklist,
+		commentsFromBlockedChannels: blocklist.isHideCommentsFromBlockedChannels
+			? CommentFromBlockedChannelActionV5.RemoveWithReplies
+			: CommentFromBlockedChannelActionV5.Show,
 	}),
 };

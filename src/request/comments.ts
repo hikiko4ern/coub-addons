@@ -3,11 +3,13 @@ import type { KeysOfUnion } from 'type-fest';
 import type { CommentsQuery, RepliesQuery } from '@/gql/comments/graphql';
 import { isObject } from '@/helpers/isObject';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
+import { CommentFromBlockedChannelAction } from '@/storage/blocklist';
+import { t } from '@/translation/js';
 import type { Context } from './ctx';
-import { CommentExclusionReason } from './types/comment';
+import { CommentHandlingReason } from './types/comment';
 
-interface FilteredOutComment {
-	reason: CommentExclusionReason;
+interface HandledComment {
+	reason: CommentHandlingReason;
 	tReason: string;
 	authorName: string | null | undefined;
 	authorPermalink: string | null | undefined;
@@ -19,8 +21,8 @@ type QueriesFields = KeysOfUnion<Queries>;
 
 type GetFromUnion<T, Key> = T extends unknown ? (Key extends keyof T ? T[Key] : never) : never;
 
-const EXCLUSION_REASON_TEXT: Record<CommentExclusionReason, string> = {
-	[CommentExclusionReason.CHANNEL_BLOCKED]: 'author is blocked manually',
+const HANDLING_REASON_TEXT: Record<CommentHandlingReason, string> = {
+	[CommentHandlingReason.CHANNEL_BLOCKED]: 'author is blocked manually',
 };
 
 const QUERY_FIELDS = ['entityComments', 'commentReplies'] satisfies QueriesFields[];
@@ -52,39 +54,44 @@ export const registerCommentsHandlers = (ctx: Context) => {
 					.actualizeChannelsData(iterAsBlockedChannels(entity.comments))
 					.catch((err: unknown) => logger.error('failed to actualize blocked channels data', err));
 
-				{
-					const isHide = await ctx.blocklist.isHideCommentsFromBlockedChannels();
+				const action = await ctx.blocklist.commentsFromBlockedChannelsAction();
 
-					if (!isHide) {
-						logger.debug(
-							'ignoring comments',
-							field,
-							'response due to isHideCommentsFromBlockedChannels =',
-							isHide,
-						);
-						continue;
-					}
+				if (action === CommentFromBlockedChannelAction.Show) {
+					logger.debug('ignoring comments', field, 'response due to action =', action);
+					continue;
 				}
 
 				const origAmount = entity.comments.length;
 
 				const filteredComments: (typeof entity)['comments'] = [];
-				const filteredOutComments: FilteredOutComment[] = [];
+				const handledComments: HandledComment[] = [];
 
 				const checker = await ctx.blocklistUtils.createChecker();
 
 				for (const comment of entity.comments) {
-					const [isExclude, reason] = checker.isExcludeComment(comment);
+					const [isHandle, reason] = checker.isHandleComment(comment);
 
-					if (isExclude) {
-						filteredOutComments.push({
+					if (isHandle) {
+						handledComments.push({
 							reason,
-							tReason: EXCLUSION_REASON_TEXT[reason],
+							tReason: HANDLING_REASON_TEXT[reason],
 							authorName: comment.author?.name,
 							authorPermalink: comment.author?.permalink,
 							message: comment.message,
 						});
-						continue;
+
+						switch (action) {
+							case CommentFromBlockedChannelAction.RemoveWithReplies:
+								continue;
+
+							case CommentFromBlockedChannelAction.HideMessage: {
+								comment.message = t('hidden-comment-message');
+								// TODO: add the feature to show hidden comment messages
+								// (comment as UnknownRecord)[COMMENT_HIDDEN_KEY] = true;
+								isModified = true;
+								break;
+							}
+						}
 					}
 
 					filteredComments.push(comment);
@@ -93,15 +100,15 @@ export const registerCommentsHandlers = (ctx: Context) => {
 				entity.comments = filteredComments;
 				isModified ||= filteredComments.length !== origAmount;
 
-				if (filteredOutComments.length) {
+				if (handledComments.length) {
 					logger.groupCollapsed(
-						'filtered out',
-						filteredOutComments.length,
-						filteredOutComments.length > 1 ? 'comments' : 'comment',
+						'handled',
+						handledComments.length,
+						handledComments.length > 1 ? 'comments' : 'comment',
 						'from',
 						field,
 					);
-					logger.tableRaw(filteredOutComments, [
+					logger.tableRaw(handledComments, [
 						'authorName',
 						'tReason',
 						'authorProfileUrl',
@@ -109,7 +116,7 @@ export const registerCommentsHandlers = (ctx: Context) => {
 					]);
 					logger.groupEnd();
 
-					ctx.stats.countFilteredOutComments(details.url, details.originUrl, filteredOutComments);
+					ctx.stats.countHandledComments(details.url, details.originUrl, handledComments);
 				}
 
 				logger.debug(
