@@ -158,16 +158,20 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				const checker = await ctx.blocklistUtils.createChecker();
 
 				for (const coub of data.coubs) {
-					const [isExclude, reason, blockedByPattern] = checker.isExcludeFromTimeline(coub);
+					const [isExclude, excludedCoub, reason, blockedByPattern] =
+						checker.isExcludeFromTimeline(coub);
 
 					if (isExclude) {
 						filteredOutCoubs.push({
-							...getCoubTitleData(coub),
-							channelPermalink: coub.channel?.permalink,
+							...getCoubTitleData(excludedCoub),
+							channelPermalink: excludedCoub.channel?.permalink,
 							reason,
 							tReason: EXCLUSION_REASON_TEXT[reason],
 							pattern: blockedByPattern,
-							link: getCoubPermalink(coub.permalink).toString(),
+							link: getCoubPermalink(excludedCoub.permalink).toString(),
+							...(excludedCoub !== coub && {
+								parent: coub,
+							}),
 						});
 						continue;
 					}
@@ -184,7 +188,14 @@ export const registerTimelineHandlers = (ctx: Context) => {
 						filteredOutCoubs.length,
 						filteredOutCoubs.length > 1 ? 'coubs' : 'coub',
 					);
-					logger.tableRaw(filteredOutCoubs, ['title', 'author', 'tReason', 'pattern', 'link']);
+					logger.tableRaw(filteredOutCoubs, [
+						'title',
+						'author',
+						'tReason',
+						'pattern',
+						'link',
+						'parent',
+					]);
 					logger.groupEnd();
 
 					ctx.stats.countFilteredOutCoubs(details.url, details.originUrl, filteredOutCoubs);

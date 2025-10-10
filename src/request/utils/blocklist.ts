@@ -57,16 +57,46 @@ class BlocklistChecker {
 	isExcludeFromTimeline = (
 		coub: TimelineResponseCoub,
 	):
-		| [isExclude: true, reason: Exclude<CoubExclusionReason, CoubExclusionReason.TAG_BLOCKED>]
-		| [isExclude: true, reason: CoubExclusionReason.TAG_BLOCKED, blockedByPattern: string]
-		| [isExclude: true, reason: CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern: string]
+		| [
+				isExclude: true,
+				excludedCoub: TimelineResponseCoub,
+				reason: Exclude<CoubExclusionReason, CoubExclusionReason.TAG_BLOCKED>,
+		  ]
+		| [
+				isExclude: true,
+				excludedCoub: TimelineResponseCoub,
+				reason: CoubExclusionReason.TAG_BLOCKED,
+				blockedByPattern: string,
+		  ]
+		| [
+				isExclude: true,
+				excludedCoub: TimelineResponseCoub,
+				reason: CoubExclusionReason.COUB_TITLE_BLOCKED,
+				blockedByPattern: string,
+		  ]
 		| [isExclude: false] => {
 		if (!isObject(coub) || coub.like === true || coub.favourite === true) {
 			return [false];
 		}
 
+		if (
+			isObject(coub.channel) &&
+			typeof coub.channel.id === 'number' &&
+			this.#isChannelBlocked(coub.channel.id)
+		) {
+			return [true, coub, CoubExclusionReason.CHANNEL_BLOCKED];
+		}
+
+		if (coub.recoub_to != null) {
+			if (this.#blocklist.isBlockRepostsOfCoubs) {
+				return [true, coub, CoubExclusionReason.REPOSTS_BLOCKED];
+			}
+
+			return this.isExcludeFromTimeline(coub.recoub_to);
+		}
+
 		if (coub.dislike === true) {
-			return [true, CoubExclusionReason.COUB_DISLIKED];
+			return [true, coub, CoubExclusionReason.COUB_DISLIKED];
 		}
 
 		if (
@@ -75,25 +105,13 @@ class BlocklistChecker {
 			Array.isArray(coub.media_blocks.remixed_from_coubs) &&
 			coub.media_blocks.remixed_from_coubs.length
 		) {
-			return [true, CoubExclusionReason.RECOUBS_BLOCKED];
-		}
-
-		if (
-			isObject(coub.channel) &&
-			typeof coub.channel.id === 'number' &&
-			this.#isChannelBlocked(coub.channel.id)
-		) {
-			return [true, CoubExclusionReason.CHANNEL_BLOCKED];
-		}
-
-		if (this.#blocklist.isBlockRepostsOfCoubs && coub.recoub_to != null) {
-			return [true, CoubExclusionReason.REPOSTS_BLOCKED];
+			return [true, coub, CoubExclusionReason.RECOUBS_BLOCKED];
 		}
 
 		let blockedByPattern: MatchedBlocklistPhrase | undefined;
 
 		if (typeof coub.title === 'string' && (blockedByPattern = this.#isBlockedByTitle(coub.title))) {
-			return [true, CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern[0]];
+			return [true, coub, CoubExclusionReason.COUB_TITLE_BLOCKED, blockedByPattern[0]];
 		}
 
 		if (
@@ -103,7 +121,7 @@ class BlocklistChecker {
 			typeof coub.tags[0].title === 'string' &&
 			(blockedByPattern = this.#isHaveBlockedTags(imap(coub.tags, tag => tag.title)))
 		) {
-			return [true, CoubExclusionReason.TAG_BLOCKED, blockedByPattern[0]];
+			return [true, coub, CoubExclusionReason.TAG_BLOCKED, blockedByPattern[0]];
 		}
 
 		return [false];
