@@ -3,7 +3,7 @@ import type { BlockedChannelData, RawBlockedChannels } from '../types';
 
 export function* iterRawBlockedChannels(
 	raw: ToReadonly<RawBlockedChannels>,
-): Generator<BlockedChannelData, void, unknown> {
+): Generator<BlockedChannelData, void, undefined> {
 	const length = raw.id.length;
 
 	for (let i = 0; i < length; i++) {

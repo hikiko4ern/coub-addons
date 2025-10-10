@@ -1,3 +1,5 @@
+import { ChannelExclusionReason } from './channel';
+
 export enum CoubExclusionReason {
 	COUB_DISLIKED = 'coub-is-disliked',
 	CHANNEL_BLOCKED = 'channel-is-blocked',
@@ -6,6 +8,10 @@ export enum CoubExclusionReason {
 	RECOUBS_BLOCKED = 'recoubs-are-blocked',
 	REPOSTS_BLOCKED = 'reposts-are-blocked',
 }
+
+export const ChannelToCoubExclusionReason = {
+	[ChannelExclusionReason.BLOCKED]: CoubExclusionReason.CHANNEL_BLOCKED,
+} satisfies Record<ChannelExclusionReason, CoubExclusionReason>;
 
 export interface FilteredOutCoubForStats {
 	channelPermalink: string | undefined;

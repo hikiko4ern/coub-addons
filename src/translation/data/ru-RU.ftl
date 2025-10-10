@@ -104,14 +104,17 @@ filtered-out-stories = Скрытые истории
 statistics-of-filtered-out-stories = Статистика отфильтрованных историй
 filtered-out-comments = Скрытые комментарии
 statistics-of-filtered-out-comments = Статистика отфильтрованных комментариев
-reason = Причина
+filtered-out-channels = Скрытые каналы
+statistics-of-filtered-out-channels = Статистика отфильтрованных каналов
 count = Количество
-coub-is-disliked = коубу поставлен дизлайк
-channel-is-blocked = канал заблокирован
-tag-is-blocked = тег заблокирован
-coub-title-is-blocked = коуб заблокирован по имени
-recoubs-are-blocked = рекоубы заблокированы
-reposts-are-blocked = репосты заблокированы
+reason = Причина
+  .blocked = заблокирован
+  .coub-is-disliked = коубу поставлен дизлайк
+  .channel-is-blocked = канал заблокирован
+  .tag-is-blocked = тег заблокирован
+  .coub-title-is-blocked = коуб заблокирован по имени
+  .recoubs-are-blocked = рекоубы заблокированы
+  .reposts-are-blocked = репосты заблокированы
 
 ## options / settings
 settings = Настройки

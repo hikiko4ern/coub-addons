@@ -13,8 +13,8 @@ import { CoubExclusionReason, type FilteredOutCoubForStats } from './types/coub'
 
 interface TimelineResponseCoubs {
 	page: number;
-	total_pages: number;
 	per_page: number;
+	total_pages: number;
 	coubs: TimelineResponseCoub[];
 }
 
@@ -220,7 +220,7 @@ export const registerTimelineHandlers = (ctx: Context) => {
 
 function* iterAsBlockedChannels(
 	coubs: Iterable<TimelineResponseCoub>,
-): Generator<BlockedChannelData, void, never> {
+): Generator<BlockedChannelData, void, undefined> {
 	for (const coub of coubs) {
 		if (is(coub.channel, Channel)) {
 			yield {

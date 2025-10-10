@@ -19,3 +19,7 @@ export type MaybePromise<T> = T | Promise<T>;
 export type ExtractFunction<T> =
 	// biome-ignore lint/suspicious/noExplicitAny: required for correct type inference
 	T extends unknown ? Extract<T, (...args: any) => any> : never;
+
+export type SetNullable<BaseType, Keys extends keyof BaseType = keyof BaseType> = {
+	[Key in keyof BaseType]: Key extends Keys ? BaseType[Key] | null | undefined : BaseType[Key];
+};

@@ -103,14 +103,17 @@ filtered-out-stories = Filtered out stories
 statistics-of-filtered-out-stories = Statistics of filtered out stories
 filtered-out-comments = Filtered out comments
 statistics-of-filtered-out-comments = Statistics of filtered out comments
-reason = Reason
+filtered-out-channels = Filtered out channels
+statistics-of-filtered-out-channels = Statistics of filtered out channels
 count = Count
-coub-is-disliked = coub is disliked
-channel-is-blocked = channel is blocked
-tag-is-blocked = tag is blocked
-coub-title-is-blocked = coub is blocked by title
-recoubs-are-blocked = recoubs are blocked
-reposts-are-blocked = reposts are blocked
+reason = Reason
+  .blocked = blocked
+  .coub-is-disliked = coub is disliked
+  .channel-is-blocked = channel is blocked
+  .tag-is-blocked = tag is blocked
+  .coub-title-is-blocked = coub is blocked by title
+  .recoubs-are-blocked = recoubs are blocked
+  .reposts-are-blocked = reposts are blocked
 
 ## options / settings
 settings = Settings

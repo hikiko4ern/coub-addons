@@ -6,6 +6,7 @@ import { useMemo } from 'preact/hooks';
 import { CardSection } from '@/options/components/CardSection';
 import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
 
+import { useT } from '@/options/hooks/useT';
 import styles from './styles.module.scss';
 
 interface Props {
@@ -19,11 +20,12 @@ export const FilteredOutSection: FunctionComponent<Props> = ({
 	data,
 	'aria-label': ariaLabel,
 }) => {
+	const t = useT();
 	const { locale } = useLocalizationContext();
 	const countFormat = useMemo(() => new Intl.NumberFormat(locale), [locale]);
 
 	return (
-		<CardSection title={title}>
+		<CardSection bodyClassName="w-full" title={title}>
 			<Table
 				classNames={{ table: styles['filtered-out-section'] }}
 				removeWrapper
@@ -42,9 +44,7 @@ export const FilteredOutSection: FunctionComponent<Props> = ({
 				<TableBody>
 					{Object.entries(data).map(([reason, count]) => (
 						<TableRow key={reason}>
-							<TableCell>
-								<Localized id={reason} />
-							</TableCell>
+							<TableCell>{t('reason', { attr: reason })}</TableCell>
 							<TableCell className="text-right">{countFormat.format(count)}</TableCell>
 						</TableRow>
 					))}

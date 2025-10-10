@@ -7,6 +7,7 @@ import { StoryExclusionReason } from '@/request/types/story';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
+import { ChannelExclusionReason } from '@/request/types/channel';
 import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
 import {
@@ -14,7 +15,7 @@ import {
 	getCountedInStatsFilteredOutData,
 } from './helpers/getCountedInStatsFilteredOutData';
 import { statsMigrations } from './migrations';
-import type { StatsV8 as Stats } from './types';
+import type { StatsV9 as Stats } from './types';
 
 export interface StatsMeta extends StorageMeta {}
 
@@ -23,6 +24,9 @@ export type ReadonlyStats = ToReadonly<Stats>;
 const key = 'stats' as const;
 
 const defaultValue: Stats = {
+	filteredChannels: Object.fromEntries(
+		Object.values(ChannelExclusionReason).map(reason => [reason, 0]),
+	) as Stats['filteredChannels'],
 	filteredCoubs: Object.fromEntries(
 		Object.values(CoubExclusionReason).map(reason => [reason, 0]),
 	) as Stats['filteredCoubs'],
@@ -35,7 +39,7 @@ const defaultValue: Stats = {
 };
 
 const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
-	version: 8,
+	version: 9,
 	defaultValue,
 	migrations: statsMigrations,
 });
@@ -57,6 +61,12 @@ export class StatsStorage extends StorageBase<typeof key, Stats, StatsMeta> {
 		this.countFilteredOutStories = this.countFilteredOutStories.bind(this);
 		this.countFilteredOutComments = this.countFilteredOutComments.bind(this);
 	}
+
+	countFilteredOutChannels = createCountFilteredOut(
+		'channels',
+		'filteredChannels',
+		ChannelExclusionReason.BLOCKED,
+	);
 
 	countFilteredOutCoubs = createCountFilteredOut(
 		'coubs',

@@ -13,8 +13,8 @@ import { type FilteredOutStoryForStats, StoryExclusionReason } from './types/sto
 
 interface StoriesResponse {
 	page: number;
-	total_pages: number;
 	per_page: number;
+	total_pages: number;
 	stories: StoriesResponseStory[];
 }
 
@@ -162,7 +162,7 @@ export const registerStoriesHandlers = (ctx: Context) => {
 
 function* iterAsBlockedChannels(
 	stories: Iterable<StoriesResponseStory>,
-): Generator<BlockedChannelData, void, never> {
+): Generator<BlockedChannelData, void, undefined> {
 	for (const story of stories) {
 		if (isObject(story)) {
 			if (is(story.channel, Channel)) {

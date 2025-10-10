@@ -27,7 +27,7 @@ Minimum supported browser versions:
 <!-- features start -->
 
 - hiding disliked coubs
-- hiding coubs, stories and comments from blocked channels
+- hiding blocked channels and their content (coubs, stories, and comments)
 - hiding coubs by title and tags containing specified phrases or matching regular expressions
 - hiding recoubs and reposted coubs and stories
 - quick tag copy/block via context menu

@@ -131,7 +131,7 @@ export const registerCommentsHandlers = (ctx: Context) => {
 
 function* iterAsBlockedChannels(
 	comments: CommentsQuery['entityComments']['comments'],
-): Generator<BlockedChannelData, void, never> {
+): Generator<BlockedChannelData, void, undefined> {
 	for (const comment of comments) {
 		if (
 			isObject(comment) &&

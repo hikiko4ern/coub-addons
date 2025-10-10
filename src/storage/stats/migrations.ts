@@ -1,3 +1,4 @@
+import { ChannelExclusionReason } from '@/request/types/channel';
 import { CommentExclusionReason } from '@/request/types/comment';
 import { CoubExclusionReason } from '@/request/types/coub';
 import { StoryExclusionReason } from '@/request/types/story';
@@ -10,10 +11,11 @@ import type {
 	StatsV6,
 	StatsV7,
 	StatsV8,
+	StatsV9,
 } from './types';
 
 // biome-ignore lint/suspicious/noExplicitAny:
-type Migrations = Record<2 | 3 | 4 | 5 | 6 | 7 | 8, (stats: any) => unknown>;
+type Migrations = Record<2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, (stats: any) => unknown>;
 
 export const statsMigrations: Migrations = {
 	2: (stats: StatsV1): StatsV2 => ({
@@ -62,6 +64,12 @@ export const statsMigrations: Migrations = {
 		filteredCoubs: {
 			...stats.filteredCoubs,
 			[CoubExclusionReason.REPOSTS_BLOCKED]: 0,
+		},
+	}),
+	9: (stats: StatsV8): StatsV9 => ({
+		...stats,
+		filteredChannels: {
+			[ChannelExclusionReason.BLOCKED]: 0,
 		},
 	}),
 };

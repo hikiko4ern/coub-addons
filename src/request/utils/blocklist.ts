@@ -7,13 +7,16 @@ import type { IsCoubBlockedByTitle } from '@/storage/blockedCoubTitles';
 import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
 import type { ReadonlyBlocklist } from '@/storage/blocklist';
 
+import type { Channel } from '@/api/types';
 import type { MatchedBlocklistPhrase } from '@/storage/phrasesBlocklist/types';
+import type { SetNullable } from '@/types/util';
 import type { Context } from '../ctx';
 import type { StoriesResponseStory } from '../stories';
 import type { TimelineResponseCoub } from '../timeline';
-import { CommentExclusionReason } from '../types/comment';
-import { CoubExclusionReason } from '../types/coub';
-import { StoryExclusionReason } from '../types/story';
+import { ChannelExclusionReason } from '../types/channel';
+import { ChannelToCommentExclusionReason, CommentExclusionReason } from '../types/comment';
+import { ChannelToCoubExclusionReason, CoubExclusionReason } from '../types/coub';
+import { ChannelToStoryExclusionReason, StoryExclusionReason } from '../types/story';
 
 export class BlocklistUtils {
 	readonly #ctx: Context;
@@ -54,6 +57,20 @@ class BlocklistChecker {
 		);
 	}
 
+	isExcludeChannel = (
+		channel: SetNullable<Channel, 'title' | 'permalink'>,
+	): [isExclude: true, reason: ChannelExclusionReason] | [isExclude: false] => {
+		if (!isObject(channel)) {
+			return [false];
+		}
+
+		if (typeof channel.id === 'number' && this.#isChannelBlocked(channel.id)) {
+			return [true, ChannelExclusionReason.BLOCKED];
+		}
+
+		return [false];
+	};
+
 	isExcludeFromTimeline = (
 		coub: TimelineResponseCoub,
 	):
@@ -79,12 +96,12 @@ class BlocklistChecker {
 			return [false];
 		}
 
-		if (
-			isObject(coub.channel) &&
-			typeof coub.channel.id === 'number' &&
-			this.#isChannelBlocked(coub.channel.id)
-		) {
-			return [true, coub, CoubExclusionReason.CHANNEL_BLOCKED];
+		{
+			const [isExcludeChannel, reason] = this.isExcludeChannel(coub.channel);
+
+			if (isExcludeChannel) {
+				return [true, coub, ChannelToCoubExclusionReason[reason]];
+			}
 		}
 
 		if (coub.recoub_to != null) {
@@ -134,12 +151,12 @@ class BlocklistChecker {
 			return [false];
 		}
 
-		if (
-			isObject(story.channel) &&
-			typeof story.channel.id === 'number' &&
-			this.#isChannelBlocked(story.channel.id)
-		) {
-			return [true, StoryExclusionReason.CHANNEL_BLOCKED];
+		{
+			const [isExcludeChannel, reason] = this.isExcludeChannel(story.channel);
+
+			if (isExcludeChannel) {
+				return [true, ChannelToStoryExclusionReason[reason]];
+			}
 		}
 
 		if (this.#blocklist.isBlockRepostsOfStories && story.is_repost === true) {
@@ -159,8 +176,16 @@ class BlocklistChecker {
 		if (isObject(comment.author) && typeof comment.author.channelId === 'string') {
 			const channelId = Number.parseInt(comment.author.channelId, 10);
 
-			if (!Number.isNaN(channelId) && this.#isChannelBlocked(channelId)) {
-				return [true, CommentExclusionReason.CHANNEL_BLOCKED];
+			if (!Number.isNaN(channelId)) {
+				const [isExcludeChannel, reason] = this.isExcludeChannel({
+					id: channelId,
+					title: comment.author.name,
+					permalink: comment.author.permalink,
+				});
+
+				if (isExcludeChannel) {
+					return [true, ChannelToCommentExclusionReason[reason]];
+				}
 			}
 		}
 

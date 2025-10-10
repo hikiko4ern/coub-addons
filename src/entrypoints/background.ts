@@ -6,6 +6,7 @@ import '@/register';
 import type {} from '@/types/tsPatch';
 
 import { EventDispatcher, EventListener } from '@/events';
+import { registerChannelsHandlers } from '@/request/channels';
 import { registerCommentsHandlers } from '@/request/comments';
 import { Context } from '@/request/ctx';
 import { registerStoriesHandlers } from '@/request/stories';
@@ -134,6 +135,7 @@ export default defineBackground(() => {
 	registerTimelineHandlers(ctx);
 	registerStoriesHandlers(ctx);
 	registerCommentsHandlers(ctx);
+	registerChannelsHandlers(ctx);
 
 	const prohibitedRouter = createRouter({
 		routes: {

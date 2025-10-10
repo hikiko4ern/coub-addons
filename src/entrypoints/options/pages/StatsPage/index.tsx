@@ -33,6 +33,12 @@ export const StatsPage: FunctionComponent = () => {
 						aria-label={l10n.getString('statistics-of-filtered-out-comments')}
 						data={stats.data.filteredComments}
 					/>
+
+					<FilteredOutSection
+						title={<Localized id="filtered-out-channels" />}
+						aria-label={l10n.getString('statistics-of-filtered-out-channels')}
+						data={stats.data.filteredChannels}
+					/>
 				</div>
 			);
 
