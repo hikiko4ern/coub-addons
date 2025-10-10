@@ -388,8 +388,8 @@ importers:
         specifier: ^3.40.1
         version: 3.40.1
       binaryen:
-        specifier: ^121.0.0
-        version: 121.0.0
+        specifier: ^124.0.0
+        version: 124.0.0
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
@@ -2995,8 +2995,8 @@ packages:
     resolution: {integrity: sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==}
     engines: {node: '>=8'}
 
-  binaryen@121.0.0:
-    resolution: {integrity: sha512-St5LX+CmVdDQMf+DDHWdne7eDK+8tH9TE4Kc+Xk3s5+CzVYIKeJbWuXgsKVbkdLJXGUc2eflFqjThQy555mBag==}
+  binaryen@124.0.0:
+    resolution: {integrity: sha512-RUv9bWl9C4kwjOmi4yA/yjW/w+YMtoEEpTFtI1nIl1m+1AGWRvxirGgd8AeqUnEB65HcsjZJ+WAIsGuVBwDxwA==}
     hasBin: true
 
   bl@4.1.0:
@@ -9527,7 +9527,7 @@ snapshots:
 
   binary-extensions@2.3.0: {}
 
-  binaryen@121.0.0: {}
+  binaryen@124.0.0: {}
 
   bl@4.1.0:
     dependencies:

@@ -1,4 +1,7 @@
-use icu_segmenter::{WordBreakIteratorUtf16, WordSegmenter};
+use icu_segmenter::{
+    iterators::WordBreakIterator, options::WordBreakInvariantOptions, scaffold::Utf16,
+    WordSegmenter, WordSegmenterBorrowed,
+};
 use itertools::Itertools as _;
 use js_sys::{JsString, Set};
 use serde::Serialize;
@@ -46,7 +49,7 @@ export function segmentWords(input: string): WordsBoundaries | undefined;
 "#;
 
 thread_local! {
-    static SEGMENTER: WordSegmenter = WordSegmenter::new_auto();
+    static SEGMENTER: WordSegmenterBorrowed<'static> = WordSegmenter::new_auto(WordBreakInvariantOptions::default());
 }
 
 #[wasm_bindgen(js_name = getFirstWord, skip_typescript)]
@@ -101,16 +104,17 @@ fn is_emoji_utf16<I>(iter: I) -> bool
 where
     I: IntoIterator<Item = u16>,
 {
-    use icu_properties::sets::{self, CodePointSetDataBorrowed};
+    use icu_properties::CodePointSetDataBorrowed;
 
-    const EMOJI: CodePointSetDataBorrowed = sets::emoji();
+    const EMOJI: CodePointSetDataBorrowed<'static> =
+        CodePointSetDataBorrowed::new::<icu_properties::props::Emoji>();
 
     char::decode_utf16(iter).all(|c| c.is_ok_and(|c| !c.is_ascii_whitespace() && EMOJI.contains(c)))
 }
 
 fn iter_words<'l, 's>(
     input: &'s JsString,
-    mut segmenter: WordBreakIteratorUtf16<'l, 's>,
+    mut segmenter: WordBreakIterator<'l, 's, Utf16>,
 ) -> impl Iterator<Item = (u32, u32, JsString)> + use<'l, 's> {
     core::iter::from_fn(move || segmenter.next().map(|i| (i as u32, segmenter.word_type())))
         .tuple_windows()

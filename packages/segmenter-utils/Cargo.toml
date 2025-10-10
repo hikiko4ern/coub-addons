@@ -13,15 +13,15 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 console_error_panic_hook = { version = "0.1.7", optional = true }
-icu_properties = "1.5.1"
-icu_segmenter = "1.5.0"
+icu_properties = "2.0.1"
+icu_segmenter = "2.0.0"
 itertools = { version = "0.14.0", default-features = false }
-js-sys = "0.3.76"
-serde = { version = "1.0.217", features = ["derive"] }
+js-sys = "=0.3.78"
+serde = { version = "1.0.228", features = ["derive"] }
 serde-wasm-bindgen = "0.6.5"
-tsify = { version = "0.4.5", default-features = false, features = ["js"] }
-wasm-bindgen = "0.2.99"
-web-sys = { version = "0.3.76", optional = true }
+tsify = { version = "0.5.5", default-features = false, features = ["js"] }
+wasm-bindgen = "=0.2.101" # 0.2.102+ sometimes reorders imports, resulting in a different hash
+web-sys = { version = "=0.3.78", optional = true }
 
 [features]
 default = ["console_panic_hook"]

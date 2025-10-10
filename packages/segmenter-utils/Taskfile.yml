@@ -19,7 +19,8 @@ tasks:
       - cargo build --lib --target wasm32-unknown-unknown {{if ne .MODE "debug"}}--{{.MODE}}{{end}}
       - pnpm create-dirs
       - cargo bin wasm-bindgen "../../target/wasm32-unknown-unknown/{{.MODE}}/segmenter_utils_rs.wasm" --out-dir lib --typescript --target web {{if eq .MODE "debug"}}--debug{{end}}
-      - if test {{.MODE}} = release; then pnpm wasm-opt -O4 lib/segmenter_utils_rs_bg.wasm -o lib/segmenter_utils_rs_bg.wasm; else echo skipping optimizations; fi
+      # spell-checker: ignore nontrapping
+      - if test {{.MODE}} = release; then pnpm wasm-opt --enable-bulk-memory --enable-nontrapping-float-to-int -O4 lib/segmenter_utils_rs_bg.wasm -o lib/segmenter_utils_rs_bg.wasm; else echo skipping optimizations; fi
     sources:
       - ../../Cargo.lock
       - ../../Cargo.toml

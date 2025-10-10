@@ -5,9 +5,9 @@ resolver = "2"
 # let's use `cargo-run-bin` while there is no built-in solution for
 # https://github.com/rust-lang/cargo/issues/2267
 [workspace.metadata.bin]
-cargo-binstall = { version = "1.10.17", locked = true }
+cargo-binstall = { version = "1.15.6", locked = true }
 cargo-watch = { version = "8.5.3", locked = true, bins = ["cargo-watch"] }
-wasm-bindgen-cli = { version = "0.2.99", locked = true, bins = ["wasm-bindgen"] }
+wasm-bindgen-cli = { version = "=0.2.101", locked = true, bins = ["wasm-bindgen"] } # 0.2.102+ sometimes reorders imports, resulting in a different hash
 
 [profile.release]
 incremental = true
