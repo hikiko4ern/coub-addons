@@ -18,7 +18,8 @@ export type { BlockedChannelData, RawBlockedChannels } from './types';
 
 export interface BlockedChannelsMeta extends StorageMeta {}
 
-const key = 'blockedChannels' as const;
+const key = 'blockedChannels' as const,
+	version = 1;
 
 const fallbackValue: RawBlockedChannels = {
 	id: [],
@@ -29,7 +30,7 @@ const fallbackValue: RawBlockedChannels = {
 const blockedChannelsItem = storage.defineItem<RawBlockedChannels, BlockedChannelsMeta>(
 	`local:${key}`,
 	{
-		version: 1,
+		version,
 		fallback: fallbackValue,
 	},
 );
@@ -62,6 +63,7 @@ export class BlockedChannelsStorage extends StorageBase<
 	static readonly MIGRATIONS = undefined;
 	static readonly merge = mergeBlockedChannels;
 	protected readonly logger: Logger;
+	protected readonly version = version;
 
 	readonly #isBlockedListeners: Record</** channelId */ number, Set<IsBlockedListener>> = {};
 

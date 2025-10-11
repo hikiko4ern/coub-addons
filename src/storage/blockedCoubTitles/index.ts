@@ -17,14 +17,15 @@ export interface BlockedCoubTitlesMeta extends StorageMeta {}
 
 export type ReadonlyBlockedCoubTitles = ToReadonly<BlockedCoubTitles>;
 
-const key = 'blockedCoubTitles' as const;
+const key = 'blockedCoubTitles' as const,
+	version = 1;
 
 const fallbackValue: RawBlockedCoubTitles = '';
 
 const blockedCoubTitlesItem = storage.defineItem<RawBlockedCoubTitles, BlockedCoubTitlesMeta>(
 	`local:${key}`,
 	{
-		version: 1,
+		version,
 		fallback: fallbackValue,
 	},
 );
@@ -35,6 +36,7 @@ export class BlockedCoubTitlesStorage extends PhrasesBlocklistStorage<typeof key
 	static readonly STORAGE = blockedCoubTitlesItem;
 	static readonly MIGRATIONS = undefined;
 	protected readonly logger: Logger;
+	protected readonly version = version;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);

@@ -14,7 +14,8 @@ export interface PlayerSettingsMeta extends StorageMeta {}
 
 export type ReadonlyPlayerSettings = ToReadonly<PlayerSettings>;
 
-const key = 'playerSettings' as const;
+const key = 'playerSettings' as const,
+	version = 3;
 
 const fallbackValue: PlayerSettings = {
 	isPreventPlaybackRateChange: false,
@@ -34,7 +35,7 @@ const fallbackValue: PlayerSettings = {
 };
 
 const playerSettingsItem = storage.defineItem<PlayerSettings, PlayerSettingsMeta>(`local:${key}`, {
-	version: 3,
+	version,
 	fallback: fallbackValue,
 	migrations: playerSettingsMigrations,
 });
@@ -49,6 +50,7 @@ export class PlayerSettingsStorage extends StorageBase<
 	static readonly STORAGE = playerSettingsItem;
 	static readonly MIGRATIONS = playerSettingsMigrations;
 	protected readonly logger: Logger;
+	protected readonly version = version;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger(new.target.name);

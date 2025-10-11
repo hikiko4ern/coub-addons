@@ -29,6 +29,7 @@ export abstract class StorageBase<
 > implements Disposable
 {
 	protected abstract readonly logger: Logger;
+	protected abstract readonly version: number;
 
 	readonly [storageStateType]?: NoInfer<State>;
 	readonly [storageListenerArgs]?: NoInfer<ListenerArgs>;
@@ -41,6 +42,7 @@ export abstract class StorageBase<
 	readonly #eventListener: EventListener;
 	protected statePromise: Promise<ToReadonly<State>> | undefined;
 	#state!: ToReadonly<State>;
+	#isVersionMetaSaved = false;
 
 	constructor(
 		tabId: number | undefined,
@@ -82,11 +84,11 @@ export abstract class StorageBase<
 	}
 
 	initialize() {
-		return (this.statePromise = this.#storage
-			.getValue()
-			.then(res => {
-				const state = (this.#state = this.parseRawValue(res as ToReadonly<RawState>));
-				this.logger.debug('initialized with state', state, 'from raw', res);
+		return (this.statePromise = Promise.all([this.#storage.getValue(), this.#storage.getMeta()])
+			.then(([rawState, meta]) => {
+				this.#isVersionMetaSaved = 'v' in meta;
+				const state = (this.#state = this.parseRawValue(rawState as ToReadonly<RawState>));
+				this.logger.debug('initialized with state', state, 'from raw', rawState);
 				return state;
 			})
 			.finally(() => (this.statePromise = undefined)));
@@ -142,12 +144,32 @@ export abstract class StorageBase<
 			} as StorageEvent);
 	}
 
+	#saveValue(value: RawState) {
+		const setValuePromise = this.#storage.setValue(value);
+
+		if (this.#isVersionMetaSaved) {
+			return setValuePromise;
+		}
+
+		// WXT does not save the version when saving the value,
+		// which causes the current non-1 version (e.g., 2)
+		// to be interpreted as 1 when migrations are run,
+		// resulting in the error
+		//
+		// https://github.com/wxt-dev/wxt/issues/1775
+
+		return Promise.all([
+			setValuePromise,
+			this.#storage.setMeta({ v: this.version } as Partial<TMetadata>),
+		]);
+	}
+
 	protected async setValue(value: ToReadonly<RawState>) {
 		this.logger.debug('new value:', value);
 
-		const oldState = (await this.#storage.getValue()) as RawState | null;
+		const oldState = await this.#storage.getValue();
 
-		await this.#storage.setValue(value as RawState);
+		await this.#saveValue(value as RawState);
 		const state = (this.#state = this.parseRawValue(value));
 
 		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
@@ -158,7 +180,7 @@ export abstract class StorageBase<
 
 		const oldState = this.toRawValue(this.#state);
 
-		await this.#storage.setValue(this.toRawValue(state));
+		await this.#saveValue(this.toRawValue(state));
 		this.#state = state;
 
 		this.#notifyWatchers(state, oldState, true, StorageEventTrigger.SetValue);
