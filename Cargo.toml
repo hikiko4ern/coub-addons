@@ -1,3 +1,5 @@
+cargo-features = ["trim-paths"]
+
 [workspace]
 members = ["packages/segmenter-utils"]
 resolver = "2"
@@ -15,3 +17,4 @@ codegen-units = 1
 lto = true
 strip = true
 opt-level = 3
+trim-paths = "all"
