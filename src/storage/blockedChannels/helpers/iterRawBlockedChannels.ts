@@ -1,4 +1,5 @@
 import type { ToReadonly } from '@/types/util';
+
 import type { BlockedChannelData, RawBlockedChannels } from '../types';
 
 export function* iterRawBlockedChannels(

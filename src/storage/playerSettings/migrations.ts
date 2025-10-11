@@ -1,8 +1,9 @@
 import { HotkeyModifier } from '@/hotkey/constants';
 import type { Hotkey } from '@/hotkey/types';
+
 import type { HotkeyV1, PlayerSettingsV1, PlayerSettingsV2, PlayerSettingsV3 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny:
+// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 type Migrations = Record<2 | 3, (playerSettings: any) => unknown>;
 
 export const playerSettingsMigrations: Migrations = {

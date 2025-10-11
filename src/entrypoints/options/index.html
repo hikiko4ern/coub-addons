@@ -12,7 +12,14 @@
         }
       }
     </style>
-    <script>
+    <!--
+      don't forget to update the hash in the `wxt.config.ts` when modifying this script
+
+      to calculate the hash, execute:
+
+        btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('sha-256', new TextEncoder('utf-8').encode(document.getElementById('set-theme').textContent)))))
+    -->
+    <script id="set-theme">
       (async () => {
         const theme = (await browser.storage.local.get('settings')).settings?.theme;
 
@@ -20,6 +27,7 @@
           theme === 'dark' ||
           (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 
+        document.documentElement.classList.remove('light', 'dark', 'text-foreground');
         document.documentElement.classList.add(
           ...(isDark ? ['dark', 'text-foreground'] : ['light']),
         );
@@ -27,7 +35,7 @@
     </script>
   </head>
   <body class="h-full">
-    <main id="root" class="bg-background"></main>
+    <main id="root"></main>
     <script type="module" src="./main.tsx"></script>
   </body>
 </html>

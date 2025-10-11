@@ -1,11 +1,12 @@
 import { is } from 'superstruct';
+import type { UnionToIntersection } from 'type-fest';
 
 import { Channel } from '@/api/types';
 import { getChannelPermalink } from '@/helpers/channel/getChannelPermalink';
 import { type ChannelTitleData, getChannelTitleData } from '@/helpers/channel/getChannelTitleData';
 import { isObject } from '@/helpers/isObject';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
-import type { UnionToIntersection } from 'type-fest';
+
 import type { Context } from './ctx';
 import { ChannelExclusionReason, type FilteredOutChannelForStats } from './types/channel';
 

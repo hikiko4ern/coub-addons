@@ -4,6 +4,7 @@ import { BlockedTagsStorage } from '@/storage/blockedTags';
 import { BlocklistStorage } from '@/storage/blocklist';
 import { StatsStorage } from '@/storage/stats';
 import type { Logger } from '@/utils/logger';
+
 import { BlocklistUtils } from './utils/blocklist';
 import { WebRequestExt } from './webRequestExt';
 

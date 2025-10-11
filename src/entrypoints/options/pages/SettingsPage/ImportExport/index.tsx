@@ -1,5 +1,3 @@
-import { name } from '../../../../../../package.json';
-
 import { Localized, useLocalization } from '@fluent/react';
 import DocumentArrowDownIcon from '@heroicons/react/24/solid/DocumentArrowDownIcon';
 import DocumentArrowUpIcon from '@heroicons/react/24/solid/DocumentArrowUpIcon';
@@ -28,6 +26,8 @@ import {
 	restoreBackup,
 } from '@/storage/backup';
 import type { ExtractFunction } from '@/types/util';
+
+import { name } from '../../../../../../package.json';
 
 const pad = (value: number) => value.toString().padStart(2, '0');
 

@@ -1,9 +1,8 @@
-import type { SegmenterUtils } from './segmenterUtils';
-
 import type { ToReadonly } from '@/types/util';
 
 import type { MatchedBlocklistPhrase } from '../types';
 import { type PhrasesTree, preparePhraseForTree } from './phrasesTree';
+import type { SegmenterUtils } from './segmenterUtils';
 
 export const getMatchedPhrase = (
 	utils: SegmenterUtils,

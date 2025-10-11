@@ -10,7 +10,7 @@ import { Router } from './components/Router';
 import { SettingsProvider } from './components/SettingsProvider';
 import { Shell } from './components/Shell';
 
-import './style.scss';
+import './style.css';
 
 render(
 	<HelmetProvider>
@@ -19,7 +19,7 @@ render(
 				<LocalizationProvider>
 					<LocalizationContext.Consumer>
 						{({ locale }) => (
-							<NextUIProvider locale={locale}>
+							<NextUIProvider locale={locale} reducedMotion="user">
 								<Shell>
 									<Router />
 								</Shell>

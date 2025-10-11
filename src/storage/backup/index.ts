@@ -2,6 +2,7 @@ import type { OmitIndexSignature } from 'type-fest';
 import { storage } from 'wxt/storage';
 
 import { logger } from '@/options/constants';
+
 import {
 	type BlockedChannelsMeta,
 	BlockedChannelsStorage,

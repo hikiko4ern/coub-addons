@@ -7,6 +7,7 @@ import { StorageHookState, useStorageState } from '@/options/hooks/useStorageSta
 import { useTabId } from '@/options/hooks/useTabId';
 import { RawTheme, SYSTEM_LOCALE, Theme } from '@/storage/settings/types';
 import { negotiateLanguages } from '@/translation/bundle';
+
 import { type Settings, SettingsContext } from './context';
 
 interface Props {

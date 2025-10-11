@@ -17,8 +17,8 @@ export const Shell: FunctionComponent = ({ children }) => {
 
 	useLayoutEffect(() => {
 		const isDark = theme === Theme.DARK;
-		document.documentElement.classList.toggle('dark', isDark);
-		document.documentElement.classList.toggle('text-foreground', isDark);
+		document.documentElement.classList.remove('light', 'dark', 'text-foreground');
+		document.documentElement.classList.add(...(isDark ? ['dark', 'text-foreground'] : ['light']));
 	}, [theme]);
 
 	return (

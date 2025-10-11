@@ -1,15 +1,15 @@
 import { imap } from 'itertools';
 
+import type { Channel } from '@/api/types';
 import type { CommentFieldsFragment } from '@/gql/comments/graphql';
 import { isObject } from '@/helpers/isObject';
 import type { IsChannelBlockedFn } from '@/storage/blockedChannels';
 import type { IsCoubBlockedByTitle } from '@/storage/blockedCoubTitles';
 import type { IsHaveBlockedTagsFn } from '@/storage/blockedTags';
 import type { ReadonlyBlocklist } from '@/storage/blocklist';
-
-import type { Channel } from '@/api/types';
 import type { MatchedBlocklistPhrase } from '@/storage/phrasesBlocklist/types';
 import type { SetNullable } from '@/types/util';
+
 import type { Context } from '../ctx';
 import type { StoriesResponseStory } from '../stories';
 import type { TimelineResponseCoub } from '../timeline';

@@ -1,4 +1,5 @@
 import { isObject } from '@/helpers/isObject';
+
 import { getJQuery } from '../getJQuery';
 import type { GetGlobalsRes } from '../types';
 

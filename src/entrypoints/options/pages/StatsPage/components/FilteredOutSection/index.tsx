@@ -5,8 +5,8 @@ import { useMemo } from 'preact/hooks';
 
 import { CardSection } from '@/options/components/CardSection';
 import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
-
 import { useT } from '@/options/hooks/useT';
+
 import styles from './styles.module.scss';
 
 interface Props {

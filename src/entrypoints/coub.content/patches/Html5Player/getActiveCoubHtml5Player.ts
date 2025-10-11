@@ -1,4 +1,5 @@
 import type { Logger } from '@/utils/logger';
+
 import { H5P_PLAYERS_MAP_SYM } from './constants';
 import { selectActiveCoubViewer } from './selectActiveCoubViewer';
 

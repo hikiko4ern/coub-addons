@@ -1,6 +1,6 @@
 import type { Logger } from '@/utils/logger';
-import type { PhrasesBlocklist, RawPhrasesBlocklist } from '..';
 
+import type { PhrasesBlocklist, RawPhrasesBlocklist } from '..';
 import { phrasesToTree } from './phrasesTree';
 import type { SegmenterUtils } from './segmenterUtils';
 import { tryRegexFromLine } from './tryRegexFromLine';

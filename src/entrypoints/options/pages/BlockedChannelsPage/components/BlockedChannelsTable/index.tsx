@@ -22,6 +22,7 @@ import type {
 } from '@/storage/blockedChannels';
 
 import { Actions } from './components/Actions';
+
 import styles from './styles.module.scss';
 
 export interface BlockedChannelsTableControls {
@@ -178,9 +179,7 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 						onSelectionChange={handleRowsPerPageChange}
 					>
 						{rowsPerPage.map(value => (
-							<SelectItem key={value} value={value}>
-								{String(value)}
-							</SelectItem>
+							<SelectItem key={value}>{String(value)}</SelectItem>
 						))}
 					</Select>
 				</Localized>

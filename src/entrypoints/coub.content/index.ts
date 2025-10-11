@@ -8,6 +8,7 @@ import { PlayerSettingsStorage, type ReadonlyPlayerSettings } from '@/storage/pl
 import { Logger } from '@/utils/logger';
 import { onContentScriptUnload } from '@/utils/unloadHandler/onContentScriptUnload';
 import { removeOldUnloadHandlers } from '@/utils/unloadHandler/removeOldUnloadHandlers';
+
 import {
 	CBC_GET_VIEWER_BLOCK_KEY,
 	CBC_VIEWER_BLOCK_KEY_UP_EVENT,
@@ -99,6 +100,7 @@ export default defineContentScript({
 					applicationOriginalSmartDateTimeKey,
 					revertHelpersPatches,
 				) => {
+					// biome-ignore lint/suspicious/noConsole: `console` is allowed for unload scripts
 					console.debug(`[${loggerPrefix}]`, 'reverting patches');
 
 					revertCoubBlockClientsidePatches(

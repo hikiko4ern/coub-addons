@@ -1,4 +1,5 @@
 import type { ToReadonly } from '@/types/util';
+
 import type { SegmenterUtils } from './segmenterUtils';
 
 export interface PhrasesTree {

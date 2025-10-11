@@ -1,6 +1,3 @@
-import { fetchChannelData } from '@/api/channel';
-import { logger } from '@/options/constants';
-import type { BlockedChannelsStorage } from '@/storage/blockedChannels';
 import { Localized } from '@fluent/react';
 import ArrowPathIcon from '@heroicons/react/24/outline/ArrowPathIcon';
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon';
@@ -10,6 +7,10 @@ import { useSignal } from '@preact/signals';
 import type { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
 import { toast } from 'react-toastify';
+
+import { fetchChannelData } from '@/api/channel';
+import { logger } from '@/options/constants';
+import type { BlockedChannelsStorage } from '@/storage/blockedChannels';
 
 interface Props {
 	storage: BlockedChannelsStorage;

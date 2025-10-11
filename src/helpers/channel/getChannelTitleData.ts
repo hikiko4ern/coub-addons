@@ -1,4 +1,5 @@
 import type { Channel } from '@/api/types';
+
 import { getChannelTitle } from './getChannelTitle';
 
 export interface ChannelTitleData {

@@ -88,12 +88,7 @@ export const ExtensionSettings: FunctionComponent = () => {
 									const tId = `theme-setting-${theme}`;
 
 									return (
-										<SelectItem
-											key={theme}
-											value={theme}
-											textValue={l10n.getString(tId)}
-											startContent={icon}
-										>
+										<SelectItem key={theme} textValue={l10n.getString(tId)} startContent={icon}>
 											<Localized id={tId} />
 										</SelectItem>
 									);
@@ -115,7 +110,7 @@ export const ExtensionSettings: FunctionComponent = () => {
 									const tId = `locale-setting-${locale}`;
 
 									return (
-										<SelectItem key={locale} value={locale} textValue={l10n.getString(tId)}>
+										<SelectItem key={locale} textValue={l10n.getString(tId)}>
 											<Localized id={tId} />
 										</SelectItem>
 									);

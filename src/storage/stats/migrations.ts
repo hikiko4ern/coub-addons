@@ -2,6 +2,7 @@ import { ChannelExclusionReason } from '@/request/types/channel';
 import { CommentHandlingReason } from '@/request/types/comment';
 import { CoubExclusionReason } from '@/request/types/coub';
 import { StoryExclusionReason } from '@/request/types/story';
+
 import type {
 	StatsV1,
 	StatsV2,
@@ -14,7 +15,7 @@ import type {
 	StatsV9,
 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny:
+// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 type Migrations = Record<2 | 3 | 4 | 5 | 6 | 7 | 8 | 9, (stats: any) => unknown>;
 
 export const statsMigrations: Migrations = {

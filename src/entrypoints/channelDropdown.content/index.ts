@@ -179,6 +179,7 @@ export default defineContentScript({
 					channelDropdownSetDropdownContentOrigKey,
 					revertWidgetsPatches,
 				) => {
+					// biome-ignore lint/suspicious/noConsole: `console` is allowed for unload scripts
 					console.debug(`[${loggerPrefix}]`, 'reverting patches');
 
 					revertWidgetsPatches(

@@ -3,6 +3,7 @@ import type { Unwatch, WxtStorageItem } from 'wxt/storage';
 import { EventDispatcher, EventListener } from '@/events';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
+
 import {
 	type StorageEvent,
 	StorageEventTrigger,
@@ -11,7 +12,7 @@ import {
 	storageStateType,
 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny:
+// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 export type AnyStorageBase = StorageBase<any, any, any, any, any>;
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (

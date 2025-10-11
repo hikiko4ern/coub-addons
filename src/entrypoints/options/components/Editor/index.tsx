@@ -21,6 +21,7 @@ import { tomorrow } from 'thememirror';
 import { truthyFilter } from '@/helpers/truthyFilter';
 import { SettingsContext } from '@/options/components/SettingsProvider/context';
 import { Theme } from '@/storage/settings/types';
+
 import { highlightLineEffect, highlightLineField } from './lineHighlighting';
 
 import styles from './styles.module.scss';

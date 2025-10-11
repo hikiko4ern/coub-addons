@@ -1,5 +1,6 @@
 import type { createAddChannelBlockButton } from '@/js/createAddChannelBlockButton';
 import type { Logger } from '@/utils/logger';
+
 import type { ChannelDropdownAddedNode, ChannelDropdownAddedNodes } from '../types';
 
 const CHANNEL_FOLLOW_BUTTON_SELECTOR = 'div.channel-follow-button' as const;

@@ -8,8 +8,8 @@ import {
 	buildClientSchema,
 	getIntrospectionQuery,
 } from 'graphql';
-import type { GraphQLProjectConfig } from 'graphql-config';
 import type { ObjMap } from 'graphql/jsutils/ObjMap';
+import type { GraphQLProjectConfig } from 'graphql-config';
 
 import { commentsProject } from './gqlCodegen';
 

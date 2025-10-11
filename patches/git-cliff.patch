@@ -1,0 +1,42 @@
+diff --git a/lib/cjs/index.d.cts b/lib/cjs/index.d.cts
+index 010b2913d99e91dd956edb257f188e92af347eed..da63da07dde353cf3efdccbe5006a0b41ed72353 100644
+--- a/lib/cjs/index.d.cts
++++ b/lib/cjs/index.d.cts
+@@ -101,7 +101,7 @@ type Options = Partial<{
+  *
+  * @param execaOptions - Options to pass to {@link execa}.
+  */
+-declare function runGitCliff(options: Options, execaOptions?: Options$1): Promise<ResultPromise<Options$1>>;
++declare function runGitCliff<ExecaOptions extends Options$1>(options: Options, execaOptions?: ExecaOptions): Promise<ResultPromise<ExecaOptions>>;
+ /**
+  * Runs the `git-cliff` with the provided arguments.
+  *
+@@ -131,6 +131,6 @@ declare function runGitCliff(options: Options, execaOptions?: Options$1): Promis
+  * await runGitCliff(["--tag", "1.0.0", "--config", "github", "--topo-order"]);
+  * ```
+  */
+-declare function runGitCliff(args: string[], execaOptions?: Options$1): Promise<ResultPromise<Options$1>>;
++declare function runGitCliff<ExecaOptions extends Options$1>(args: string[], execaOptions?: ExecaOptions): Promise<ResultPromise<ExecaOptions>>;
+ 
+ export { type Options, runGitCliff };
+diff --git a/lib/esm/index.d.ts b/lib/esm/index.d.ts
+index 010b2913d99e91dd956edb257f188e92af347eed..da63da07dde353cf3efdccbe5006a0b41ed72353 100644
+--- a/lib/esm/index.d.ts
++++ b/lib/esm/index.d.ts
+@@ -101,7 +101,7 @@ type Options = Partial<{
+  *
+  * @param execaOptions - Options to pass to {@link execa}.
+  */
+-declare function runGitCliff(options: Options, execaOptions?: Options$1): Promise<ResultPromise<Options$1>>;
++declare function runGitCliff<ExecaOptions extends Options$1>(options: Options, execaOptions?: ExecaOptions): Promise<ResultPromise<ExecaOptions>>;
+ /**
+  * Runs the `git-cliff` with the provided arguments.
+  *
+@@ -131,6 +131,6 @@ declare function runGitCliff(options: Options, execaOptions?: Options$1): Promis
+  * await runGitCliff(["--tag", "1.0.0", "--config", "github", "--topo-order"]);
+  * ```
+  */
+-declare function runGitCliff(args: string[], execaOptions?: Options$1): Promise<ResultPromise<Options$1>>;
++declare function runGitCliff<ExecaOptions extends Options$1>(args: string[], execaOptions?: ExecaOptions): Promise<ResultPromise<ExecaOptions>>;
+ 
+ export { type Options, runGitCliff };

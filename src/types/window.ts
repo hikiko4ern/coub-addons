@@ -5,10 +5,12 @@ import type { ConditionalKeys, OmitIndexSignature } from 'type-fest';
 
 import type { Channel } from '@/api/types';
 import type { TimelineResponseCoub } from '@/request/timeline';
+
 import type { JstTemplateName } from './jst';
 
 declare global {
 	namespace coub {
+		// spell-checker: ignore gon
 		interface Gon {
 			profile_channel?: ProfileChannel;
 		}
@@ -161,7 +163,7 @@ declare global {
 
 	// Gecko's Xray-specific functions
 	var cloneInto: <T>(value: T, ctx: unknown, options?: { cloneFunctions?: boolean }) => T;
-	// biome-ignore lint/suspicious/noExplicitAny:
+	// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 	var exportFunction: <T extends (...args: any[]) => any, Ctx>(
 		fn: T,
 		ctx: Ctx,

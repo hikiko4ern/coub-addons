@@ -10,6 +10,7 @@ import type { FunctionComponent, VNode } from 'preact';
 import { formatHotkey } from '@/hotkey/formatHotkey';
 import type { ReadonlyHotkey } from '@/hotkey/types';
 import { useLocalizationContext } from '@/options/hooks/useLocalizationContext';
+
 import { useRecordHotkey } from './useRecordHotkey';
 
 interface Props {

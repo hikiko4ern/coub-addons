@@ -173,7 +173,7 @@ export const BlocklistSettings: FunctionComponent<Props> = ({ storage, state }) 
 						onSelectionChange={handleCommentsFromBlockedChannelsChange}
 					>
 						{COMMENT_FROM_BLOCKED_CHANNEL_ACTIONS.map(value => (
-							<SelectItem key={value} value={value}>
+							<SelectItem key={value}>
 								{t('comments-from-blocked-channels', { attr: value })}
 							</SelectItem>
 						))}

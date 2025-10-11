@@ -1,5 +1,5 @@
 import { useSignal } from '@preact/signals';
-import { default as FlexSearch } from 'flexsearch';
+import { Index } from 'flexsearch';
 import { useCallback, useRef } from 'preact/hooks';
 
 import type { BlockedChannelData, ReadonlyBlockedChannels } from '@/storage/blockedChannels';
@@ -8,11 +8,11 @@ const stringify = (channel: Readonly<BlockedChannelData>) =>
 	channel.permalink ? `${channel.title} ${channel.permalink}` : channel.title;
 
 export const useSearch = () => {
-	const instance = useRef<FlexSearch.Index>();
+	const instance = useRef<Index>();
 	const searchResult = useSignal<BlockedChannelData[] | undefined>(undefined);
 
 	const initializeIndex = useCallback((state: ReadonlyBlockedChannels) => {
-		const index = (instance.current = new FlexSearch.Index({
+		const index = (instance.current = new Index({
 			tokenize: 'full',
 			encode: str =>
 				str
@@ -56,13 +56,18 @@ export const useSearch = () => {
 			return;
 		}
 
-		index.searchAsync(query, Number.POSITIVE_INFINITY).then(res => {
-			searchResult.value = res.reduce<BlockedChannelData[]>((arr, id) => {
-				const channel = state.channels.get(id as number);
-				channel && arr.push(channel);
-				return arr;
-			}, []);
-		});
+		index
+			.searchAsync({
+				query,
+				limit: Number.POSITIVE_INFINITY,
+			})
+			.then(res => {
+				searchResult.value = res.reduce<BlockedChannelData[]>((arr, id) => {
+					const channel = state.channels.get(id as number);
+					channel && arr.push(channel);
+					return arr;
+				}, []);
+			});
 	}, []);
 
 	const clearSearch = useCallback(() => (searchResult.value = undefined), []);

@@ -3,7 +3,6 @@ import { nanoid } from 'nanoid';
 import { createRouter } from 'radix3';
 
 import '@/register';
-import type {} from '@/types/tsPatch';
 
 import { EventDispatcher, EventListener } from '@/events';
 import { registerChannelsHandlers } from '@/request/channels';
@@ -12,6 +11,7 @@ import { Context } from '@/request/ctx';
 import { registerStoriesHandlers } from '@/request/stories';
 import { registerTimelineHandlers } from '@/request/timeline';
 import { setLocales, t } from '@/translation/js';
+import type {} from '@/types/tsPatch';
 import { Logger } from '@/utils/logger';
 
 declare global {
@@ -75,12 +75,10 @@ export default defineBackground(() => {
 		browser.menus.update(MenuItemId.TAG_LINK_BLOCK, { title: t('block-tag') });
 	});
 
-	const eventListener = new EventListener(logger, (event, sender, _sendResponse) => {
+	const eventListener = new EventListener(logger, (event, sender, sendResponse) => {
 		if (browser.runtime.id !== sender.id) {
 			return;
 		}
-
-		const sendResponse = _sendResponse as (data: unknown) => void;
 
 		switch (event.type) {
 			case 'GetTabId':

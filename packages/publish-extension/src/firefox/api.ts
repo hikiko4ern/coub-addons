@@ -2,9 +2,9 @@
 
 import crypto from 'node:crypto';
 import { openAsBlob } from 'node:fs';
+import path from 'node:path';
 import signJwt from 'jsonwebtoken/sign';
 
-import path from 'node:path';
 import type { SupportedLocale } from '../types';
 import { type FirefoxAddonChannel, getAmoOrigin } from './options';
 import type { AddonDetails, AddonVersion, UploadDetails } from './types';
@@ -180,7 +180,7 @@ function normalizeExtensionId(id: string): string {
 	}
 
 	if (!id.startsWith('{')) {
-		// biome-ignore lint/style/useTemplate:
+		// biome-ignore lint/style/useTemplate: template is useless here
 		id = '{' + id;
 	}
 

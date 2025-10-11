@@ -12,6 +12,7 @@ import type {
 	ReadonlyPlayerSettings,
 } from '@/storage/playerSettings';
 import { FluentList } from '@/translation/intl';
+
 import { PLAYER_HOTKEYS } from '../KeyboardShortcuts/constants';
 import { BUILT_IN_HOTKEYS } from './constants';
 

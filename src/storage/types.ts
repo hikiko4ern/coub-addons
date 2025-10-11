@@ -1,4 +1,5 @@
 import type { ToReadonly } from '@/types/util';
+
 import type { StorageBase } from './base';
 import type { BlockedChannelsStorage } from './blockedChannels';
 import type { StatsStorage } from './stats';

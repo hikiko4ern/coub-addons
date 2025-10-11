@@ -8,6 +8,7 @@ import { useCallback } from 'preact/hooks';
 import { CardSection } from '@/options/components/CardSection';
 import { HintTooltip } from '@/options/components/HintTooltip';
 import type { PlayerSettingsStorage, ReadonlyPlayerSettings } from '@/storage/playerSettings';
+
 import { KeyboardShortcuts } from './components/KeyboardShortcuts';
 
 interface Props {

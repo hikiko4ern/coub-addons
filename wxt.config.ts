@@ -60,9 +60,9 @@ export default defineConfig({
 			},
 		},
 		content_security_policy: {
-			// don't forget to reload the extension after changing the hash!
+			// don't forget to reload the extension after changing the hash
 			extension_pages:
-				"script-src 'self' 'wasm-unsafe-eval' 'sha256-tommjNcTFgpLYmOWXGx1CR0O2Eh5jNbwvUsWT6+GO4Q='; object-src 'self'",
+				"script-src 'self' 'wasm-unsafe-eval' 'sha256-+Xz1iA/3wvRwOUFS+SCA6HgYZn06cVcRqCDRJA8IpO8='; object-src 'self'",
 		},
 	}),
 	zip: {

@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from 
 import type { FunctionComponent } from 'preact';
 
 import type { PlayerSettingsStorage, ReadonlyPlayerSettings } from '@/storage/playerSettings';
+
 import { KeyboardShortcut } from '../KeyboardShortcut';
 import { PLAYER_HOTKEYS } from './constants';
 

@@ -6,6 +6,7 @@ import { isObject } from '@/helpers/isObject';
 import type { GraphqlRequest, GraphqlResponse } from '@/types/graphql';
 import type { MaybePromise } from '@/types/util';
 import { Logger } from '@/utils/logger';
+
 import type { Context } from './ctx';
 
 export type RequestDetails = WebRequest.OnBeforeRequestDetailsType;

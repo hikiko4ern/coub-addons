@@ -1,7 +1,8 @@
+import type { SetReturnType } from 'type-fest';
 import type { AugmentedBrowser as Browser, Events } from 'wxt/browser';
 
 import { Logger } from '@/utils/logger';
-import type { SetReturnType } from 'type-fest';
+
 import { isObject } from './helpers/isObject';
 import type { StorageEvent } from './storage/types';
 
@@ -47,7 +48,7 @@ const EVENT_IDS: ReadonlySet<Event['type']> = new Set([
 const logger = Logger.create('events');
 
 export class EventDispatcher {
-	private static async dispatchEvent<Response = void>(event: Event) {
+	private static dispatchEvent<Response = void>(event: Event) {
 		return EventDispatcher.dispatch<Response>('runtime', event, event =>
 			browser.runtime.sendMessage(event),
 		);

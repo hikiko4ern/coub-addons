@@ -24,7 +24,7 @@ for (let i = 0; i < size; i++) {
 
 	data.id[i] = i + 1;
 	data.title[i] = `${firstName} ${lastName}`;
-	data.permalink[i] = faker.internet.userName({ firstName, lastName });
+	data.permalink[i] = faker.internet.username({ firstName, lastName });
 }
 
 await fs.writeFile(DEST, JSON.stringify(backup));

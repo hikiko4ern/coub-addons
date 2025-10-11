@@ -1,3 +1,3 @@
 export default {
-	exclude: ['@types/jquery', '@types/moment'],
+	exclude: ['@types/i18n-js', '@types/jquery', '@types/moment'],
 };

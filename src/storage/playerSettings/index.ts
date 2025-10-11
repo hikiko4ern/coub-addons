@@ -5,7 +5,6 @@ import type { Logger } from '@/utils/logger';
 
 import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
-
 import { playerSettingsMigrations } from './migrations';
 import type { PlayerSettingsV3 as PlayerSettings } from './types';
 

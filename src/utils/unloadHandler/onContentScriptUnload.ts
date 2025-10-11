@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 
 import { EventDispatcher } from '@/events';
 import { Logger } from '@/utils/logger';
+
 import { type SerializableArg, serializeArgs } from './serializeArgs';
 
 interface UnloadScript extends HTMLScriptElement {

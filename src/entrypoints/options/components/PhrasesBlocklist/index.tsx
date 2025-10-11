@@ -14,6 +14,7 @@ import { ErrorCode } from '@/options/components/ErrorCode';
 import { HintTooltip } from '@/options/components/HintTooltip';
 import { StorageHookState, useStorageState } from '@/options/hooks/useStorageState';
 import type { PhrasesBlocklistStorage } from '@/storage/phrasesBlocklist';
+
 import { phrasesBlocklist, phrasesBlocklistLinter } from './grammar';
 import { useTestPhrasesBlocklist } from './hooks/useTestPhrasesBlocklist';
 

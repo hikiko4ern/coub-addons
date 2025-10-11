@@ -1,13 +1,13 @@
 import type { ConditionalKeys } from 'type-fest';
 import { storage } from 'wxt/storage';
 
+import { ChannelExclusionReason } from '@/request/types/channel';
 import { CommentHandlingReason } from '@/request/types/comment';
 import { CoubExclusionReason } from '@/request/types/coub';
 import { StoryExclusionReason } from '@/request/types/story';
 import type { ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
-import { ChannelExclusionReason } from '@/request/types/channel';
 import { StorageBase } from '../base';
 import type { StorageMeta } from '../types';
 import {

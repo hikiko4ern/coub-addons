@@ -7,6 +7,7 @@ import { JST_TEMPLATE_NAMES } from '@/types/jst';
 import { Logger } from '@/utils/logger';
 import { onContentScriptUnload } from '@/utils/unloadHandler/onContentScriptUnload';
 import { removeOldUnloadHandlers } from '@/utils/unloadHandler/removeOldUnloadHandlers';
+
 import { JST_ORIGINAL_TEMPLATES_KEY, patchJst, revertJstPatches } from './patches/JST';
 
 const UNLOAD_HANDLERS_SUFFIX = 'popularAndCommunityTimelines';
@@ -53,6 +54,7 @@ export default defineContentScript({
 					jstOriginalTemplatesKey,
 					revertJstPatches,
 				) => {
+					// biome-ignore lint/suspicious/noConsole: `console` is allowed for unload scripts
 					console.debug(`[${loggerPrefix}]`, 'reverting patches');
 
 					revertJstPatches(isObject, jstTemplateNames, jstOriginalTemplatesKey, loggerPrefix);

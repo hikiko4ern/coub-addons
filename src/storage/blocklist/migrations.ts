@@ -7,7 +7,7 @@ import {
 	CommentFromBlockedChannelActionV5,
 } from './types';
 
-// biome-ignore lint/suspicious/noExplicitAny:
+// biome-ignore lint/suspicious/noExplicitAny: old state is untyped
 type Migrations = Record<2 | 3 | 4 | 5, (blocklist: any) => unknown>;
 
 export const blocklistMigrations: Migrations = {

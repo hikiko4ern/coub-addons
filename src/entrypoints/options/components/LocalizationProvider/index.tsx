@@ -9,6 +9,7 @@ import { Helmet } from 'react-helmet-async';
 import { SettingsContext } from '@/options/components/SettingsProvider/context';
 import { logger } from '@/options/constants';
 import { type AvailableLocale, generateBundlesFromNegotiated } from '@/translation/bundle';
+
 import { LocalizationContext } from './context';
 
 const createInstance = (locales: readonly AvailableLocale[]): ReactLocalization => {

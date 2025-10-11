@@ -1,8 +1,8 @@
 import type { Asyncify } from 'type-fest';
 
+import { isPromise } from '@/helpers/isPromise';
 import type { ToReadonly } from '@/types/util';
 
-import { isPromise } from '@/helpers/isPromise';
 import { StorageBase } from '../base';
 import type { FnWithState, StorageMeta } from '../types';
 import { getMatchedPhrase } from './helpers/getMatchedPhrase';

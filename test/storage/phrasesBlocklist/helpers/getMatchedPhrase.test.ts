@@ -4,6 +4,7 @@ import { expect, it } from 'vitest';
 
 import { getMatchedPhrase } from '@/storage/phrasesBlocklist/helpers/getMatchedPhrase';
 import { parsePhrasesBlocklist } from '@/storage/phrasesBlocklist/helpers/parsePhrasesBlocklist';
+
 import { segmenterUtils } from './segmenterUtils';
 
 const parseTree = (raw: string) => parsePhrasesBlocklist(console, segmenterUtils, raw).phrases;

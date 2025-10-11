@@ -6,7 +6,7 @@
 	"main": "src/index.js",
 	"peerDependencies": {
 		"base64-arraybuffer": "^1",
-		"vite": "^5"
+		"vite": "^6"
 	},
 	"repository": {
 		"type": "git",

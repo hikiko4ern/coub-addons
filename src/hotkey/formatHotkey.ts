@@ -1,6 +1,7 @@
 import { reduce } from 'itertools';
 
 import { filterMap } from '@/helpers/filterMap';
+
 import { HOTKEY_MODIFIERS_ENTRIES } from './constants';
 import type { ReadonlyPartialHotkey } from './types';
 

@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/complexity/useArrowFunction: test data */
+
 import { expect, test } from 'vitest';
 
 import { serializeArg, serializeArgs } from '@/utils/unloadHandler/serializeArgs';
@@ -39,8 +41,7 @@ test('should serialize functions', () => {
 	expect(serializeArg(a => a + 1)).toMatchInlineSnapshot(`"(a) => a + 1"`);
 	expect(
 		serializeArg(
-			// biome-ignore format:
-			// biome-ignore lint/complexity/useArrowFunction:
+			// biome-ignore format: test data
 			function(a){a+1},
 		),
 	).toMatchInlineSnapshot(`
@@ -50,7 +51,7 @@ test('should serialize functions', () => {
 	`);
 	expect(
 		serializeArg(
-			// biome-ignore format:
+			// biome-ignore format: test data
 			function fn(a){a+1},
 		),
 	).toMatchInlineSnapshot(`
@@ -80,7 +81,6 @@ test('should serialize arrays', () => {
 		'a\nb',
 		`some ${'some'} text`,
 		(a: number) => a + 1,
-		// biome-ignore lint/complexity/useArrowFunction:
 		function (a: number) {
 			a + 1;
 		},

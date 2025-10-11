@@ -1,5 +1,6 @@
 import type { isObject as isObjectFn } from '@/helpers/isObject';
 import type { JST_TEMPLATE_NAMES } from '@/types/jst';
+
 import type { JST_ORIGINAL_TEMPLATES_KEY, JST_ORIGINAL_TEMPLATES_SYM } from './constants';
 
 export function revertJstPatches(

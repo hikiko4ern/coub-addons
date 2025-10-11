@@ -5,36 +5,37 @@
 	"type": "module",
 	"exports": {
 		".": {
+			"types": "./lib/segmenter_utils_rs.d.ts",
 			"import": "./lib/segmenter_utils_rs.js",
-			"require": "./lib/segmenter_utils_rs.js",
-			"types": "./lib/segmenter_utils_rs.d.ts"
+			"require": "./lib/segmenter_utils_rs.js"
 		},
 		"./wasm": {
+			"types": "./lib/segmenter_utils_rs_bg.wasm.d.ts",
 			"import": "./lib/segmenter_utils_rs_bg.wasm",
-			"require": "./lib/segmenter_utils_rs_bg.wasm",
-			"types": "./lib/segmenter_utils_rs_bg.wasm.d.ts"
+			"require": "./lib/segmenter_utils_rs_bg.wasm"
 		},
 		"./sync": {
+			"types": "./src/sync.ts",
 			"import": "./src/sync.ts",
-			"require": "./src/sync.ts",
-			"types": "./src/sync.ts"
+			"require": "./src/sync.ts"
 		}
 	},
 	"scripts": {
 		"postinstall": "task",
 		"create-dirs": "node -e \"fs.mkdirSync('lib', { recursive: true })\"",
 		"clean": "rimraf lib",
-		"test": "vitest"
+		"test": "vitest run",
+		"test:watch": "vitest --watch"
 	},
 	"dependencies": {
-		"@go-task/cli": "^3.40.1",
+		"@go-task/cli": "^3.45.4",
 		"binaryen": "^124.0.0",
 		"rimraf": "^6.0.1",
 		"streamsearch": "^1.1.0"
 	},
 	"devDependencies": {
 		"@types/streamsearch": "^1.1.2",
-		"vitest": "^2.1.8"
+		"vitest": "^3.2.4"
 	},
 	"repository": {
 		"type": "git",

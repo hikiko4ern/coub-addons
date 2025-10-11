@@ -1,5 +1,6 @@
 import { isObject } from '@/helpers/isObject';
 import type { Logger } from '@/utils/logger';
+
 import { getJQuery } from '../getJQuery';
 import type { GetGlobalsRes } from '../types';
 

@@ -3,6 +3,7 @@ import { prependJqListener } from '@/helpers/prependJqListener';
 import { isHotkeyPressed } from '@/hotkey/isHotkeyPressed';
 import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
+
 import { H5P_KEY_UP_EVENT, H5P_KEY_UP_EVENT_KEY } from './constants';
 
 export const addKeyUpHandlerToHtml5Player = (

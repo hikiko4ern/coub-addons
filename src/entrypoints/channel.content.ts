@@ -1,6 +1,5 @@
-import type {} from 'typed-query-selector';
-
 import { nanoid } from 'nanoid';
+import type {} from 'typed-query-selector';
 
 import { createAddChannelBlockButton } from '@/js/createAddChannelBlockButton';
 import { getChannelDataFromWindow } from '@/js/getChannelDataFromWindow';
@@ -43,7 +42,7 @@ export default defineContentScript({
 		`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/rules`,
 		`${import.meta.env?.VITE_COUB_ORIGIN || process.env.VITE_COUB_ORIGIN}/dmca`,
 	],
-	async main(ctx) {
+	main(ctx) {
 		const ID = nanoid();
 		const logger = Logger.create('channels cs', { devUniqueId: ID });
 

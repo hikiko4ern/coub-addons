@@ -5,6 +5,7 @@ import { isObject } from '@/helpers/isObject';
 import type { BlockedChannelData } from '@/storage/blockedChannels';
 import { CommentFromBlockedChannelAction } from '@/storage/blocklist';
 import { t } from '@/translation/js';
+
 import type { Context } from './ctx';
 import { CommentHandlingReason } from './types/comment';
 

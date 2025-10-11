@@ -1,4 +1,5 @@
 import type { ToReadonly } from '@/types/util';
+
 import { HOTKEY_MODIFIERS_ENTRIES } from './constants';
 import { getUniversalHotkeyKey } from './getUniversalHotkeyKey';
 import type { Hotkey } from './types';

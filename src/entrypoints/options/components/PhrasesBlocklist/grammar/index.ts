@@ -3,6 +3,7 @@ import { type Diagnostic, linter } from '@codemirror/lint';
 import { styleTags, tags as t } from '@lezer/highlight';
 
 import { tryRegexFromLine } from '@/storage/phrasesBlocklist/helpers/tryRegexFromLine';
+
 import { parser } from './syntax.grammar';
 
 export const phrasesBlocklistLanguage = LRLanguage.define({
