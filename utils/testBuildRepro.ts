@@ -8,7 +8,12 @@ import { type Options as ExecaOptions, execaCommand } from 'execa';
 import extractZip from 'extract-zip';
 import JSZip, { type JSZipObject } from 'jszip';
 import { type DefaultRenderer, Listr, type ListrTaskWrapper, type SimpleRenderer } from 'listr2';
-import { temporaryDirectoryTask } from 'tempy';
+import {
+	type DirectoryOptions,
+	type TaskCallback,
+	temporaryDirectory,
+	temporaryDirectoryTask,
+} from 'tempy';
 
 import { name, version } from '../package.json' with { type: 'json' };
 
@@ -22,7 +27,7 @@ type Ctx = Record<never, never>;
 
 const isStdoutTty = process.stdout.isTTY;
 
-temporaryDirectoryTask(
+tmpdir(
 	async dir => {
 		console.log('Output dir:', OUTPUT_DIR);
 		console.log('Temporary dir:', dir);
@@ -129,6 +134,16 @@ temporaryDirectoryTask(
 	},
 	{ prefix: `${name}-${version}-build-repro-` },
 );
+
+function tmpdir(callback: TaskCallback<void>, options: DirectoryOptions) {
+	const isDelete = true;
+
+	if (isDelete) {
+		temporaryDirectoryTask(callback, options);
+	} else {
+		callback(temporaryDirectory(options));
+	}
+}
 
 function inspect(object: unknown) {
 	return util.inspect(object, { colors: isStdoutTty });
