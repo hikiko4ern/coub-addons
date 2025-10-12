@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.2.0] - 2025-10-12
+
+### BREAKING CHANGES
+
+- `copy link to coub` hotkey was removed
+  as it was added temporarily, doesn't work well, and has bugs anyway
+
+- the minimum supported version of Firefox
+  has been raised to 125
+
+### Removed Features
+
+- **\[breaking\]** **(hotkey)** remove the `copy link to coub` hotkey ([#22](https://github.com/hikiko4ern/coub-addons/issues/22))
+- **\[breaking\]** **(blocklist)** remove the segmenter polyfill ([#21](https://github.com/hikiko4ern/coub-addons/issues/21))
+
+### Bug Fixes
+
+- **(settings)** fix blocked channels table pagination
+- manually save the storage version due to a `wxt` bug
+
+### Features
+
+- **(blocklist)** add blocking of reposts of coubs ([#19](https://github.com/hikiko4ern/coub-addons/issues/19))
+- **(blocklist)** check the original coub if repost
+- **(blocklist)** hide featured/recommended blocked channels ([#17](https://github.com/hikiko4ern/coub-addons/issues/17))
+- **(blocklist)** add an option to hide message of blocked comments
+
+### Miscellaneous Tasks
+
+- **(settings)** emphasize overwriting of data during import
+- **(reproducibility)** enable `trim-paths` for `cargo`
+
 ## [0.1.29] - 2024-12-31
 
 ### Bug Fixes
