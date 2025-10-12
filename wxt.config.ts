@@ -17,7 +17,7 @@ import {
 export const geckoManifest = {
 	id: process.env.VITE_GECKO_ID,
 	update_url: process.env.VITE_GECKO_UPDATE_URL,
-	strict_min_version: '125',
+	strict_min_version: '125.0',
 } satisfies NonNullable<UserManifest['browser_specific_settings']>['gecko'];
 
 // See https://wxt.dev/api/config.html
