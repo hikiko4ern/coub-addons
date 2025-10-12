@@ -1,4 +1,3 @@
-import { isObject } from '@/helpers/isObject';
 import { prependJqListener } from '@/helpers/prependJqListener';
 import { isHotkeyPressed } from '@/hotkey/isHotkeyPressed';
 import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
@@ -33,22 +32,6 @@ export const addKeyUpHandlerToHtml5Player = (
 		) {
 			e.stopImmediatePropagation();
 			return this.toggleFullScreen();
-		}
-
-		if (
-			playerSettings.copyCoubPermalinkHotkey &&
-			isHotkeyPressed(e.originalEvent as KeyboardEvent, playerSettings.copyCoubPermalinkHotkey)
-		) {
-			logger.debug('copying permalink to', this.data);
-			e.stopImmediatePropagation();
-			return (
-				isObject(this.data) &&
-				typeof this.data.permalink === 'string' &&
-				this.data.permalink &&
-				navigator.clipboard.writeText(
-					new URL(`/view/${this.data.permalink}`, window.location.toString()).toString(),
-				)
-			);
 		}
 
 		if (playerSettings.isPreventPlaybackRateChange && (e.which === 87 || e.which === 83)) {

@@ -21,8 +21,4 @@ export const PLAYER_HOTKEYS: HotkeyConfig[] = [
 		key: 'toggleFullscreenHotkey',
 		l10nKey: 'fullscreen',
 	},
-	{
-		key: 'copyCoubPermalinkHotkey',
-		l10nKey: 'copy-coub-link',
-	},
 ];

@@ -32,3 +32,7 @@ export interface PlayerSettingsV2
 export interface PlayerSettingsV3 extends PlayerSettingsV2 {
 	copyCoubPermalinkHotkey: HotkeyV2 | undefined;
 }
+
+// v4
+
+export type PlayerSettingsV4 = Omit<PlayerSettingsV3, 'copyCoubPermalinkHotkey'>;

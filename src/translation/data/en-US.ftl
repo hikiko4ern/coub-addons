@@ -96,7 +96,6 @@ shortcut = Shortcut
 dislike = dislike
 bookmark = bookmark
 fullscreen = fullscreen
-copy-coub-link = copy coub link
 built-in = built-in
 press-any-key-combination = Press any key combination
 recording-key-combination-label = Recording

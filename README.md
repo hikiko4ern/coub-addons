@@ -44,7 +44,6 @@ Minimum supported browser versions:
   | put/remove dislike        | <kbd>D</kbd> (<ins>D</ins>islike)    |
   | add/remove from bookmarks | <kbd>B</kbd> (<ins>B</ins>ookmark)   |
   | toggle fullscreen mode    | <kbd>F</kbd> (<ins>F</ins>ullscreen) |
-  | copy link to coub         | —                                    |
 
 <!-- features end -->
 <!-- features start -->

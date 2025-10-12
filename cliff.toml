@@ -60,8 +60,9 @@ commit_parsers = [
 
 	# groups
 	{ message = "^[a-z]+\\((build|changelog|dev|deps|release|utils|internal)(\\)|,)", skip = true },
-	{ message = "^fix", group = "<!-- 1 -->Bug Fixes" },
-	{ message = "^feat", group = "<!-- 2 -->Features" },
+	{ message = "^remove", group = "<!-- 1 -->Removed Features" },
+	{ message = "^fix", group = "<!-- 2 -->Bug Fixes" },
+	{ message = "^feat", group = "<!-- 3 -->Features" },
 	{ message = "^docs", group = "Documentation", skip = true },
 	{ message = "^perf", group = "Performance" },
 	{ message = "^refactor", group = "Refactor", skip = true },

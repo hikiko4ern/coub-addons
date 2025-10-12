@@ -19,15 +19,12 @@ it('should merge player settings', ({ expect }) => {
 
 	t({ toggleBookmarkHotkey: undefined });
 
-	t({ toggleFullscreenHotkey: undefined });
-
-	t({ copyCoubPermalinkHotkey: { mods: HotkeyModifier.ctrl | HotkeyModifier.alt, key: 'c' } });
+	t({ toggleFullscreenHotkey: { mods: HotkeyModifier.ctrl | HotkeyModifier.alt, key: 'f' } });
 
 	t({
 		isPreventPlaybackRateChange: true,
 		toggleDislikeHotkey: undefined,
 		toggleBookmarkHotkey: undefined,
-		toggleFullscreenHotkey: undefined,
-		copyCoubPermalinkHotkey: { mods: HotkeyModifier.ctrl | HotkeyModifier.alt, key: 'c' },
+		toggleFullscreenHotkey: { mods: HotkeyModifier.ctrl | HotkeyModifier.alt, key: 'f' },
 	});
 });
