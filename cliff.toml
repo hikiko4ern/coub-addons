@@ -27,7 +27,7 @@ body = """
 {% if breaking_commits %}
 	### BREAKING CHANGES
 	{% for commit in breaking_commits %}
-			- {% if commit.scope %}**({{commit.scope}})** {% endif %}{{commit.breaking_description}}
+			- {{ commit.breaking_description | indent(prefix="  ") }}
 	{% endfor %}\
 {% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
