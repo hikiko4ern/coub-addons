@@ -67,6 +67,17 @@
 							"strict_min_version": "101.0"
 						}
 					}
+				},
+				{
+					"version": "0.2.0",
+					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.2.0/coub-addons-0.2.0-firefox.xpi",
+					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.2.0.html",
+					"update_hash": "sha256:5912d535e0ef5766c63d254eab0b40069fc30b79730775fa66ae058ea82f6a74",
+					"applications": {
+						"gecko": {
+							"strict_min_version": "125.0"
+						}
+					}
 				}
 			]
 		}
