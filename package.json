@@ -21,16 +21,13 @@
 		"version:gen-update-info": "node --disable-warning=ExperimentalWarning ./utils/genUpdateInfoHtml.js",
 		"version:add-files": "git add CHANGELOG.md docs/release-notes",
 		"release-build": "run-s \"release-build:*\"",
-		"release-build:su-prod": "pnpm --filter=\"@coub-addons/segmenter-utils\" run postinstall",
 		"release-build:zip-ff": "NODE_ENV=production wxt zip -b firefox",
-		"add-update": "NODE_ENV=production node -r dotenv-flow/config ./utils/addUpdate.js",
+		"add-update": "NODE_ENV=production tsx -r dotenv-flow/config ./utils/addUpdate.ts",
 		"release-notes": "node ./utils/genReleaseNotes.js",
 		"gql:fetch-schema": "tsx -r dotenv-flow/config ./utils/fetchGqlSchema.ts",
 		"gql:gen": "graphql-codegen --config ./utils/gqlCodegen.ts",
-		"su": "pnpm --filter=\"@coub-addons/segmenter-utils\"",
 		"pex": "pnpm --filter=\"@coub-addons/publish-extension\"",
-		"wsi": "pnpm --filter=\"@coub-addons/wxt-svg-icon\"",
-		"su:watch": "cargo bin cargo-watch -w packages/segmenter-utils/src -w packages/segmenter-utils/Cargo.toml -w packages/segmenter-utils/Taskfile.yml -w Cargo.lock -w Cargo.toml -w pnpm-lock.yaml -w rust-toolchain.toml -s \"pnpm su exec task build MODE=debug\""
+		"wsi": "pnpm --filter=\"@coub-addons/wxt-svg-icon\""
 	},
 	"dependencies": {
 		"@codemirror/autocomplete": "^6.19.0",
@@ -40,8 +37,6 @@
 		"@codemirror/search": "^6.5.11",
 		"@codemirror/state": "^6.5.2",
 		"@codemirror/view": "^6.38.5",
-		"@coub-addons/segmenter-utils": "workspace:^",
-		"@coub-addons/vite-plugin-arraybuffer": "workspace:^",
 		"@coub-addons/wxt-svg-icon": "workspace:^",
 		"@fluent/bundle": "^0.19.1",
 		"@fluent/dom": "^0.10.2",
@@ -171,7 +166,6 @@
 		],
 		"onlyBuiltDependencies": [
 			"@biomejs/biome",
-			"@go-task/cli",
 			"@parcel/watcher",
 			"dprint",
 			"esbuild",

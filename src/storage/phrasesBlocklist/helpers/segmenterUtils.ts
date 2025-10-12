@@ -1,14 +1,4 @@
-import initWasm, {
-	getFirstWord as wasm_getFirstWord,
-	segmentWords as wasm_segmentWords,
-} from '@coub-addons/segmenter-utils';
 import createEmojiRegex from 'emoji-regex';
-
-import type { MaybePromise } from '@/types/util';
-import { Logger } from '@/utils/logger';
-
-const logger = Logger.create('segmenter');
-const wasmUrl = browser.runtime.getURL('segmenter-utils.wasm');
 
 export interface WordsBoundaries {
 	words: Word[];
@@ -20,73 +10,34 @@ interface Word {
 	index: number;
 }
 
-export interface SegmenterUtils {
-	getFirstWord: (input: string) => string | undefined;
-	segmentWords: (input: string) => WordsBoundaries | undefined;
-}
+const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+const emojiRegex = createEmojiRegex();
 
-let loadSegmenterUtils: () => MaybePromise<SegmenterUtils>;
+const isWordLikeSegment = (data: Intl.SegmentData) =>
+	data.isWordLike || ((emojiRegex.lastIndex = 0), emojiRegex.test(data.segment));
 
-if (typeof Intl.Segmenter === 'undefined') {
-	logger.debug('using `Intl.Segmenter` polyfill');
+export const getFirstWord = (input: string): string | undefined => {
+	const first = segmenter.segment(input)[Symbol.iterator]().next();
+	return !first.done && isWordLikeSegment(first.value) ? first.value.segment : undefined;
+};
 
-	let initPromise: Promise<SegmenterUtils> | undefined;
-	let segmenterUtils: SegmenterUtils | undefined;
-
-	loadSegmenterUtils = () =>
-		(initPromise ||= initWasm(wasmUrl).then((): SegmenterUtils => {
-			logger.debug('successfully loaded from', wasmUrl);
-
-			segmenterUtils = {
-				getFirstWord: wasm_getFirstWord,
-				segmentWords: wasm_segmentWords,
-			};
-
-			// biome-ignore lint/style/noNonNullAssertion: it's guaranteed to be already loaded
-			loadSegmenterUtils = () => segmenterUtils!;
-
-			return segmenterUtils;
-		})).catch((err: unknown) => {
-			logger.error('failed to load from', wasmUrl, err);
-			throw err;
-		});
-} else {
-	logger.debug('using native `Intl.Segmenter`');
-
-	const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
-	const emojiRegex = createEmojiRegex();
-
-	const isWordLikeSegment = (data: Intl.SegmentData) =>
-		data.isWordLike || ((emojiRegex.lastIndex = 0), emojiRegex.test(data.segment));
-
-	const segmenterUtils: SegmenterUtils = {
-		getFirstWord: function getFirstWord(input) {
-			const first = segmenter.segment(input)[Symbol.iterator]().next();
-			return !first.done && isWordLikeSegment(first.value) ? first.value.segment : undefined;
-		},
-		segmentWords: function segmentWords(input: string) {
-			const res: WordsBoundaries = {
-				words: [],
-				wordBoundaryIndexes: new Set(),
-			};
-
-			for (const s of segmenter.segment(input)) {
-				if (isWordLikeSegment(s)) {
-					res.words.push({
-						word: s.segment,
-						index: s.index,
-					});
-
-					res.wordBoundaryIndexes.add(s.index);
-					res.wordBoundaryIndexes.add(s.index + s.segment.length);
-				}
-			}
-
-			return res.words.length ? res : undefined;
-		},
+export const segmentWords = (input: string): WordsBoundaries | undefined => {
+	const res: WordsBoundaries = {
+		words: [],
+		wordBoundaryIndexes: new Set(),
 	};
 
-	loadSegmenterUtils = () => segmenterUtils;
-}
+	for (const s of segmenter.segment(input)) {
+		if (isWordLikeSegment(s)) {
+			res.words.push({
+				word: s.segment,
+				index: s.index,
+			});
 
-export { loadSegmenterUtils };
+			res.wordBoundaryIndexes.add(s.index);
+			res.wordBoundaryIndexes.add(s.index + s.segment.length);
+		}
+	}
+
+	return res.words.length ? res : undefined;
+};

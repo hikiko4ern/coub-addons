@@ -1,6 +1,6 @@
 import type { ToReadonly } from '@/types/util';
 
-import type { SegmenterUtils } from './segmenterUtils';
+import { getFirstWord } from './segmenterUtils';
 
 export interface PhrasesTree {
 	[word: string]: PhrasesTreeLeaf;
@@ -11,15 +11,12 @@ export interface PhrasesTreeLeaf {
 	rawPositions: Map<string, number>;
 }
 
-export const phrasesToTree = (
-	utils: SegmenterUtils,
-	phrases: Iterable<[phrase: string, pos: number]>,
-): PhrasesTree => {
+export const phrasesToTree = (phrases: Iterable<[phrase: string, pos: number]>): PhrasesTree => {
 	const tree: PhrasesTree = {};
 
 	for (let [phrase, pos] of phrases) {
 		phrase = preparePhraseForTree(phrase);
-		const word = utils.getFirstWord(phrase);
+		const word = getFirstWord(phrase);
 		word && addToLeaf((tree[word] ||= newLeaf()), phrase, pos);
 	}
 
@@ -29,13 +26,12 @@ export const phrasesToTree = (
 export const preparePhraseForTree = (phrase: string) => phrase.normalize('NFKC').toLowerCase();
 
 export const addPhraseToTree = (
-	utils: SegmenterUtils,
 	tree: ToReadonly<PhrasesTree>,
 	phrase: string,
 	pos: number,
 ): ToReadonly<PhrasesTree> => {
 	phrase = preparePhraseForTree(phrase);
-	const word = utils.getFirstWord(phrase);
+	const word = getFirstWord(phrase);
 
 	if (!word) {
 		return tree;

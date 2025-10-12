@@ -10,7 +10,7 @@ Web Extension, which adds additional functionality to [Coub.com](https://coub.co
 
 Minimum supported browser versions:
 
-- Firefox 101
+- Firefox 125
 
 > [!WARNING]
 > The extension is in the early stages of development, so it is temporary:

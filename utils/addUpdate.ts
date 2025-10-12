@@ -8,6 +8,7 @@
  *
  * 2. add a specific version:
  * 		pnpm add-update --version 0.1.26 --file /path/to/coub-addons-0.1.26-firefox.xpi
+ * 		pnpm add-update --version 0.1.26 --sha256 sha256_hash
  */
 
 // @ts-check
@@ -24,66 +25,86 @@ import { execa } from 'execa';
 
 import updates from '../docs/updates.json' with { type: 'json' };
 import pkg from '../package.json' with { type: 'json' };
+import { geckoManifest } from '../wxt.config';
 
 const ROOT_PATH = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const UPDATES_FILE = path.join(ROOT_PATH, 'docs', 'updates.json');
 
 const {
-	values: { version, file },
+	values: { version: argsVersion, file, sha256 },
 } = parseArgs({
 	options: {
 		version: {
 			type: 'string',
 			short: 'v',
-			default: pkg.version,
 		},
 		file: {
 			type: 'string',
 			short: 'f',
 		},
+		sha256: {
+			type: 'string',
+		},
 	},
 });
+
+const version = argsVersion || pkg.version;
 
 if (!version) {
 	throw new RangeError(`\`--version\` is required, got \`${JSON.stringify(version)}\``);
 }
 
-if (!file) {
-	throw new RangeError(`path to the XPI \`--file\` is required, got \`${JSON.stringify(file)}\``);
+let newUpdateHash: string;
+
+if (sha256) {
+	if (!argsVersion) {
+		throw new Error('`--sha256` can only be used with `--version`');
+	}
+
+	newUpdateHash = sha256;
+} else {
+	if (!file) {
+		throw new RangeError(`path to the XPI \`--file\` is required, got \`${JSON.stringify(file)}\``);
+	}
+
+	try {
+		newUpdateHash = (await buffer(createReadStream(file).pipe(createHash('sha256')))).toString(
+			'hex',
+		);
+	} catch (err) {
+		console.error('Failed to hash', file, err);
+		process.exit(1);
+	}
 }
 
-/** @type {string} */
-let newUpdateHash;
-
-try {
-	newUpdateHash = (await buffer(createReadStream(file).pipe(createHash('sha256')))).toString('hex');
-} catch (err) {
-	console.error('Failed to hash', file, err);
-	process.exit(1);
+interface Update {
+	version: string;
+	update_link: string;
+	update_info_url: string;
+	update_hash: string;
+	applications: {
+		gecko: {
+			strict_min_version: string;
+		};
+	};
 }
 
-/**
- * @typedef {Object} Update
- * @property {string} version
- * @property {string} update_link
- * @property {string} update_info_url
- * @property {string} update_hash
- */
-
-/** @type {Update} */
-const newUpdate = {
+const newUpdate: Update = {
 	version,
 	update_link: `https://github.com/hikiko4ern/coub-addons/releases/download/v${version}/coub-addons-${version}-firefox.xpi`,
 	update_info_url: `https://coub-addons.doggo.moe/release-notes/${version}.html`,
 	update_hash: `sha256:${newUpdateHash}`,
+	applications: {
+		gecko: {
+			strict_min_version: geckoManifest.strict_min_version,
+		},
+	},
 };
 
-const oldExtUpdates =
-	updates.addons[/** @type {keyof typeof updates.addons} */ (process.env.VITE_GECKO_ID)];
+const oldExtUpdates = updates.addons[process.env.VITE_GECKO_ID as keyof typeof updates.addons];
 const sameVersionOldUpdate = oldExtUpdates.updates.findIndex(u => u.version === version);
 
-/** @type {typeof updates} */
-const newUpdates = {
+const newUpdates: typeof updates = {
 	...updates,
 	addons: {
 		...updates.addons,
@@ -102,8 +123,8 @@ console.log('Writing to', path.relative(ROOT_PATH, UPDATES_FILE));
 console.log();
 
 if (sameVersionOldUpdate !== -1) {
+	console.warn('Replacing old update');
 	console.warn(
-		'Replacing old update',
 		await codeToANSI(
 			JSON.stringify(oldExtUpdates.updates[sameVersionOldUpdate], null, 2),
 			'json',

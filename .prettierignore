@@ -15,8 +15,6 @@ stats.html
 web-ext.config.ts
 
 # caches
-.bin
-.task
 .cspellcache
 *.tsbuildinfo
 

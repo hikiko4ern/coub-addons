@@ -14,22 +14,9 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/en)
 
 ## Setup
 
-The extension requires globally installed:
+The extension requires globally installed [Node.js][node.js] with [Corepack][corepack] enabled
 
-- [Node.js][node.js] with [Corepack][corepack] enabled
-
-  The version of Node.js used is specified in [`.nvmrc`](./.nvmrc). It is recommended to use version managers - e.g. [fnm][fnm].
-
-- [Rust][rust]
-
-  If [`rustup`][rustup] is used, it should automatically install everything you need when building. If not, you need to manually install the version and target specified in the [rust-toolchain.toml](./rust-toolchain.toml) file.
-
-- [`cargo-run-bin`][cargo-run-bin]
-
-  To install:
-  ```sh
-  cargo install --locked cargo-run-bin
-  ```
+The version of Node.js used is specified in [`.nvmrc`](./.nvmrc). It is recommended to use version managers - e.g. [fnm][fnm].
 
 ## Development
 
@@ -40,8 +27,6 @@ The extension requires globally installed:
    ```sh
    pnpm i
    ```
-
-   this will also automatically build [`segmenter-utils`][segmenter-utils]
 
 2. if you don't want the dev-version of the extension to conflict with the prod-version, create a `.env.local` file with the contents:
 
@@ -64,7 +49,6 @@ Here are some helpful commands:
 - `pnpm zip:ff` - builds and packages an extension for Firefox
 - `pnpm test` - runs the tests once
 - `pnpm test:watch` - runs tests in watch mode
-- `pnpm su:watch` - starts a dev build of [`segmenter-utils`][segmenter-utils] in watch mode
 - `pnpm test-build-reproducibility` - checks if build is reproducible (this is required to pass an <abbr title="addons.mozilla.org">AMO</abbr> review)
 
 #### GraphQL <!-- omit in toc -->
@@ -161,8 +145,4 @@ To publish a release:
 [node.js]: https://nodejs.org
 [corepack]: https://github.com/nodejs/corepack
 [fnm]: https://github.com/Schniz/fnm
-[rust]: https://www.rust-lang.org
-[rustup]: https://www.rust-lang.org/tools/install
-[cargo-run-bin]: https://crates.io/crates/cargo-run-bin
-[segmenter-utils]: ./packages/segmenter-utils/README.md
 [firefox-temp-install]: https://extensionworkshop.com/documentation/develop/temporary-installation-in-firefox/

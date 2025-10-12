@@ -6,7 +6,7 @@ import { lezer } from '@lezer/generator/rollup';
 import preact from '@preact/preset-vite';
 import { normalizePath } from 'vite';
 import sassDts from 'vite-plugin-sass-dts';
-import { type WxtViteConfig, defineConfig } from 'wxt';
+import { type UserManifest, type WxtViteConfig, defineConfig } from 'wxt';
 
 import {
 	ARE_COMMENTS_ON_DIFFERENT_HOST,
@@ -14,13 +14,11 @@ import {
 	COUB_HOST,
 } from './src/permissions/constants';
 
-const SEGMENTER_UTILS_ASSET = 'segmenter-utils.wasm';
-
-declare module 'wxt/browser' {
-	export interface WxtRuntime {
-		getURL(path: typeof SEGMENTER_UTILS_ASSET): string;
-	}
-}
+export const geckoManifest = {
+	id: process.env.VITE_GECKO_ID,
+	update_url: process.env.VITE_GECKO_UPDATE_URL,
+	strict_min_version: '125',
+} satisfies NonNullable<UserManifest['browser_specific_settings']>['gecko'];
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
@@ -53,43 +51,32 @@ export default defineConfig({
 		}),
 		browser_action: {},
 		browser_specific_settings: {
-			gecko: {
-				id: process.env.VITE_GECKO_ID,
-				update_url: process.env.VITE_GECKO_UPDATE_URL,
-				strict_min_version: '101.0',
-			},
+			gecko: geckoManifest,
 		},
 		content_security_policy: {
 			// don't forget to reload the extension after changing the hash
 			extension_pages:
-				"script-src 'self' 'wasm-unsafe-eval' 'sha256-+Xz1iA/3wvRwOUFS+SCA6HgYZn06cVcRqCDRJA8IpO8='; object-src 'self'",
+				"script-src 'self' 'sha256-+Xz1iA/3wvRwOUFS+SCA6HgYZn06cVcRqCDRJA8IpO8='; object-src 'self'",
 		},
 	}),
 	zip: {
-		includeSources: [
-			'.env',
-			'.env.production',
-			'.npmrc',
-			'.nvmrc',
-			'.postcssrc.json',
-			'packages/segmenter-utils/.task/checksum/build',
-		],
+		includeSources: ['.env', '.env.production', '.npmrc', '.nvmrc', '.postcssrc.json'],
 		excludeSources: [
 			'src/gql/comments/requests/**',
 			'src/gql/comments/schema.json',
 			'docs/**',
-			'target/**',
 			'test/**',
 			'test-extension/**',
 			'utils/**',
+			'blockedChannels*.json',
 			'biome.json',
 			'cliff.toml',
 			'cspell.json',
 			'dprint.json',
 			'lefthook.yml',
-			'Taskfile.yml',
 			'vitest.config.ts',
 			'*.zip',
+			'packages/publish-extension/**',
 		],
 	},
 	hooks: {
@@ -101,12 +88,6 @@ export default defineConfig({
 				delete manifest.browser_specific_settings;
 			}
 		},
-		'build:publicAssets'(_wxt, files) {
-			files.push({
-				relativeDest: SEGMENTER_UTILS_ASSET,
-				absoluteSrc: require.resolve('@coub-addons/segmenter-utils/wasm'),
-			});
-		},
 	},
 	runner: {
 		disabled: true,
@@ -114,14 +95,17 @@ export default defineConfig({
 	vite: () =>
 		({
 			build: {
-				target: ['es2022', 'firefox101'],
+				target: [
+					'es2023', // lightningcss doesn't support `es2024` yet
+					'firefox125',
+				],
 				cssMinify: 'lightningcss',
 			},
 
 			css: {
 				lightningcss: {
 					targets: {
-						firefox: 101 << 16,
+						firefox: 125 << 16,
 					},
 				},
 				preprocessorOptions: {

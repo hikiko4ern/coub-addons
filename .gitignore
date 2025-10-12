@@ -32,12 +32,5 @@ vitest.config.ts.*.mjs
 /test-extension
 
 # caches
-.bin
-.task
 .cspellcache
 *.tsbuildinfo
-
-# packages
-/target
-/packages/*/lib
-/packages/*/target

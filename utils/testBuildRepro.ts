@@ -65,10 +65,6 @@ tmpdir(
 				rendererOptions: { outputBar: 10 },
 			},
 			{
-				title: 'Clearing build artifacts',
-				task: (_, task) => exec(task, 'pnpm su clean', { cwd: dir }),
-			},
-			{
 				title: 'Building package from sources',
 				task: (_, task) => exec(task, BUILD_COMMAND, { cwd: dir }),
 				rendererOptions: { outputBar: 10 },

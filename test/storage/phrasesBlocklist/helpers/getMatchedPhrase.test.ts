@@ -5,9 +5,7 @@ import { expect, it } from 'vitest';
 import { getMatchedPhrase } from '@/storage/phrasesBlocklist/helpers/getMatchedPhrase';
 import { parsePhrasesBlocklist } from '@/storage/phrasesBlocklist/helpers/parsePhrasesBlocklist';
 
-import { segmenterUtils } from './segmenterUtils';
-
-const parseTree = (raw: string) => parsePhrasesBlocklist(console, segmenterUtils, raw).phrases;
+const parseTree = (raw: string) => parsePhrasesBlocklist(console, raw).phrases;
 
 it('simple', () => {
 	const tree = parseTree(`\
@@ -18,35 +16,33 @@ hewwo
 worldo?`);
 
 	// will match phrase `hewwo`
-	expect(getMatchedPhrase(segmenterUtils, tree, ['hello', 'hewwo'])).toBeTruthy();
+	expect(getMatchedPhrase(tree, ['hello', 'hewwo'])).toBeTruthy();
 
 	// will match phrase `hewwo wowwd!`
-	expect(getMatchedPhrase(segmenterUtils, tree, ['---hewwo wowwd!'])).toBeTruthy();
+	expect(getMatchedPhrase(tree, ['---hewwo wowwd!'])).toBeTruthy();
 
 	// will match phrase `wowwd`
-	expect(getMatchedPhrase(segmenterUtils, tree, ['---hewwo wowwd?'])).toBeTruthy();
+	expect(getMatchedPhrase(tree, ['---hewwo wowwd?'])).toBeTruthy();
 
 	// will match phrase `worldo?`
-	expect(getMatchedPhrase(segmenterUtils, tree, ['hello worldo?'])).toBeTruthy();
+	expect(getMatchedPhrase(tree, ['hello worldo?'])).toBeTruthy();
 
 	// will NOT match phrase `worldo?`
-	expect(getMatchedPhrase(segmenterUtils, tree, ['hello worldo!'])).toBeFalsy();
+	expect(getMatchedPhrase(tree, ['hello worldo!'])).toBeFalsy();
 });
 
 it('partial', () => {
 	{
 		const tree = parseTree('свою смерть');
-		expect(
-			getMatchedPhrase(segmenterUtils, tree, ['еретики примите свою смерть достойно']),
-		).toBeTruthy();
+		expect(getMatchedPhrase(tree, ['еретики примите свою смерть достойно'])).toBeTruthy();
 	}
 
 	{
 		const tree = parseTree('🥶');
-		expect(getMatchedPhrase(segmenterUtils, tree, ['🥶'])).toBeTruthy();
-		expect(getMatchedPhrase(segmenterUtils, tree, ['🥶 winter is coming'])).toBeTruthy();
-		expect(getMatchedPhrase(segmenterUtils, tree, ['winter is coming 🥶'])).toBeTruthy();
-		expect(getMatchedPhrase(segmenterUtils, tree, ['winter🥶winter'])).toBeTruthy();
-		expect(getMatchedPhrase(segmenterUtils, tree, ['winter 🥶 winter'])).toBeTruthy();
+		expect(getMatchedPhrase(tree, ['🥶'])).toBeTruthy();
+		expect(getMatchedPhrase(tree, ['🥶 winter is coming'])).toBeTruthy();
+		expect(getMatchedPhrase(tree, ['winter is coming 🥶'])).toBeTruthy();
+		expect(getMatchedPhrase(tree, ['winter🥶winter'])).toBeTruthy();
+		expect(getMatchedPhrase(tree, ['winter 🥶 winter'])).toBeTruthy();
 	}
 });

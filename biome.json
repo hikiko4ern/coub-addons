@@ -8,8 +8,7 @@
 			"!**/*.scss",
 			"!**/*.scss.d.ts",
 			"!**/src/gql/**",
-			"!**/docs/release-notes/**",
-			"!**/packages/*/lib/**"
+			"!**/docs/release-notes/**"
 		]
 	},
 	"vcs": {

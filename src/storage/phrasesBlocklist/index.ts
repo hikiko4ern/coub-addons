@@ -1,6 +1,5 @@
 import type { Asyncify } from 'type-fest';
 
-import { isPromise } from '@/helpers/isPromise';
 import type { ToReadonly } from '@/types/util';
 
 import { StorageBase } from '../base';
@@ -9,7 +8,6 @@ import { getMatchedPhrase } from './helpers/getMatchedPhrase';
 import { mergePhrasesBlocklist } from './helpers/mergePhrasesBlocklist';
 import { parsePhrasesBlocklist } from './helpers/parsePhrasesBlocklist';
 import { addPhraseToTree } from './helpers/phrasesTree';
-import { type SegmenterUtils, loadSegmenterUtils } from './helpers/segmenterUtils';
 import type { MatchedBlocklistPhrase, PhrasesBlocklist, RawPhrasesBlocklist } from './types';
 
 export type { PhrasesBlocklist, RawPhrasesBlocklist } from './types';
@@ -21,8 +19,6 @@ export type ReadonlyPhrasesBlocklist = ToReadonly<PhrasesBlocklist>;
 /** if one of values is blocked, returns the pattern by which it is blocked */
 export type IsBlockedFn = (value: string | Iterable<string>) => MatchedBlocklistPhrase | undefined;
 
-let segmenterUtils: SegmenterUtils;
-
 export abstract class PhrasesBlocklistStorage<Key extends string> extends StorageBase<
 	Key,
 	PhrasesBlocklist,
@@ -30,24 +26,6 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 	RawPhrasesBlocklist
 > {
 	static readonly merge = mergePhrasesBlocklist;
-
-	initialize() {
-		return (this.statePromise = this.loadUtilsThenInitialize());
-	}
-
-	private loadUtilsThenInitialize() {
-		if (!segmenterUtils) {
-			const utilsPromise = loadSegmenterUtils();
-
-			if (isPromise(utilsPromise)) {
-				return utilsPromise.then(res => ((segmenterUtils = res), super.initialize()));
-			}
-
-			segmenterUtils = utilsPromise;
-		}
-
-		return super.initialize();
-	}
 
 	isBlocked: Asyncify<IsBlockedFn> = async value => this.#isBlocked(await this.getValue(), value);
 
@@ -65,7 +43,7 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 			this.setParsedValue({
 				...state,
 				raw: newRawWithoutValue + value,
-				phrases: addPhraseToTree(segmenterUtils, state.phrases, value, newRawWithoutValue.length),
+				phrases: addPhraseToTree(state.phrases, value, newRawWithoutValue.length),
 			});
 		}
 	};
@@ -75,7 +53,7 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 	// TODO: optimize
 	#isBlocked: FnWithState<PhrasesBlocklist, IsBlockedFn> = (state, value) => {
 		const valuesArr: string[] = typeof value === 'string' ? [value] : Array.from(value);
-		const blockedByPhrase = getMatchedPhrase(segmenterUtils, state.phrases, valuesArr);
+		const blockedByPhrase = getMatchedPhrase(state.phrases, valuesArr);
 
 		if (typeof blockedByPhrase !== 'undefined') {
 			return blockedByPhrase;
@@ -91,7 +69,7 @@ export abstract class PhrasesBlocklistStorage<Key extends string> extends Storag
 	};
 
 	protected parseRawValue(raw: RawPhrasesBlocklist): PhrasesBlocklist {
-		return parsePhrasesBlocklist(this.logger, segmenterUtils, raw);
+		return parsePhrasesBlocklist(this.logger, raw);
 	}
 
 	protected toRawValue(parsed: ReadonlyPhrasesBlocklist): RawPhrasesBlocklist {

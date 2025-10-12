@@ -10,7 +10,6 @@ import type { JstTemplateName } from './jst';
 
 declare global {
 	namespace coub {
-		// spell-checker: ignore gon
 		interface Gon {
 			profile_channel?: ProfileChannel;
 		}

@@ -2,10 +2,9 @@ import type { ToReadonly } from '@/types/util';
 
 import type { MatchedBlocklistPhrase } from '../types';
 import { type PhrasesTree, preparePhraseForTree } from './phrasesTree';
-import type { SegmenterUtils } from './segmenterUtils';
+import { segmentWords } from './segmenterUtils';
 
 export const getMatchedPhrase = (
-	utils: SegmenterUtils,
 	tree: ToReadonly<PhrasesTree>,
 	strings: Iterable<string>,
 ): MatchedBlocklistPhrase | undefined => {
@@ -13,7 +12,7 @@ export const getMatchedPhrase = (
 		str = preparePhraseForTree(str);
 
 		const strLength = str.length,
-			wordsBoundaries = utils.segmentWords(str);
+			wordsBoundaries = segmentWords(str);
 
 		if (wordsBoundaries) {
 			for (const { word, index } of wordsBoundaries.words) {
