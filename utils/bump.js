@@ -1,3 +1,11 @@
+/**
+ * @file bumps version and creates git commit and tag
+ *
+ * Usage:
+ *
+ * pnpm bump
+ */
+
 import { execa } from 'execa';
 import { runGitCliff } from 'git-cliff';
 

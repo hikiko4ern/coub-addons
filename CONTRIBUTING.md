@@ -111,13 +111,14 @@ If something doesn't work, see [Testing Automatic Updating](https://extensionwor
 
 ## Releasing updates
 
-At the moment releases are done manually. To create a release, run `pnpm bump`.
+At the moment releases are done manually.
 
-This will automatically bump up the version based on new commits added since the previous tag and generate a [`CHANGELOG.md`](./CHANGELOG.md).
+To create a release, run `pnpm bump`. This will automatically bump up the version based on new commits added since the previous tag and generate a [`CHANGELOG.md`](./CHANGELOG.md).
 
 To publish a release:
 
 1. run `pnpm release-build` to build a release version of the extension
+
    this will create two files in the `.output` directory:
 
    - `coub-addons-x.x.x-firefox.zip` - unsigned extension
@@ -127,9 +128,14 @@ To publish a release:
 2. run `pnpm tsx ./utils/upload/index.ts` to publish a new version to <abbr title="addons.mozilla.org">AMO</abbr>
 3. wait for the new version to be approved by the AMO
 4. download the signed `.xpi` from AMO
-5. create new releases in [`GitHub`](https://github.com/hikiko4ern/coub-addons) and [Codeberg](https://codeberg.org/hikiko4ern/coub-addons)
+5. create new releases in [GitHub](https://github.com/hikiko4ern/coub-addons) and [Codeberg](https://codeberg.org/hikiko4ern/coub-addons)
 
-   run `pnpm -s release-notes` to generate a release description
+   to generate a release description, run:
+
+   | hosting  | command                             |
+   | :------- | :---------------------------------- |
+   | GitHub   | `pnpm -s release-notes -h github`   |
+   | Codeberg | `pnpm -s release-notes -h codeberg` |
 
    attach 2 files to the release:
    - `coub-addons-x.x.x-firefox.xpi` - signed extension downloaded from AMO

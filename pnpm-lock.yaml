@@ -277,9 +277,6 @@ importers:
       '@shikijs/cli':
         specifier: ^3.13.0
         version: 3.13.0
-      '@types/hast':
-        specifier: ^3.0.4
-        version: 3.0.4
       '@types/mdast':
         specifier: ^4.0.4
         version: 4.0.4

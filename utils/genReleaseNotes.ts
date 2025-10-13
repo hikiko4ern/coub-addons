@@ -1,44 +1,34 @@
 /**
- * @file generates release notes for git hosting
+ * @file generates release notes for the git hosting
  *
  * Usage:
  *
  * 1. generate for the latest version:
- * 		pnpm release-notes
+ *      pnpm -s release-notes
  *
  * 2. generate for a specific version:
- * 		pnpm release-notes -v 0.1.26
+ *      pnpm -s release-notes -v 0.1.26
  *
  * 3. generate for a specific version with a custom range:
- * 		pnpm release-notes -v 0.1.26 --range v0.1.25..v0.1.26
+ *      pnpm -s release-notes -v 0.1.26 --range v0.1.25..v0.1.26
  */
 
-// @ts-check
-
-import { stdout } from 'node:process';
 import { parseArgs } from 'node:util';
-import { codeToANSI } from '@shikijs/cli';
-import { execa } from 'execa';
-import { runGitCliff } from 'git-cliff';
-import { fromMarkdown } from 'mdast-util-from-markdown';
+import type { PhrasingContent, RootContent } from 'mdast';
 import { gfmToMarkdown } from 'mdast-util-gfm';
 import { toMarkdown } from 'mdast-util-to-markdown';
-import { remove } from 'unist-util-remove';
 import { SKIP, visit } from 'unist-util-visit';
 
-import pkg from '../package.json' with { type: 'json' };
+import { generateReleaseNotes } from './helpers/generateReleaseNotes';
+import { printCode } from './helpers/printCode';
 
-let {
-	values: { version, range, files: withFilesFooter },
+const {
+	values: { hosting, files: withFilesFooter },
 } = parseArgs({
 	options: {
-		version: {
+		hosting: {
 			type: 'string',
-			short: 'v',
-			default: pkg.version,
-		},
-		range: {
-			type: 'string',
+			short: 'h',
 		},
 		files: {
 			type: 'boolean',
@@ -49,35 +39,25 @@ let {
 	allowNegative: true,
 });
 
-if (!version) {
-	throw new RangeError(`\`--version\` is required, got \`${JSON.stringify(version)}\``);
+if (hosting !== 'github' && hosting !== 'codeberg') {
+	throw new RangeError(
+		`\`--hosting\` \`${JSON.stringify(hosting)}\` is not one of the supported ones (\`github\`, \`codeberg\`)`,
+	);
 }
 
-if (!range) {
-	const prevTag = (
-		await execa({
-			stdio: ['ignore', 'pipe', 'inherit'],
-		})`git describe --tags --abbrev=0 v${version}^`
-	).stdout.trim();
+const { mdTree, range } = await generateReleaseNotes();
 
-	if (!prevTag) {
-		throw new Error(`Failed to get previous for ${version} version`);
-	}
+let compareLink: string;
 
-	range = `${prevTag}..v${version}`;
+switch (hosting) {
+	case 'github':
+		compareLink = `https://github.com/hikiko4ern/coub-addons/compare/${range.replace('..', '...')}`;
+		break;
+
+	case 'codeberg':
+		compareLink = `https://codeberg.org/hikiko4ern/coub-addons/compare/${range.replace('..', '...')}`;
+		break;
 }
-
-const compareLink = `https://github.com/hikiko4ern/coub-addons/compare/${range.replace('..', '...')}`;
-
-const newVersionMarkdown = (await runGitCliff([range], { stdio: ['ignore', 'pipe', 'inherit'] }))
-	.stdout;
-
-const mdTree = fromMarkdown(newVersionMarkdown);
-
-remove(mdTree, [
-	{ type: 'heading', depth: 1 },
-	{ type: 'heading', depth: 2 },
-]);
 
 // replace issue/PR links `[#1](https://github.com/hikiko4ern/coub-addons/issues/1)`
 // with a plain text `#1`
@@ -152,29 +132,23 @@ const releaseNotes = toMarkdown(mdTree, {
 	extensions: [gfmToMarkdown({ tablePipeAlign: false })],
 }).trim();
 
-stdout.isTTY && console.log();
-console.log(
-	stdout.isTTY ? (await codeToANSI(releaseNotes, 'markdown', 'ayu-dark')).trim() : releaseNotes,
-);
+await printCode(releaseNotes, 'markdown');
 
-/**
- * @typedef {Object} ReleaseFilesOptions
- * @property {string} title
- * @property {string} fileHeader
- * @property {string} descriptionHeader
- * @property {import('mdast').PhrasingContent[]} xpiDescription
- * @property {import('mdast').PhrasingContent[]} sourcesDescription
- *
- * @param {ReleaseFilesOptions} options
- * @returns {import('mdast').RootContent[]}
- */
+interface ReleaseFilesOptions {
+	title: string;
+	fileHeader: string;
+	descriptionHeader: string;
+	xpiDescription: PhrasingContent[];
+	sourcesDescription: PhrasingContent[];
+}
+
 function releaseFiles({
 	title,
 	fileHeader,
 	descriptionHeader,
 	xpiDescription,
 	sourcesDescription,
-}) {
+}: ReleaseFilesOptions): RootContent[] {
 	return [
 		{ type: 'html', value: `<details><summary>${title}</summary>` },
 		{

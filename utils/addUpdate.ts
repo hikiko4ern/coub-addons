@@ -4,14 +4,15 @@
  * Usage:
  *
  * 1. add the current version:
- * 		pnpm add-update --file /path/to/coub-addons-0.1.26-firefox.xpi
+ *      pnpm add-update --file /path/to/coub-addons-0.1.26-firefox.xpi
  *
  * 2. add a specific version:
- * 		pnpm add-update --version 0.1.26 --file /path/to/coub-addons-0.1.26-firefox.xpi
- * 		pnpm add-update --version 0.1.26 --sha256 sha256_hash
+ *    - using file:
+ *        pnpm add-update --version 0.1.26 --file /path/to/coub-addons-0.1.26-firefox.xpi
+ *
+ *    - using precomputed hash:
+ *        pnpm add-update --version 0.1.26 --sha256 sha256_hash_of_xpi
  */
-
-// @ts-check
 
 import { createHash } from 'node:crypto';
 import { createReadStream } from 'node:fs';

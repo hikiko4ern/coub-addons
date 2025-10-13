@@ -4,10 +4,10 @@
  * Usage:
  *
  * 1. generate changelog during bump:
- * 		node ./utils/genUpdateInfoHtml.js
+ *      node ./utils/genUpdateInfoHtml.js
  *
  * 2. generate changelog for a specific version:
- * 		node ./utils/genUpdateInfoHtml.js -v 0.1.26 --range v0.1.25..v0.1.26
+ *      node ./utils/genUpdateInfoHtml.js -v 0.1.26 --range v0.1.25..v0.1.26
  */
 
 // @ts-check
