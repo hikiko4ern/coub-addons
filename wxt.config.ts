@@ -117,7 +117,10 @@ export default defineConfig({
 
 			plugins: [
 				ValidateEnv(),
-				preact({ devToolsEnabled: false }),
+				preact({
+					// Preact DevTools doesn't work on protected pages like `moz-extension://` anyway
+					devToolsEnabled: false,
+				}),
 				sassDts(),
 				lezer(),
 				(() => {

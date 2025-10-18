@@ -1,0 +1,30 @@
+`@nextui-org/shared-utils`, built with patches
+
+see the patch list in https://github.com/hikiko4ern/nextui/commits/hikiko4ern/coub-addons/
+
+---
+
+# @nextui-org/system
+
+A Quick description of the component
+
+> This is an internal utility, not intended for public usage.
+
+## Installation
+
+```sh
+yarn add @nextui-org/system
+# or
+npm i @nextui-org/system
+```
+
+## Contribution
+
+Yes please! See the
+[contributing guidelines](https://github.com/nextui-org/nextui/blob/master/CONTRIBUTING.md)
+for details.
+
+## License
+
+This project is licensed under the terms of the
+[MIT license](https://github.com/nextui-org/nextui/blob/master/LICENSE).

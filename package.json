@@ -151,7 +151,8 @@
 		"overrides": {
 			"@types/node": "^22.18.9",
 			"vite": "^6.3.6",
-			"vite>jiti": ">=2"
+			"vite>jiti": ">=2",
+			"@nextui-org/shared-utils": "packages/@nextui-org/shared-utils"
 		},
 		"peerDependencyRules": {
 			"ignoreMissing": [
@@ -170,6 +171,13 @@
 			"esbuild",
 			"lefthook"
 		],
+		"packageExtensions": {
+			"@nextui-org/shared-utils": {
+				"peerDependencies": {
+					"react": ">=18 || >=19.0.0-rc.0"
+				}
+			}
+		},
 		"patchedDependencies": {
 			"git-cliff": "patches/git-cliff.patch"
 		},

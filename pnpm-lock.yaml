@@ -8,6 +8,9 @@ overrides:
   '@types/node': ^22.18.9
   vite: ^6.3.6
   vite>jiti: '>=2'
+  '@nextui-org/shared-utils': packages/@nextui-org/shared-utils
+
+packageExtensionsChecksum: sha256-oaJvg29//7Jv85iwXD8zVGf2fcPIwOzn5YjkEOKRiR0=
 
 patchedDependencies:
   git-cliff:
@@ -1919,9 +1922,6 @@ packages:
     resolution: {integrity: sha512-mkiTpFJnCzB2M8Dl7IwXVzDKKq9ZW2WC0DaQRs1eWgqboRCP8DDde+MJZq331hC7pfH8BC/4rxXsKECrOUUwCg==}
     peerDependencies:
       react: '>=18 || >=19.0.0-rc.0'
-
-  '@nextui-org/shared-utils@2.1.2':
-    resolution: {integrity: sha512-5n0D+AGB4P9lMD1TxwtdRSuSY0cWgyXKO9mMU11Xl3zoHNiAz/SbCSTc4VBJdQJ7Y3qgNXvZICzf08+bnjjqqA==}
 
   '@nextui-org/snippet@2.2.9':
     resolution: {integrity: sha512-Sc3CdW4/UCL4hhwKP0k1ffLYLo6JlI9XbB3exS77j1lS6ox/FRc+d7YylMrrNuAb/L4bIjR/TUoNiu+Rkc6u0Q==}
@@ -7927,7 +7927,7 @@ snapshots:
       '@nextui-org/framer-utils': 2.1.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-aria-accordion': 2.2.2
@@ -7943,7 +7943,7 @@ snapshots:
   '@nextui-org/aria-utils@2.2.6(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)':
     dependencies:
       '@nextui-org/react-rsc-utils': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@react-aria/utils': 3.26.0
       '@react-stately/collections': 3.12.0
@@ -7958,7 +7958,7 @@ snapshots:
     dependencies:
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/ripple': 2.2.6(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/spinner': 2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
@@ -7975,7 +7975,7 @@ snapshots:
     dependencies:
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/ripple': 2.2.6(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-aria-button': 2.2.4
@@ -7990,7 +7990,7 @@ snapshots:
     dependencies:
       '@nextui-org/form': 2.1.7(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-callback-ref': 2.1.1
@@ -8009,7 +8009,7 @@ snapshots:
     dependencies:
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@react-aria/focus': 3.19.0
@@ -8020,14 +8020,14 @@ snapshots:
   '@nextui-org/code@2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))':
     dependencies:
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system-rsc': 2.3.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
 
   '@nextui-org/divider@2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))':
     dependencies:
       '@nextui-org/react-rsc-utils': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system-rsc': 2.3.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@react-types/shared': 3.26.0
@@ -8039,7 +8039,7 @@ snapshots:
   '@nextui-org/form@2.1.7(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))':
     dependencies:
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@react-aria/utils': 3.26.0
@@ -8049,7 +8049,7 @@ snapshots:
 
   '@nextui-org/framer-utils@2.1.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)':
     dependencies:
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/use-measure': 2.1.1
       framer-motion: 12.23.24
@@ -8061,7 +8061,7 @@ snapshots:
       '@nextui-org/form': 2.1.7(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-safe-layout-effect': 2.1.1
@@ -8079,7 +8079,7 @@ snapshots:
   '@nextui-org/kbd@2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))':
     dependencies:
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system-rsc': 2.3.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@react-aria/utils': 3.26.0
@@ -8088,7 +8088,7 @@ snapshots:
     dependencies:
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-aria-link': 2.2.4
@@ -8102,7 +8102,7 @@ snapshots:
       '@nextui-org/aria-utils': 2.2.6(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/divider': 2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-is-mobile': 2.2.2
@@ -8123,7 +8123,7 @@ snapshots:
       '@nextui-org/framer-utils': 2.1.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-aria-button': 2.2.4
@@ -8144,7 +8144,7 @@ snapshots:
       '@nextui-org/dom-animation': 2.1.1(framer-motion@12.23.24)
       '@nextui-org/framer-utils': 2.1.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-scroll-position': 2.1.1
@@ -8161,7 +8161,7 @@ snapshots:
     dependencies:
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-intersection-observer': 2.2.2
@@ -8179,7 +8179,7 @@ snapshots:
       '@nextui-org/dom-animation': 2.1.1(framer-motion@12.23.24)
       '@nextui-org/framer-utils': 2.1.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-aria-button': 2.2.4
@@ -8199,13 +8199,13 @@ snapshots:
   '@nextui-org/react-utils@2.1.2':
     dependencies:
       '@nextui-org/react-rsc-utils': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
 
   '@nextui-org/ripple@2.2.6(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)':
     dependencies:
       '@nextui-org/dom-animation': 2.1.1(framer-motion@12.23.24)
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       framer-motion: 12.23.24
@@ -8213,7 +8213,7 @@ snapshots:
   '@nextui-org/scroll-shadow@2.3.4(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))':
     dependencies:
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-data-scroll-overflow': 2.2.2
@@ -8227,7 +8227,7 @@ snapshots:
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/scroll-shadow': 2.3.4(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/spinner': 2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
@@ -8245,14 +8245,12 @@ snapshots:
 
   '@nextui-org/shared-icons@2.1.1': {}
 
-  '@nextui-org/shared-utils@2.1.2': {}
-
   '@nextui-org/snippet@2.2.9(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)':
     dependencies:
       '@nextui-org/button': 2.2.8(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/tooltip': 2.2.6(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
@@ -8264,14 +8262,14 @@ snapshots:
   '@nextui-org/spacer@2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))':
     dependencies:
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system-rsc': 2.3.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
 
   '@nextui-org/spinner@2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))':
     dependencies:
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system-rsc': 2.3.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
 
@@ -8300,7 +8298,7 @@ snapshots:
       '@nextui-org/checkbox': 2.3.7(@nextui-org/system@2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24))(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/react-utils': 2.1.2
       '@nextui-org/shared-icons': 2.1.1
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/spacer': 2.2.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
@@ -8316,7 +8314,7 @@ snapshots:
 
   '@nextui-org/theme@2.4.4(tailwindcss@3.4.18)':
     dependencies:
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       clsx: 1.2.1
       color: 4.2.3
       color2k: 2.0.3
@@ -8332,7 +8330,7 @@ snapshots:
       '@nextui-org/dom-animation': 2.1.1(framer-motion@12.23.24)
       '@nextui-org/framer-utils': 2.1.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/react-utils': 2.1.2
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@nextui-org/system': 2.4.5(@nextui-org/theme@2.4.4(tailwindcss@3.4.18))(framer-motion@12.23.24)
       '@nextui-org/theme': 2.4.4(tailwindcss@3.4.18)
       '@nextui-org/use-safe-layout-effect': 2.1.1
@@ -8359,7 +8357,7 @@ snapshots:
 
   '@nextui-org/use-aria-button@2.2.4':
     dependencies:
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@react-aria/focus': 3.19.0
       '@react-aria/interactions': 3.22.5
       '@react-aria/utils': 3.26.0
@@ -8368,7 +8366,7 @@ snapshots:
 
   '@nextui-org/use-aria-link@2.2.4':
     dependencies:
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@react-aria/focus': 3.19.0
       '@react-aria/interactions': 3.22.5
       '@react-aria/utils': 3.26.0
@@ -8407,7 +8405,7 @@ snapshots:
 
   '@nextui-org/use-data-scroll-overflow@2.2.2':
     dependencies:
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
 
   '@nextui-org/use-disclosure@2.2.2':
     dependencies:
@@ -8434,7 +8432,7 @@ snapshots:
 
   '@nextui-org/use-pagination@2.2.3':
     dependencies:
-      '@nextui-org/shared-utils': 2.1.2
+      '@nextui-org/shared-utils': link:packages/@nextui-org/shared-utils
       '@react-aria/i18n': 3.12.4
 
   '@nextui-org/use-safe-layout-effect@2.1.1': {}
