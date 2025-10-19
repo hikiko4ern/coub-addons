@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import type {} from 'typed-query-selector';
 
+import '@/register';
+
 import { isObject } from '@/helpers/isObject';
 import { applyPatches } from '@/helpers/patch/applyPatches';
 import { JST_TEMPLATE_NAMES } from '@/types/jst';

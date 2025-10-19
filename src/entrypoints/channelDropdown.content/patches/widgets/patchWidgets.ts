@@ -49,7 +49,7 @@ export function patchWidgets(
 	logger.debug('patched successfully');
 
 	return () => {
-		logger.debug('removing patches');
+		using rmLogger = logger.scopedGroupAuto('removing patches');
 
 		for (const revert of patches) {
 			revert?.();
@@ -60,7 +60,7 @@ export function patchWidgets(
 			CD_ADDED_NODES_KEY,
 			CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_KEY,
 			undefined,
-			logger,
+			rmLogger,
 			waivedWindow.widgets,
 		);
 	};
@@ -75,13 +75,6 @@ const patchChannelDropdown = (
 	const logger = parentLogger.getChildLogger('ChannelDropdown');
 	const proto = waivedWindow.widgets.ChannelDropdown.prototype;
 
-	const addContent = addBlockButtonToChannelDropdown.bind(
-		undefined,
-		logger,
-		addedNodes,
-		addChannelBlockButton,
-	);
-
 	patchMethod(
 		logger,
 		proto,
@@ -91,13 +84,21 @@ const patchChannelDropdown = (
 			const channelDropdown = this.wrappedJSObject || this;
 			const res = Reflect.apply(origSetDropdownContent, channelDropdown, args);
 
-			logger.debug('adding content to channel dropdown', { channelDropdown });
+			using handlerLogger = logger.scopedGroupAuto('adding content to channel dropdown');
+			handlerLogger.debug({ channelDropdown });
 
 			try {
 				const content = channelDropdown.dropdown?.content[0];
-				content && addContent(content, channelDropdown.data?.get('fullChannelData')?.id);
+				content &&
+					addBlockButtonToChannelDropdown(
+						handlerLogger,
+						addedNodes,
+						addChannelBlockButton,
+						content,
+						channelDropdown.data?.get('fullChannelData')?.id,
+					);
 			} catch (err) {
-				logger.error('failed to patch content:', err);
+				handlerLogger.error('failed to patch content:', err);
 			}
 
 			return res;

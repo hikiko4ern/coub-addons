@@ -42,7 +42,7 @@ export function patchHelpers(
 	logger.debug('patched successfully');
 
 	return () => {
-		logger.debug('removing patches');
+		using rmLogger = logger.scopedGroupAuto('removing patches');
 
 		for (const revert of patches) {
 			revert?.();
@@ -51,7 +51,7 @@ export function patchHelpers(
 		revertHelpersPatches(
 			APPLICATION_ORIGINAL_SMART_DATE_TIME_KEY,
 			undefined,
-			logger,
+			rmLogger,
 			waivedWindow.helpers,
 		);
 	};
@@ -76,7 +76,7 @@ const patchApplication = (parentLogger: Logger, waivedWindow: typeof window) => 
 		'smartDateTime',
 		APPLICATION_ORIGINAL_SMART_DATE_TIME_SYM,
 		function patchedSmartDateTime(origSmartDateTime, ...args) {
-			smartDateTimeLogger.debug('called with', [...args]);
+			using logger = smartDateTimeLogger.scopedGroupAuto('called with', [...args]);
 
 			const [object, _ago, dateProperty = 'created_at'] = args;
 
@@ -92,7 +92,7 @@ const patchApplication = (parentLogger: Logger, waivedWindow: typeof window) => 
 						date = moment(rawDate),
 						dateYear = date.year();
 
-					logger.debug('created date');
+					logger.debug('created date', date);
 
 					if (
 						dateYear !== now.getFullYear() &&
@@ -112,10 +112,7 @@ const patchApplication = (parentLogger: Logger, waivedWindow: typeof window) => 
 						);
 					}
 				} catch (err) {
-					smartDateTimeLogger.error(
-						'failed to format date, falling back to the provided implementation',
-						err,
-					);
+					logger.error('failed to format date, falling back to the provided implementation', err);
 				}
 			}
 

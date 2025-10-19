@@ -164,7 +164,7 @@ export function patchHtml5Player(
 	logger.debug('patched successfully');
 
 	return () => {
-		logger.debug('removing patches');
+		using rmLogger = logger.scopedGroupAuto('removing patches');
 
 		revertHtml5PlayerPatches(
 			H5P_ATTACH_EVENTS_KEY,
@@ -172,7 +172,7 @@ export function patchHtml5Player(
 			H5P_KEY_UP_HANDLERS_KEY,
 			H5P_CHANGE_STATE_KEY,
 			undefined,
-			logger,
+			rmLogger,
 			proto,
 		);
 	};
@@ -194,19 +194,15 @@ const addMediaSessionHandlers = (parentLogger: Logger, { $, Html5Player }: Html5
 	type ActionHandler = (logger: Logger, details: MediaSessionActionDetails) => void;
 
 	const setHandler = (action: MediaSessionAction, handler: ActionHandler) => {
-		const actionLogger = logger.getChildLogger(action);
-
 		try {
 			navigator.mediaSession.setActionHandler(action, (...args) => {
-				logger.group(action);
+				using actionLogger = logger.scopedGroupAuto(action);
 
 				try {
 					handler(actionLogger, ...args);
 				} catch (err) {
-					logger.error('handler thrown:', err);
+					actionLogger.error('handler thrown:', err);
 				}
-
-				logger.groupEnd();
 			});
 		} catch (err) {
 			logger.error(`failed to set \`${action}\` handler`, err);

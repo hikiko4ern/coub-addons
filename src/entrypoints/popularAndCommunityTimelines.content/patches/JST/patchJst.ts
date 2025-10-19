@@ -52,7 +52,7 @@ export function patchJst(
 	logger.debug('patched successfully');
 
 	return () => {
-		logger.debug('removing patches');
+		using rmLogger = logger.scopedGroupAuto('removing patches');
 
 		for (const revert of patches) {
 			revert?.();
@@ -63,7 +63,7 @@ export function patchJst(
 			JST_TEMPLATE_NAMES,
 			JST_ORIGINAL_TEMPLATES_KEY,
 			undefined,
-			logger,
+			rmLogger,
 			waivedWindow.JST,
 		);
 	};

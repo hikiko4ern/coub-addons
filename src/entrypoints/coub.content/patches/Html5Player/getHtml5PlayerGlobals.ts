@@ -42,11 +42,17 @@ export const getHtml5PlayerGlobals = (logger: Logger): GetGlobalsRes<Html5Player
 	}
 
 	if (typeof proto.toggleFavourites !== 'function') {
-		logger.warn('`X.prototype.toggleFavourites` is not a function:', proto.toggleFavourites);
+		logger.warn(
+			'`Html5Player.prototype.toggleFavourites` is not a function:',
+			proto.toggleFavourites,
+		);
 	}
 
 	if (typeof proto.toggleFullScreen !== 'function') {
-		logger.warn('`X.prototype.toggleFullScreen` is not a function:', proto.toggleFullScreen);
+		logger.warn(
+			'`Html5Player.prototype.toggleFullScreen` is not a function:',
+			proto.toggleFullScreen,
+		);
 	}
 
 	return { isValid: true, ret: { WeakMap, WeakRef, $, Html5Player } };

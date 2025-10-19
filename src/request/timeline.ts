@@ -184,20 +184,22 @@ export const registerTimelineHandlers = (ctx: Context) => {
 				isModified = filteredCoubs.length !== origAmount;
 
 				if (filteredOutCoubs.length) {
-					logger.groupCollapsed(
-						'filtered out',
-						filteredOutCoubs.length,
-						filteredOutCoubs.length > 1 ? 'coubs' : 'coub',
-					);
-					logger.tableRaw(filteredOutCoubs, [
-						'title',
-						'author',
-						'tReason',
-						'pattern',
-						'link',
-						'parent',
-					]);
-					logger.groupEnd();
+					{
+						using _ = logger.scopedGroupAuto(
+							'filtered out',
+							filteredOutCoubs.length,
+							filteredOutCoubs.length > 1 ? 'coubs' : 'coub',
+						);
+
+						logger.tableRaw(filteredOutCoubs, [
+							'title',
+							'author',
+							'tReason',
+							'pattern',
+							'link',
+							'parent',
+						]);
+					}
 
 					ctx.stats.countFilteredOutCoubs(details.url, details.originUrl, filteredOutCoubs);
 				}

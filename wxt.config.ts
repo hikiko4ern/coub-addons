@@ -94,6 +94,10 @@ export default defineConfig({
 	},
 	vite: () =>
 		({
+			esbuild: {
+				target: ['es2024', 'firefox125'],
+			},
+
 			build: {
 				target: [
 					'es2023', // lightningcss doesn't support `es2024` yet

@@ -4,6 +4,8 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Router as Wouter } from 'wouter-preact';
 import { useHashLocation } from 'wouter-preact/use-hash-location';
 
+import '@/register';
+
 import { LocalizationProvider } from './components/LocalizationProvider';
 import { LocalizationContext } from './components/LocalizationProvider/context';
 import { Router } from './components/Router';

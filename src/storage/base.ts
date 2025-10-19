@@ -123,7 +123,8 @@ export abstract class StorageBase<
 		isDispatchEvent: boolean,
 		eventTrigger?: StorageEventTrigger,
 	) {
-		this.logger.debug('notifying watchers', { state, oldState, watchers: this.#watchers });
+		using logger = this.logger.scopedGroupAuto('notifying watchers');
+		logger.debug({ state, oldState, watchers: this.#watchers });
 
 		if (this.#watchers.size) {
 			for (const cb of this.#watchers) {

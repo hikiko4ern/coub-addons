@@ -102,20 +102,22 @@ export const registerCommentsHandlers = (ctx: Context) => {
 				isModified ||= filteredComments.length !== origAmount;
 
 				if (handledComments.length) {
-					logger.groupCollapsed(
-						'handled',
-						handledComments.length,
-						handledComments.length > 1 ? 'comments' : 'comment',
-						'from',
-						field,
-					);
-					logger.tableRaw(handledComments, [
-						'authorName',
-						'tReason',
-						'authorProfileUrl',
-						'message',
-					]);
-					logger.groupEnd();
+					{
+						using _ = logger.scopedGroupAuto(
+							'handled',
+							handledComments.length,
+							handledComments.length > 1 ? 'comments' : 'comment',
+							'from',
+							field,
+						);
+
+						logger.tableRaw(handledComments, [
+							'authorName',
+							'tReason',
+							'authorProfileUrl',
+							'message',
+						]);
+					}
 
 					ctx.stats.countHandledComments(details.url, details.originUrl, handledComments);
 				}

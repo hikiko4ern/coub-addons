@@ -36,13 +36,18 @@ export const createAddChannelBlockButton = ({
 	followButtonTextDummySelector,
 	followButtonTextDummyClassName,
 }: CreateOptions) => {
-	const logger = parentLogger.getChildLogger('addChannelBlockButton');
+	const fnLogger = parentLogger.getChildLogger('addChannelBlockButton');
 	const blockedChannelsPromise = EventDispatcher.getTabId().then(
-		tabId => new BlockedChannelsStorage(tabId, source, logger),
+		tabId => new BlockedChannelsStorage(tabId, source, fnLogger),
 	);
 
 	return async ({ target, channel, onAdded }: AddOptions) => {
-		logger.debug('adding "Block" button for channel', channel, 'to node', target);
+		using logger = fnLogger.scopedGroupAuto(
+			'adding "Block" button for channel',
+			channel,
+			'to node',
+			target,
+		);
 
 		let followButton = target.querySelector(followButtonSelector);
 
@@ -55,8 +60,6 @@ export const createAddChannelBlockButton = ({
 			);
 			return;
 		}
-
-		logger.debug('adding "Block" button for channel', channel, 'to node', target);
 
 		const blockButton = followButton.cloneNode(true) as HTMLElement;
 		blockButton.id = buttonIdPrefix + buttonId;

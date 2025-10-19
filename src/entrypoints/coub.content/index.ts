@@ -2,6 +2,8 @@ import { nanoid } from 'nanoid';
 import type { Writable } from 'type-fest';
 import type {} from 'typed-query-selector';
 
+import '@/register';
+
 import { EventDispatcher } from '@/events';
 import { applyPatches } from '@/helpers/patch/applyPatches';
 import { PlayerSettingsStorage, type ReadonlyPlayerSettings } from '@/storage/playerSettings';

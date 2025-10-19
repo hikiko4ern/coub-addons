@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import type {} from 'typed-query-selector';
 
+import '@/register';
+
 import { createAddChannelBlockButton } from '@/js/createAddChannelBlockButton';
 import { getChannelDataFromWindow } from '@/js/getChannelDataFromWindow';
 import type { BlockedChannelData } from '@/storage/blockedChannels';

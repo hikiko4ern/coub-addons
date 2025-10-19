@@ -108,13 +108,15 @@ export const registerChannelsHandlers = (ctx: Context) => {
 			isModified = filteredChannels.length !== origAmount;
 
 			if (filteredOutChannels.length) {
-				logger.groupCollapsed(
-					'filtered out',
-					filteredOutChannels.length,
-					filteredOutChannels.length > 1 ? 'channels' : 'channel',
-				);
-				logger.tableRaw(filteredOutChannels, ['title', 'tReason', 'link']);
-				logger.groupEnd();
+				{
+					using _ = logger.scopedGroupAuto(
+						'filtered out',
+						filteredOutChannels.length,
+						filteredOutChannels.length > 1 ? 'channels' : 'channel',
+					);
+
+					logger.tableRaw(filteredOutChannels, ['title', 'tReason', 'link']);
+				}
 
 				ctx.stats.countFilteredOutChannels(details.url, details.originUrl, filteredOutChannels);
 			}

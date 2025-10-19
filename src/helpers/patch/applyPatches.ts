@@ -12,7 +12,7 @@ type Patchers<T extends object, Args extends unknown[]> = {
 };
 
 export const applyPatches = <T extends object, Args extends unknown[]>(
-	logger: Logger,
+	parentLogger: Logger,
 	target: T,
 	patchers: Patchers<T, Args>,
 	...args: Args
@@ -20,12 +20,14 @@ export const applyPatches = <T extends object, Args extends unknown[]>(
 	type Patchers = typeof patchers;
 	type PatchersKey = keyof Patchers;
 
+	using logger = parentLogger.scopedGroupAuto('applying patches');
+
 	return (Object.entries(patchers) as [PatchersKey, NonNullable<Patchers[PatchersKey]>][]).reduce<
 		(RevertPatch | undefined)[]
 	>((patches, [key, patch]) => {
 		const index = patches.push(undefined) - 1;
 
-		const apply = () => {
+		const apply = (logger: Logger) => {
 			const revertOrErrors = patch(logger, ...args);
 
 			if (!revertOrErrors || typeof revertOrErrors === 'function') {
@@ -37,7 +39,7 @@ export const applyPatches = <T extends object, Args extends unknown[]>(
 
 		// object is already loaded, apply patch immediately
 		if (target[key]) {
-			apply();
+			apply(logger);
 		}
 		// object is not loaded, wait
 		else {
@@ -48,7 +50,7 @@ export const applyPatches = <T extends object, Args extends unknown[]>(
 				enumerable: true,
 				get: exportFunction(() => {}, window),
 				set: exportFunction(v => {
-					logger.debug(key, 'is initialized, patching...');
+					parentLogger.debug(key, 'is initialized, patching...');
 
 					Reflect.defineProperty(target, key, {
 						configurable: true,
@@ -57,7 +59,7 @@ export const applyPatches = <T extends object, Args extends unknown[]>(
 						value: v,
 					});
 
-					apply();
+					apply(parentLogger);
 				}, window),
 			});
 

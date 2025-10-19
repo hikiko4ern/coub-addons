@@ -27,8 +27,6 @@ export const getCountedInStatsFilteredOutData = <Reason, F extends FilteredOutDa
 	originUrl: originUrlStr,
 	filteredOut,
 }: Options<Reason, F>) => {
-	let isEndGroup = false;
-
 	try {
 		const requestUrl = new URL(requestUrlStr);
 		const originUrl = originUrlStr && new URL(originUrlStr);
@@ -46,10 +44,9 @@ export const getCountedInStatsFilteredOutData = <Reason, F extends FilteredOutDa
 			channelPageMatch && (channelPagePermalink = channelPageMatch.params.permalink);
 
 			if (timelineChannelPermalink || channelPagePermalink) {
-				logger.groupCollapsed('filtering filtered out', name);
-				isEndGroup = true;
+				using filterLogger = logger.scopedGroupAuto('filtering filtered out', name);
 
-				logger.debugRaw({
+				filterLogger.debugRaw({
 					requestUrl,
 					originUrl,
 					timelineChannelPermalink,
@@ -63,12 +60,12 @@ export const getCountedInStatsFilteredOutData = <Reason, F extends FilteredOutDa
 					}
 
 					if (f.channelPermalink === timelineChannelPermalink) {
-						logger.debugRaw(f.channelPermalink, "matches timeline's permalink");
+						filterLogger.debugRaw(f.channelPermalink, "matches timeline's permalink");
 						return false;
 					}
 
 					if (f.channelPermalink === channelPagePermalink) {
-						logger.debugRaw(f.channelPermalink, "matches origin page's channel");
+						filterLogger.debugRaw(f.channelPermalink, "matches origin page's channel");
 						return false;
 					}
 
@@ -78,8 +75,6 @@ export const getCountedInStatsFilteredOutData = <Reason, F extends FilteredOutDa
 		}
 	} catch (err) {
 		logger.error('failed to check if request should be counted in stats', requestUrlStr, err);
-	} finally {
-		isEndGroup && logger.groupEnd();
 	}
 
 	return filteredOut;

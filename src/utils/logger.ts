@@ -7,14 +7,14 @@ interface LoggerOptions {
 export class Logger {
 	readonly #prefix: string;
 
-	private constructor(prefix: string) {
+	protected constructor(prefix: string) {
 		this.#prefix = prefix;
 	}
 
 	static create(prefix: string, options?: LoggerOptions) {
 		let id = name;
 
-		if (process.env.NODE_ENV === 'development' && options?.devUniqueId) {
+		if (import.meta.env.DEV && options?.devUniqueId) {
 			id = `${id} | ${options.devUniqueId}`;
 		}
 
@@ -30,9 +30,10 @@ export class Logger {
 	warn = (...args: unknown[]) => console.warn(...this.#withHeader(args));
 	error = (...args: unknown[]) => console.error(...this.#withHeader(args));
 
-	group = (...args: unknown[]) => console.group(...this.#withHeader(args));
-	groupCollapsed = (...args: unknown[]) => console.groupCollapsed(...this.#withHeader(args));
-	groupEnd = () => console.groupEnd();
+	groupAuto = (...args: unknown[]) =>
+		(import.meta.env.DEV ? console.group : console.groupCollapsed)(...this.#withHeader(args));
+
+	scopedGroupAuto = (...args: unknown[]) => (this.groupAuto(...args), this.#scoped());
 
 	debugRaw = (...args: unknown[]) => console.debug(...args);
 	tableRaw: Console['table'] = (...args) => console.table(...args);
@@ -41,5 +42,14 @@ export class Logger {
 
 	#withHeader(args: unknown[]) {
 		return [`[${this.#prefix}]`, ...args] as const;
+	}
+	#scoped() {
+		return new LoggerScopeGuard(this.#prefix);
+	}
+}
+
+class LoggerScopeGuard extends Logger implements Disposable {
+	[Symbol.dispose]() {
+		console.groupEnd();
 	}
 }

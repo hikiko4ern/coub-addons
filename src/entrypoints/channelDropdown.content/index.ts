@@ -1,6 +1,8 @@
 import { nanoid } from 'nanoid';
 import type {} from 'typed-query-selector';
 
+import '@/register';
+
 import { isObject } from '@/helpers/isObject';
 import { applyPatches } from '@/helpers/patch/applyPatches';
 import { createAddChannelBlockButton } from '@/js/createAddChannelBlockButton';
@@ -10,6 +12,7 @@ import { removeOldUnloadHandlers } from '@/utils/unloadHandler/removeOldUnloadHa
 
 import { CD_ADDED_NODES_KEY, CD_ADDED_NODES_SYM } from './constants';
 import { addBlockButtonToChannelDropdown } from './helpers/addBlockButtonToChannelDropdown';
+import { reinitializeChannelDropdowns } from './helpers/reinitializeChannelDropdowns';
 import {
 	CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_KEY,
 	patchWidgets,
@@ -73,7 +76,6 @@ export default defineContentScript({
 				followButtonTextDummyClassName: 'text-dummy',
 			});
 
-			const oldAddedNodes = waivedWindow[CD_ADDED_NODES_SYM];
 			const addedNodes: ChannelDropdownAddedNodes = (waivedWindow[CD_ADDED_NODES_SYM] = cloneInto(
 				[],
 				waivedWindow,
@@ -100,60 +102,10 @@ export default defineContentScript({
 
 			document.addEventListener('readystatechange', handleDocumentReadyStateChanged);
 
-			{
-				let isCloseGroup = false;
-
-				try {
-					if (Array.isArray(oldAddedNodes) && oldAddedNodes.length > 0) {
-						logger.groupCollapsed('reinitializing `addedNodes`');
-						isCloseGroup = true;
-
-						for (const [i, entry] of oldAddedNodes.entries()) {
-							try {
-								const unregister = entry[2]?.deref();
-								unregister?.();
-							} catch (err) {
-								// it's ok... sometimes
-								if (!(err instanceof Error) || !err.message.includes('dead object')) {
-									logger.error(i, 'failed to unregister', err);
-								}
-							}
-
-							try {
-								const node = entry[1]?.deref();
-								node?.remove();
-							} catch (err) {
-								logger.error(i, 'failed to remove node', err);
-							}
-
-							let isCloseGroup = false;
-
-							try {
-								const channelDropdownContent = entry[0]?.deref();
-
-								if (channelDropdownContent) {
-									logger.groupCollapsed(i, 'reinitializing', channelDropdownContent);
-									isCloseGroup = true;
-
-									addBlockButtonToChannelDropdown(
-										logger,
-										addedNodes,
-										addChannelBlockButton,
-										channelDropdownContent,
-									);
-								}
-							} catch (err) {
-								logger.error(i, 'failed to reinitialize', err);
-							} finally {
-								isCloseGroup && logger.groupEnd();
-							}
-						}
-					}
-				} catch (err) {
-					logger.error('failed to reinitialize `addedNodes`', err);
-				} finally {
-					isCloseGroup && logger.groupEnd();
-				}
+			try {
+				reinitializeChannelDropdowns(logger, waivedWindow, addedNodes, addChannelBlockButton);
+			} catch (err) {
+				logger.error('failed to reinitialize `addedNodes`', err);
 			}
 
 			const patches = applyPatches(

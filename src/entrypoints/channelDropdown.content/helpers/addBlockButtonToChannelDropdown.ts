@@ -9,12 +9,14 @@ const CHANNEL_TITLE_SELECTOR = '.channel__title' as const;
 const CHANNEL_LINK_SELECTOR = '.channel__title > a' as const;
 
 export const addBlockButtonToChannelDropdown = (
-	logger: Logger,
+	parentLogger: Logger,
 	addedNodes: ChannelDropdownAddedNodes,
 	addChannelBlockButton: ReturnType<typeof createAddChannelBlockButton>,
 	channelDropdownContent: Element,
 	channelId?: number,
 ) => {
+	using logger = parentLogger.scopedGroupAuto('adding block button to channel dropdown');
+
 	logger.debug(
 		'trying to get channel ID from attr',
 		CHANNEL_ID_ATTR,
@@ -109,7 +111,7 @@ export const addBlockButtonToChannelDropdown = (
 			entry[1] = new WeakRef(blockButton);
 			entry[2] = new WeakRef(
 				exportFunction(() => {
-					logger.debug('removing channel', channelId, 'listener');
+					parentLogger.debug('removing channel', channelId, 'listener');
 					unsubscribe();
 				}, waivedWindow),
 			);

@@ -121,14 +121,14 @@ export function patchCoubBlockClientside(
 	logger.debug('patched successfully');
 
 	return () => {
-		logger.debug('removing patches');
+		using rmLogger = logger.scopedGroupAuto('removing patches');
 
 		revertCoubBlockClientsidePatches(
 			CBC_GET_VIEWER_BLOCK_KEY,
 			CBC_VIEWER_BLOCK_KEY_UP_EVENT,
 			CBC_VIEWER_BLOCK_KEY_UP_HANDLERS_KEY,
 			undefined,
-			logger,
+			rmLogger,
 			proto,
 		);
 	};

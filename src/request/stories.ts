@@ -133,13 +133,15 @@ export const registerStoriesHandlers = (ctx: Context) => {
 				isModified = filteredStories.length !== origAmount;
 
 				if (filteredOutStories.length) {
-					logger.groupCollapsed(
-						'filtered out',
-						filteredOutStories.length,
-						filteredOutStories.length > 1 ? 'stories' : 'story',
-					);
-					logger.tableRaw(filteredOutStories, ['title', 'author', 'tReason', 'link']);
-					logger.groupEnd();
+					{
+						using _ = logger.scopedGroupAuto(
+							'filtered out',
+							filteredOutStories.length,
+							filteredOutStories.length > 1 ? 'stories' : 'story',
+						);
+
+						logger.tableRaw(filteredOutStories, ['title', 'author', 'tReason', 'link']);
+					}
 
 					ctx.stats.countFilteredOutStories(details.url, details.originUrl, filteredOutStories);
 				}

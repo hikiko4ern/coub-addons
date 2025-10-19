@@ -140,23 +140,25 @@ export class BlockedChannelsStorage extends StorageBase<
 		let newState: BlockedChannels | undefined;
 		const replacedIds = new Set<number>();
 
-		this.logger.debug('actualizing channels', oldState);
+		{
+			using logger = this.logger.scopedGroupAuto('actualizing channels', oldState);
 
-		for (const channel of channels) {
-			if (replacedIds.has(channel.id)) {
-				continue;
-			}
+			for (const channel of channels) {
+				if (replacedIds.has(channel.id)) {
+					continue;
+				}
 
-			const blockedChannel = oldState.channels.get(channel.id);
+				const blockedChannel = oldState.channels.get(channel.id);
 
-			if (blockedChannel && !areBlockedChannelsEqual(blockedChannel, channel)) {
-				this.logger.debug('replacing blocked channel', blockedChannel, 'with', channel);
+				if (blockedChannel && !areBlockedChannelsEqual(blockedChannel, channel)) {
+					logger.debug('replacing blocked channel', blockedChannel, 'with', channel);
 
-				newState ||= BlockedChannelsStorage.copyValue(oldState);
-				newState.channels.set(channel.id, channel);
-				blockedChannel.permalink && newState.permalinks.delete(blockedChannel.permalink);
-				channel.permalink && newState.permalinks.add(channel.permalink);
-				replacedIds.add(channel.id);
+					newState ||= BlockedChannelsStorage.copyValue(oldState);
+					newState.channels.set(channel.id, channel);
+					blockedChannel.permalink && newState.permalinks.delete(blockedChannel.permalink);
+					channel.permalink && newState.permalinks.add(channel.permalink);
+					replacedIds.add(channel.id);
+				}
 			}
 		}
 
