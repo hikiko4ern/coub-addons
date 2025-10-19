@@ -18,6 +18,7 @@ import {
 } from './constants';
 import { getActiveCoubHtml5Player } from './getActiveCoubHtml5Player';
 import { getHtml5PlayerGlobals } from './getHtml5PlayerGlobals';
+import { getViewerCoubHtml5Player } from './getViewerCoubHtml5Player';
 import { revertHtml5PlayerPatches } from './revertHtml5PlayerPatches';
 import { selectActiveCoubViewer } from './selectActiveCoubViewer';
 
@@ -160,77 +161,145 @@ export function patchHtml5Player(
 				player && actualizeMediaSessionFromHtml5Player(msLogger, player);
 			}
 
-			try {
-				navigator.mediaSession.setActionHandler('play', () => {
-					try {
-						const player = getActiveCoubHtml5Player($, msLogger, proto);
+			type ActionHandler = (logger: Logger, details: MediaSessionActionDetails) => void;
 
-						if (!player) {
-							return;
+			const setHandler = (action: MediaSessionAction, handler: ActionHandler) => {
+				const actionLogger = msLogger.getChildLogger(action);
+
+				try {
+					navigator.mediaSession.setActionHandler(action, (...args) => {
+						msLogger.group(action);
+
+						try {
+							handler(actionLogger, ...args);
+						} catch (err) {
+							msLogger.error('handler thrown:', err);
 						}
 
-						msLogger.debug('play', { player });
+						msLogger.groupEnd();
+					});
+				} catch (err) {
+					msLogger.error(`failed to set \`${action}\` handler`, err);
+				}
+			};
 
-						if (player) {
-							player.play(true);
-							player.preloadDefer?.play.done(
-								exportFunction(() => {
-									if (player.browserPaused && !player.hasFocus()) {
-										player.playLoop();
-										player.browserPaused = false;
-									}
-								}, player.preloadDefer),
-							);
-						}
-					} catch (err) {
-						msLogger.debug('`play` handler thrown', err);
-					}
-				});
-			} catch (err) {
-				msLogger.error('failed to set `play` handler', err);
-			}
+			const play = (player: coub.Html5Player | undefined) => {
+				if (player) {
+					player.play(true);
+					player.preloadDefer?.play.done(
+						exportFunction(() => {
+							if (player.browserPaused && !player.hasFocus()) {
+								player.playLoop();
+								player.browserPaused = false;
+							}
+						}, player.preloadDefer),
+					);
+				}
+			};
 
-			try {
-				navigator.mediaSession.setActionHandler('pause', () => {
-					try {
-						const viewer = selectActiveCoubViewer($);
-						msLogger.debug('pause', viewer);
+			setHandler('play', logger => {
+				const player = getActiveCoubHtml5Player($, logger, proto);
+				logger.debug('player:', player);
+				play(player);
+			});
+
+			setHandler('pause', logger => {
+				const viewer = selectActiveCoubViewer($);
+				logger.debug('viewer:', viewer);
+
+				if (!viewer.length) {
+					logger.warn('there is no active viewer found by selector');
+					return;
+				}
+
+				/** @see Html5Player.suspend */
+				viewer.triggerHandler('suspend');
+			});
+
+			setHandler('stop', logger => {
+				const viewer = selectActiveCoubViewer($);
+				logger.debug('viewer:', viewer);
+
+				if (!viewer.length) {
+					logger.warn('there is no active viewer found by selector');
+					return;
+				}
+
+				/** @see Html5Player.pause */
+				viewer.triggerHandler('pause');
+			});
+
+			type KeyPressEventData = Required<Pick<KeyboardEventInit, 'which' | 'code'>>;
+
+			const dispatchKeyPress = (el: JQuery, data: KeyPressEventData, eventTarget?: string) => {
+				const clonedData = cloneInto(data, el);
+				{
+					const e = $.Event(eventTarget ? `keydown.${eventTarget}` : 'keydown');
+					e.which = data.which;
+					e.originalEvent = new KeyboardEvent('keydown', clonedData);
+					el.trigger(e);
+				}
+				{
+					const e = $.Event(eventTarget ? `keyup.${eventTarget}` : 'keyup');
+					e.which = data.which;
+					e.originalEvent = new KeyboardEvent('keyup', clonedData);
+					el.trigger(e);
+				}
+			};
+
+			const createSwitchTrackHandler = (dir: 'next' | 'prev'): ActionHandler => {
+				const data: KeyPressEventData =
+					dir === 'next' ? { which: 40, code: 'ArrowDown' } : { which: 38, code: 'ArrowUp' };
+
+				const dataFullscreen: KeyPressEventData =
+					dir === 'next' ? { which: 39, code: 'ArrowRight' } : { which: 37, code: 'ArrowLeft' };
+
+				return logger => {
+					if (document.fullscreenElement) {
+						logger.debug('fullscreen');
+
+						let viewer = selectActiveCoubViewer($);
+						logger.debug('viewer:', viewer);
 
 						if (!viewer.length) {
-							msLogger.warn('there is no active viewer found by selector');
+							logger.warn('there is no active viewer found by selector');
 							return;
 						}
 
-						/** @see Html5Player.suspend */
-						viewer.triggerHandler('suspend');
-					} catch (err) {
-						msLogger.debug('`pause` handler thrown', err);
-					}
-				});
-			} catch (err) {
-				msLogger.error('failed to set `pause` handler', err);
-			}
+						dispatchKeyPress(viewer, dataFullscreen, 'timelineFullScreenChanger');
 
-			try {
-				navigator.mediaSession.setActionHandler('stop', () => {
-					try {
-						const viewer = selectActiveCoubViewer($);
-						msLogger.debug('stop', viewer);
+						viewer = selectActiveCoubViewer($).not(viewer);
 
 						if (!viewer.length) {
-							msLogger.warn('there is no active viewer found by selector');
+							logger.warn('there is no active viewer found by selector');
 							return;
 						}
 
-						/** @see Html5Player.pause */
-						viewer.triggerHandler('pause');
-					} catch (err) {
-						msLogger.debug('`stop` handler thrown', err);
+						const player = getViewerCoubHtml5Player(viewer, logger, proto);
+						logger.debug('play', { player });
+						play(player);
+
+						return;
 					}
-				});
-			} catch (err) {
-				msLogger.error('failed to set `stop` handler', err);
-			}
+
+					const viewer = selectActiveCoubViewer($);
+					logger.debug('viewer:', viewer);
+
+					if (!viewer.length) {
+						logger.warn('there is no active viewer found by selector');
+						return;
+					}
+
+					dispatchKeyPress(viewer, data);
+
+					const player = getActiveCoubHtml5Player($, logger, proto);
+					logger.debug('play', { player });
+					play(player);
+				};
+			};
+
+			setHandler('previoustrack', createSwitchTrackHandler('prev'));
+			setHandler('nexttrack', createSwitchTrackHandler('next'));
 		}
 	}
 
