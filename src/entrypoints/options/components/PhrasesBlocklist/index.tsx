@@ -61,8 +61,10 @@ export const PhrasesBlocklist: FunctionComponent<Props> = ({ storage }) => {
 
 	useEffect(
 		() => () => {
-			const value = editorRef.current?.getValue();
-			typeof value === 'string' && save(value);
+			if (isModified.peek()) {
+				const value = editorRef.current?.getValue();
+				typeof value === 'string' && save(value);
+			}
 		},
 		[],
 	);
