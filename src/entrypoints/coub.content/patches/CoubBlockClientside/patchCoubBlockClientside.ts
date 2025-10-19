@@ -2,6 +2,7 @@ import type { ArrayValues } from 'type-fest';
 
 import { isObject } from '@/helpers/isObject';
 import type { RevertPatch } from '@/helpers/patch/applyPatches';
+import { patchMethod } from '@/helpers/patch/patchMethod';
 import { prependJqListener } from '@/helpers/prependJqListener';
 import { isHotkeyPressed } from '@/hotkey/isHotkeyPressed';
 import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
@@ -54,47 +55,37 @@ export function patchCoubBlockClientside(
 	const { CoubBlockClientside, WeakRef } = globals;
 	const proto = CoubBlockClientside.prototype;
 
-	{
-		const origGetViewerBlock = proto[CBC_GET_VIEWER_BLOCK_SYM];
+	patchMethod(
+		logger,
+		proto,
+		'getViewerBlock',
+		CBC_GET_VIEWER_BLOCK_SYM,
+		function patchedGetViewerBlock(origGetViewerBlock, ...args) {
+			const cbc = this.wrappedJSObject || this;
+			const node = Reflect.apply(origGetViewerBlock, this, args);
 
-		if (typeof origGetViewerBlock === 'function') {
-			logger.debug('reverting non-reverted `getViewerBlock` patch');
-			proto.getViewerBlock = origGetViewerBlock;
-			delete proto[CBC_GET_VIEWER_BLOCK_SYM];
-		}
-	}
+			// `getViewerBlock` is called for the first time in the constructor,
+			// so we can add handlers with the highest priority
+			const exportedHandler = addKeyUpHandlerToNode(logger, globals, playerSettings, node, this);
 
-	const origGetViewerBlock = (proto[CBC_GET_VIEWER_BLOCK_SYM] = proto.getViewerBlock);
+			const handlers = (proto[CBC_VIEWER_BLOCK_KEY_UP_HANDLERS_SYM] ||= cloneInto([], proto));
 
-	const patchedGetViewerBlock: typeof proto.getViewerBlock = function patchedGetViewerBlock(
-		...args
-	) {
-		const cbc = this.wrappedJSObject || this;
-		const node = Reflect.apply(origGetViewerBlock, this, args);
+			const handlersEntry = cloneInto(
+				// clone the array separately from the elements to preserve references to already created/cloned elements
+				[] as unknown as ArrayValues<typeof handlers>,
+				proto,
+			);
+			handlers.push(handlersEntry);
 
-		// `getViewerBlock` is called for the first time in the constructor,
-		// so we can add handlers with the highest priority
-		const exportedHandler = addKeyUpHandlerToNode(logger, globals, playerSettings, node, this);
+			handlersEntry[0] = new WeakRef(cbc);
+			handlersEntry[1] = exportedHandler;
 
-		const handlers = (proto[CBC_VIEWER_BLOCK_KEY_UP_HANDLERS_SYM] ||= cloneInto([], proto));
+			// return the native handler so that our additional logic is not executed in subsequent calls
+			this.getViewerBlock = origGetViewerBlock.bind(this);
 
-		const handlersEntry = cloneInto(
-			// clone the array separately from the elements to preserve references to already created/cloned elements
-			[] as unknown as ArrayValues<typeof handlers>,
-			proto,
-		);
-		handlers.push(handlersEntry);
-
-		handlersEntry[0] = new WeakRef(cbc);
-		handlersEntry[1] = exportedHandler;
-
-		// return the native handler so that our additional logic is not executed in subsequent calls
-		this.getViewerBlock = origGetViewerBlock.bind(this);
-
-		return node;
-	};
-
-	exportFunction(patchedGetViewerBlock, proto, { defineAs: 'getViewerBlock' });
+			return node;
+		},
+	);
 
 	try {
 		const viewerBlockKeyUpHandlers = proto[CBC_VIEWER_BLOCK_KEY_UP_HANDLERS_SYM];

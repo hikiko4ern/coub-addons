@@ -1,5 +1,6 @@
 import { isObject } from '@/helpers/isObject';
 import { type RevertPatch, applyPatches } from '@/helpers/patch/applyPatches';
+import { patchMethod } from '@/helpers/patch/patchMethod';
 import type { createAddChannelBlockButton } from '@/js/createAddChannelBlockButton';
 import type { Logger } from '@/utils/logger';
 
@@ -81,38 +82,27 @@ const patchChannelDropdown = (
 		addChannelBlockButton,
 	);
 
-	{
-		const origSetDropdownContent = proto[CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_SYM];
+	patchMethod(
+		logger,
+		proto,
+		'setDropdownContent',
+		CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_SYM,
+		function patchedSetDropdownContent(origSetDropdownContent, ...args) {
+			const channelDropdown = this.wrappedJSObject || this;
+			const res = Reflect.apply(origSetDropdownContent, channelDropdown, args);
 
-		if (typeof origSetDropdownContent === 'function') {
-			logger.debug('reverting non-reverted `setDropdownContent` patch');
-			proto.setDropdownContent = origSetDropdownContent;
-			delete proto[CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_SYM];
-		}
-	}
+			logger.debug('adding content to channel dropdown', { channelDropdown });
 
-	const origSetDropdownContent = (proto[CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_SYM] =
-		proto.setDropdownContent);
+			try {
+				const content = channelDropdown.dropdown?.content[0];
+				content && addContent(content, channelDropdown.data?.get('fullChannelData')?.id);
+			} catch (err) {
+				logger.error('failed to patch content:', err);
+			}
 
-	const patchedSetDropdownContent: typeof proto.setDropdownContent = function patchedTemplate(
-		...args
-	) {
-		const channelDropdown = this.wrappedJSObject || this;
-		const res = Reflect.apply(origSetDropdownContent, channelDropdown, args);
-
-		logger.debug('adding content to channel dropdown', { channelDropdown });
-
-		try {
-			const content = channelDropdown.dropdown?.content[0];
-			content && addContent(content, channelDropdown.data?.get('fullChannelData')?.id);
-		} catch (err) {
-			logger.error('failed to patch content:', err);
-		}
-
-		return res;
-	};
-
-	exportFunction(patchedSetDropdownContent, proto, { defineAs: 'setDropdownContent' });
+			return res;
+		},
+	);
 
 	logger.debug('patched successfully');
 };

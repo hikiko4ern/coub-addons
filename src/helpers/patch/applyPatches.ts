@@ -26,12 +26,12 @@ export const applyPatches = <T extends object, Args extends unknown[]>(
 		const index = patches.push(undefined) - 1;
 
 		const apply = () => {
-			const maybeRevert = patch(logger, ...args);
+			const revertOrErrors = patch(logger, ...args);
 
-			if (!maybeRevert || typeof maybeRevert === 'function') {
-				patches[index] = maybeRevert as Exclude<typeof maybeRevert, void> | undefined;
+			if (!revertOrErrors || typeof revertOrErrors === 'function') {
+				patches[index] = revertOrErrors as Exclude<typeof revertOrErrors, void> | undefined;
 			} else {
-				logger.error('failed to patch', key, ...maybeRevert);
+				logger.error('failed to patch', key, ...revertOrErrors);
 			}
 		};
 
