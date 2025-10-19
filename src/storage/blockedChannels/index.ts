@@ -68,7 +68,7 @@ export class BlockedChannelsStorage extends StorageBase<
 	readonly #isBlockedListeners: Record</** channelId */ number, Set<IsBlockedListener>> = {};
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
-		const childLogger = logger.getChildLogger(new.target.name);
+		const childLogger = logger.getChildLogger('BlockedChannelsStorage');
 		super(tabId, source, childLogger, new.target.KEY, new.target.STORAGE);
 		Object.setPrototypeOf(this, new.target.prototype);
 		this.logger = childLogger;
