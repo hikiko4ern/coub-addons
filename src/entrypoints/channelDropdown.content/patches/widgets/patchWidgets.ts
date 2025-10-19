@@ -81,6 +81,16 @@ const patchChannelDropdown = (
 		addChannelBlockButton,
 	);
 
+	{
+		const origSetDropdownContent = proto[CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_SYM];
+
+		if (typeof origSetDropdownContent === 'function') {
+			logger.debug('reverting non-reverted `setDropdownContent` patch');
+			proto.setDropdownContent = origSetDropdownContent;
+			delete proto[CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_SYM];
+		}
+	}
+
 	const origSetDropdownContent = (proto[CD_CHANNEL_DROPDOWN_SET_DROPDOWN_CONTENT_ORIG_SYM] =
 		proto.setDropdownContent);
 
