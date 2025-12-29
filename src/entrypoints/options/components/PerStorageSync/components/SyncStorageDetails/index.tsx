@@ -1,6 +1,6 @@
 import { Localized, useLocalization } from '@fluent/react';
 import { Button } from '@nextui-org/button';
-import { ModalBody, ModalFooter, ModalHeader } from '@nextui-org/modal';
+import { ModalBody, ModalHeader } from '@nextui-org/modal';
 import {
 	Table,
 	TableBody,
@@ -13,6 +13,7 @@ import {
 import cx from 'clsx';
 import { type ComponentChildren, type FunctionComponent } from 'preact';
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import { toast } from 'react-toastify';
 
 import { byteSize } from '@/helpers/byteSize';
 import { CardSection } from '@/options/components/CardSection';
@@ -24,12 +25,18 @@ import {
 	type StorageState,
 	useStorageState,
 } from '@/options/hooks/useStorageState';
-import type { AnyStorageBase } from '@/storage/base';
+import type { AnyStorageBase, StorageShard } from '@/storage/base';
+import type { ObjectEntries, ToReadonly } from '@/types/util';
 
 import styles from './styles.module.scss';
 
 interface Props {
 	storage: AnyStorageBase;
+}
+
+interface AllDetails {
+	sync: Details;
+	local: Details;
 }
 
 interface Details {
@@ -86,6 +93,8 @@ type ColumnKey = (typeof columns)[number]['key'];
 
 const KEY_RE = /^(?<key>[^#]+)(?:#(?<index>\d+))?$/;
 
+const sortCollator = new Intl.Collator('en', { usage: 'sort' });
+
 const getDataSample = (value: unknown): ShardDetail['format'] => {
 	if (typeof value !== 'string') {
 		return null;
@@ -93,6 +102,76 @@ const getDataSample = (value: unknown): ShardDetail['format'] => {
 
 	const firstBytes = value.slice(0, 5);
 	return firstBytes.split(':')[0] || firstBytes + '...';
+};
+
+const getDetails = (storageKey: string, shards: StorageShard[]): Details => {
+	const details: Record<string, ShardDetails> = {};
+
+	for (const shard of shards) {
+		let key: string, index: number | undefined;
+
+		if (typeof shard.key !== 'string' || shard.key === storageKey) {
+			key = '.';
+		} else if (shard.key.endsWith('$')) {
+			key = 'meta';
+		} else {
+			const field = shard.key.startsWith(storageKey)
+				? shard.key.slice(storageKey.length + 1)
+				: shard.key;
+
+			const fieldMatch = field.match(KEY_RE);
+
+			if (!fieldMatch) {
+				logger.warn('unmatched shard key', shard.key, field);
+				continue;
+			}
+
+			let indexStr: string | undefined;
+
+			({ key, index: indexStr } = fieldMatch.groups as { key: string; index?: string });
+
+			index = indexStr ? Number.parseInt(indexStr, 10) : undefined;
+		}
+
+		const size = byteSize(JSON.stringify(shard.value));
+		const keyDetails = (details[key] ||= { key, details: [], totalByteSize: 0 });
+
+		keyDetails.totalByteSize += size;
+		keyDetails.details.push({
+			key: index || 0,
+			index,
+			byteSize: size,
+			format: getDataSample(shard.value),
+		});
+	}
+
+	const detailsValues = Object.values(details);
+
+	for (const v of detailsValues) {
+		v.details.sort(
+			(a, b) =>
+				(a.key as Exclude<typeof a.key, TOTAL_KEY>) - (b.key as Exclude<typeof b.key, TOTAL_KEY>),
+		);
+
+		// fill `total` for multiple keys
+		if (v.details.length > 1) {
+			v.details.push({
+				key: TOTAL_KEY,
+				index: TOTAL_KEY,
+				byteSize: v.totalByteSize,
+				format: null,
+			});
+		}
+	}
+
+	detailsValues.sort((a, b) =>
+		a.key === 'meta' ? (b.key === 'meta' ? 0 : -1) : sortCollator.compare(a.key, b.key),
+	);
+
+	return {
+		shards: detailsValues,
+		totalByteSize: detailsValues.reduce((total, details) => total + details.totalByteSize, 0),
+	};
 };
 
 export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
@@ -104,7 +183,7 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 		[locale],
 	);
 	const state = useStorageState({ storage });
-	const [shardsDetails, setShardsDetails] = useState<StorageState<Details>>(() => ({
+	const [shardsDetails, setShardsDetails] = useState<StorageState<AllDetails>>(() => ({
 		status: StorageHookState.Loading,
 	}));
 
@@ -115,92 +194,80 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 		}
 
 		(async () => {
-			const [shards] = await storage.getSyncItems();
+			const [[syncShards, { [storage.metaKey]: meta }], [localShards]] = await Promise.all([
+				storage.getShardsFromSync(),
+				storage.getSyncItems(),
+			]);
 
-			const details: Record<string, ShardDetails> = {};
-
-			for (const shard of shards) {
-				const storageKey = shard.key.slice('sync:'.length);
-				let key: string, index: number | undefined;
-
-				if (storageKey === storage.key) {
-					key = '.';
-				} else if (storageKey.endsWith('$')) {
-					key = 'meta';
-				} else {
-					const keyMatch = storageKey.slice(storage.key.length + 1).match(KEY_RE);
-
-					if (!keyMatch) {
-						logger.warn('unmatched shard key', storageKey);
-						continue;
-					}
-
-					let indexStr: string | undefined;
-
-					({ key, index: indexStr } = keyMatch.groups as { key: string; index?: string });
-
-					index = indexStr ? Number.parseInt(indexStr, 10) : undefined;
-				}
-
-				const size = byteSize(JSON.stringify(shard.value));
-				const keyDetails = (details[key] ||= { key, details: [], totalByteSize: 0 });
-
-				keyDetails.totalByteSize += size;
-				keyDetails.details.push({
-					key: index || 0,
-					index,
-					byteSize: size,
-					format: getDataSample(shard.value),
+			if (meta) {
+				syncShards.unshift({
+					key: 'meta',
+					value: meta,
 				});
 			}
 
-			const detailsValues = Object.values(details);
+			const sync = getDetails(storage.key, syncShards);
 
-			// fill `total` for multiple keys
-			for (const v of detailsValues) {
-				if (v.details.length > 1) {
-					v.details.push({
-						key: TOTAL_KEY,
-						index: TOTAL_KEY,
-						byteSize: v.totalByteSize,
-						format: null,
-					});
-				}
-			}
+			const local = getDetails(
+				storage.key,
+				localShards.map(
+					(shard): StorageShard => ({
+						...shard,
+						key: shard.key.slice('sync:'.length),
+					}),
+				),
+			);
 
 			setShardsDetails({
 				status: StorageHookState.Loaded,
 				data: {
-					shards: detailsValues,
-					totalByteSize: detailsValues.reduce((total, details) => total + details.totalByteSize, 0),
+					sync,
+					local,
 				},
 			});
 		})();
 	}, [state]);
 
-	const copyAsJson = useCallback(async () => {
-		if (shardsDetails.status !== StorageHookState.Loaded) {
-			return;
-		}
+	const copyAsJson = useCallback(
+		async (key: keyof AllDetails) => {
+			if (shardsDetails.status !== StorageHookState.Loaded) {
+				return;
+			}
 
-		try {
-			await navigator.clipboard.writeText(
-				JSON.stringify(
-					shardsDetails.data.shards.reduce<Record<string, unknown>>((obj, { key, details }) => {
-						obj[key] = details.map(({ key, index, ...rest }) => ({
-							...rest,
-							index: index ?? null,
-						}));
-						return obj;
-					}, {}),
-				),
-			);
-		} catch (err) {
-			logger.error('failed to copy details as JSON:', err);
-		}
-	}, [shardsDetails]);
+			try {
+				const { shards, totalByteSize } = shardsDetails.data[key];
 
-	let content: ComponentChildren, footer: ComponentChildren;
+				await navigator.clipboard.writeText(
+					JSON.stringify({
+						fields: shards.reduce<Record<string, unknown>>((obj, { key, details }) => {
+							const totalIndex = details.findIndex(d => d.key === TOTAL_KEY);
+
+							const [total, shards] =
+								totalIndex === -1
+									? [details[0].byteSize, details]
+									: [details[totalIndex].byteSize, details.toSpliced(totalIndex, 1)];
+
+							obj[key] = {
+								shards: shards.map(({ key, index, ...rest }) => ({
+									...rest,
+									index: index ?? null,
+								})),
+								totalByteSize: total,
+							};
+							return obj;
+						}, {}),
+						totalByteSize,
+					}),
+				);
+			} catch (err) {
+				logger.error('failed to copy details as JSON:', err);
+				toast.error(String(err));
+			}
+		},
+		[shardsDetails],
+	);
+
+	let content: ComponentChildren;
 
 	switch (shardsDetails.status) {
 		case StorageHookState.Loading: {
@@ -254,9 +321,7 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 				}
 			};
 
-			const { shards, totalByteSize } = shardsDetails.data;
-
-			content = (
+			const renderTable = (shards: ToReadonly<Details['shards']>) => (
 				<div className={cx('grid gap-4', shards.length > 4 ? 'grid-cols-3' : 'grid-cols-2')}>
 					{shards.map(({ key, details }) => (
 						<CardSection key={key} bodyClassName="w-full" title={key}>
@@ -300,15 +365,24 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 				</div>
 			);
 
-			footer = (
-				<>
-					<div className="text-zinc-500 dark:text-zinc-400">
-						<Localized id="total-def" vars={{ total: byteNumberFormat.format(totalByteSize) }} />
-					</div>
+			content = (
+				Object.entries(shardsDetails.data) as ObjectEntries<typeof shardsDetails.data>
+			).map(([key, { shards, totalByteSize }]) => (
+				<section key={key} className="flex flex-1 flex-col gap-4">
+					<header>{key}</header>
 
-					<Button onPress={copyAsJson}>JSON</Button>
-				</>
-			);
+					{renderTable(shards)}
+
+					<footer className="mt-auto flex items-center justify-between">
+						<div className="text-zinc-500 dark:text-zinc-400">
+							<Localized id="total-def" vars={{ total: byteNumberFormat.format(totalByteSize) }} />
+						</div>
+
+						<Button onPress={() => copyAsJson(key)}>JSON</Button>
+					</footer>
+				</section>
+			));
+
 			break;
 		}
 	}
@@ -319,9 +393,9 @@ export const SyncStorageDetails: FunctionComponent<Props> = ({ storage }) => {
 				<Localized id="sync-backup-storage-shards-title" vars={{ storage: storage.key }} />
 			</ModalHeader>
 
-			<ModalBody>{content}</ModalBody>
-
-			{footer && <ModalFooter className="flex items-center justify-between">{footer}</ModalFooter>}
+			<ModalBody className="flex flex-row gap-0 [&>*+*]:ms-6 [&>*+*]:border-s [&>*+*]:border-s-zinc-300 [&>*+*]:ps-6 dark:[&>*+*]:border-s-zinc-700">
+				{content}
+			</ModalBody>
 		</>
 	);
 };

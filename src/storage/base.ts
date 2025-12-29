@@ -2,6 +2,7 @@ import type { IsNever } from 'type-fest';
 import type { StorageItemKey, Unwatch, WxtStorageItem } from 'wxt/storage';
 
 import { EventDispatcher, EventListener } from '@/events';
+import { filterMap } from '@/helpers/filterMap';
 import type { MaybePromise, ToReadonly } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
@@ -162,6 +163,23 @@ export abstract class StorageBase<
 		}
 
 		return [syncShards, removeKeys];
+	}
+
+	async getShardsFromSync(
+		keepStoragePrefix?: boolean,
+	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]> {
+		const state = await browser.storage.sync.get();
+
+		const shards = filterMap(
+			Object.entries(state),
+			([key]) => key === this.key,
+			([key, value]): StorageShard<never> => ({
+				key: keepStoragePrefix ? key : undefined,
+				value,
+			}),
+		);
+
+		return [shards, state];
 	}
 
 	async restoreFromSync() {

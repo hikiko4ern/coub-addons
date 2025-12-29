@@ -14,7 +14,7 @@ import { mapFilter } from '@/helpers/mapFilter';
 import { logger } from '@/options/constants';
 import { useIsDevMode } from '@/options/hooks/useIsDevMode';
 import { type StorageToBackup, restoreBackup } from '@/storage/backup';
-import { type AnyStorageBase, ShardedStorage, type StorageShard } from '@/storage/base';
+import { type AnyStorageBase, type StorageShard } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
 
 import { SyncStorageDetails } from './components/SyncStorageDetails';
@@ -40,14 +40,11 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage })
 
 			const newShardsKeys = new Set(shards.map(shard => shard.key));
 
-			const extraSyncKeysToRemove =
-				storage instanceof ShardedStorage
-					? mapFilter(
-							(await storage.getShardsFromSync(true))[0],
-							shard => `sync:${shard.key}` as const,
-							key => !newShardsKeys.has(key),
-						)
-					: [];
+			const extraSyncKeysToRemove = mapFilter(
+				(await storage.getShardsFromSync(true))[0],
+				shard => `sync:${shard.key}` as const,
+				key => !newShardsKeys.has(key),
+			);
 
 			const allKeysToRemove = [...new Set([...removeKeys, ...extraSyncKeysToRemove])];
 
@@ -190,7 +187,12 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage })
 			</ButtonGroup>
 
 			{(isDevMode || areDetailsOpen) && (
-				<Modal size="2xl" isOpen={areDetailsOpen} onOpenChange={onDetailsOpenChange}>
+				<Modal
+					className="max-w-6xl"
+					size="5xl"
+					isOpen={areDetailsOpen}
+					onOpenChange={onDetailsOpenChange}
+				>
 					<ModalContent>
 						<SyncStorageDetails storage={storage} />
 					</ModalContent>
