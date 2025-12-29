@@ -12,6 +12,7 @@ export const shardBlockedChannels = async (
 ) =>
 	Promise.all([
 		shardUint32(logger, keyPrefix, 'id', raw.id),
+		// TODO: allow to omit `title` and/or `permalink` from the sync export
 		shardArray(keyPrefix, 'title', raw.title, 'string', byteSize),
 		shardArray(keyPrefix, 'permalink', raw.permalink, 'string', byteSize),
 	]).then(arr => arr.flat());

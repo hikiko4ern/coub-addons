@@ -1,11 +1,12 @@
 import type { ReactLocalization } from '@fluent/react';
-import { decode as decodeBase64, encode as encodeBase64 } from 'base64-arraybuffer';
 
 import type { StorageShard } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
+import type { MaybePromise } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
 import { shardArray } from './array';
+import { gunzipBase64, gzipBase64 } from './compression';
 import { PER_KEY_BYTES_LIMIT } from './constants';
 import { ShardGenerator } from './generator';
 
@@ -13,8 +14,9 @@ const MAX_U32 = 2 ** 32 - 1;
 const U32_SIZE = Uint32Array.BYTES_PER_ELEMENT;
 
 enum Uint32ShardType {
-	// `base64` of the little-endian `Uint32Array`
-	BASE64 = 'b64:',
+	// `base64` of the `gzip`-compressed little-endian `Uint32Array`
+	// gzipping allows to save ~900 bytes (from `8166` to ~`7250`)
+	GZIP = 'gz:',
 }
 
 const MAX_PREFIX_LENGTH = Math.max(...Object.values(Uint32ShardType).map(p => p.length));
@@ -35,11 +37,11 @@ export const shardUint32 = (
 		return shardArray(keyPrefix, key, values, 'generic');
 	}
 
-	return asBase64(keyPrefix, key, values);
+	return asGzip(keyPrefix, key, values);
 };
 
 /** recovers the `uint32` array from shard */
-export const recoverUint32Shard = (logger: Logger, value: unknown): number[] => {
+export const recoverUint32Shard = (logger: Logger, value: unknown): MaybePromise<number[]> => {
 	if (Array.isArray(value)) {
 		// it was JSON-stringified
 		return value;
@@ -49,8 +51,8 @@ export const recoverUint32Shard = (logger: Logger, value: unknown): number[] => 
 		const prefix = value.slice(0, MAX_PREFIX_LENGTH);
 
 		switch (prefix) {
-			case Uint32ShardType.BASE64:
-				return fromBase64(value.slice(prefix.length));
+			case Uint32ShardType.GZIP:
+				return fromGzip(value.slice(prefix.length));
 
 			default: {
 				const err = new UnknownUint32Prefix(prefix, value);
@@ -63,8 +65,8 @@ export const recoverUint32Shard = (logger: Logger, value: unknown): number[] => 
 	throw new UnknownUint32Value(typeof value, JSON.stringify(value));
 };
 
-const asBase64 = (keyPrefix: string, key: string | undefined, values: number[]) => {
-	const valuePrefix = Uint32ShardType.BASE64,
+const asGzip = async (keyPrefix: string, key: string | undefined, values: number[]) => {
+	const valuePrefix = Uint32ShardType.GZIP,
 		shards = new ShardGenerator<`${typeof valuePrefix}${string}`>(keyPrefix, key),
 		baseLength = shards.baseLength + 2 + valuePrefix.length, // +2 for the string quotes ""
 		/** maximum amount of `uint32` that can fit into one key when converted to a base64 string */
@@ -86,21 +88,22 @@ const asBase64 = (keyPrefix: string, key: string | undefined, values: number[]) 
 			}
 		}
 
-		shards.push(`${valuePrefix}${encodeBase64(buf)}`);
+		const base64 = await gzipBase64(buf);
+		shards.push(`${valuePrefix}${base64}`);
 	}
 
 	return shards.finish();
 };
 
-const fromBase64 = (value: string) => {
-	const buf = decodeBase64(value);
+const fromGzip = async (value: string) => {
+	const buf = await gunzipBase64(value);
 
 	if (buf.byteLength % U32_SIZE !== 0) {
 		throw new InvalidUint32BufferSize(buf.byteLength);
 	}
 
 	const length = buf.byteLength / U32_SIZE,
-		arr = new Array(length),
+		arr = new Array<number>(length),
 		view = new DataView(buf);
 
 	for (let i = 0, offset = 0; i < length; i++, offset += U32_SIZE) {

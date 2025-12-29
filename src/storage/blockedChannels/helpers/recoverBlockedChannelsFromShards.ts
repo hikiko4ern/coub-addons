@@ -48,7 +48,7 @@ export const recoverBlockedChannelsFromShards = async (
 
 		switch (key) {
 			case 'id':
-				value = recoverUint32Shard(logger, rawValue);
+				value = await recoverUint32Shard(logger, rawValue);
 				break;
 
 			case 'title':

@@ -1,11 +1,11 @@
 import type { ReactLocalization } from '@fluent/react';
-import { decode as decodeBase64, encode as encodeBase64 } from 'base64-arraybuffer';
 import type { JsonValue } from 'type-fest';
 
 import { TranslatableError } from '@/storage/errors';
 import type { ExtendableFromKeys, MaybePromise } from '@/types/util';
 import type { Logger } from '@/utils/logger';
 
+import { gunzipBase64, gzipBase64 } from './compression';
 import { PER_KEY_BYTES_LIMIT } from './constants';
 import { ShardGenerator } from './generator';
 
@@ -132,18 +132,8 @@ const asGzip = async (
 		length = baseLength;
 
 	const compressShard = async (values: string) => {
-		const valuesStream = new ReadableStream({
-			start(controller) {
-				controller.enqueue(textEncoder.encode(values));
-				controller.close();
-			},
-		});
-
-		const compressedBuf = await new Response(
-			valuesStream.pipeThrough(new CompressionStream('gzip')),
-		).arrayBuffer();
-
-		return `${valuePrefix}${encodeBase64(compressedBuf)}` as const;
+		const base64 = await gzipBase64(textEncoder.encode(values));
+		return `${valuePrefix}${base64}` as const;
 	};
 
 	for (let i = 0; i < valuesLength; i++) {
@@ -157,6 +147,13 @@ const asGzip = async (
 		//       so keys capacity is not fully utilized (e.g. if values are 7000 bytes in size,
 		//       they will be split into two keys even if they could fit into one of ~6100 bytes
 		//       after compression)
+		//
+		//       however, this is not a problem at the moment, because even if each key uses
+		//       only half of the per-key quota (8192/2 = 4096 bytes), i.e., the export will require
+		//       twice as many keys, the capacity of these extra keys still cannot be used because it
+		//       greatly exceeds the total per-extension storage quota (512/2*8192 = 2097152 bytes (~2MB),
+		//       which is much greater than the total limit of 102400 bytes (~102KB)), so we are guaranteed
+		//       not to reach the key amount limit (unless we create a lot of keys with a small amount of data each)
 		if (newLength >= capacity) {
 			valueLength -= commaLength; // remove the comma since we start a new array
 			length = baseLength + valueLength;
@@ -181,17 +178,7 @@ const asGzip = async (
 const textDecoder = new TextDecoder('utf8', { fatal: true });
 
 const fromGzip = async (logger: Logger, value: string) => {
-	const compressedStream = new ReadableStream({
-		start(controller) {
-			controller.enqueue(decodeBase64(value));
-			controller.close();
-		},
-	});
-
-	const decompressedBuf = await new Response(
-		compressedStream.pipeThrough(new DecompressionStream('gzip')),
-	).arrayBuffer();
-
+	const decompressedBuf = await gunzipBase64(value);
 	const decompressed = textDecoder.decode(decompressedBuf);
 
 	logger.debug('decompressed array', decompressed);
