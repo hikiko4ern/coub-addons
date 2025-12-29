@@ -30,6 +30,11 @@ export const recoverPhrasesBlocklistFromShards = async (
 			index = indexStr ? Number.parseInt(indexStr, 10) : 0;
 		}
 
+		if (typeof rawValue === 'undefined' || rawValue === null) {
+			logger.info('skipping empty shard (probably failed to remove?)', { index, rawValue });
+			continue;
+		}
+
 		arrays[index] = await recoverArrayShard<string>(logger, rawValue);
 	}
 

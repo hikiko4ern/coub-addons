@@ -302,5 +302,8 @@ export abstract class ShardedStorage<
 	 * on 365 channels with the one-key-per-field approach
 	 */
 	abstract shardRawValue(keyPrefix: string, raw: RawState): MaybePromise<StorageShard<never>[]>;
+	abstract getShardsFromSync(
+		keepStoragePrefix?: boolean,
+	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]>;
 	abstract recoverRawValueFromShards(): Promise<[RawState, TMetadata]>;
 }

@@ -10,10 +10,11 @@ import { useCallback } from 'preact/hooks';
 import { toast } from 'react-toastify';
 import { storage as wxtStorage } from 'wxt/storage';
 
+import { mapFilter } from '@/helpers/mapFilter';
 import { logger } from '@/options/constants';
 import { useIsDevMode } from '@/options/hooks/useIsDevMode';
 import { type StorageToBackup, restoreBackup } from '@/storage/backup';
-import type { AnyStorageBase } from '@/storage/base';
+import { type AnyStorageBase, ShardedStorage, type StorageShard } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
 
 import { SyncStorageDetails } from './components/SyncStorageDetails';
@@ -35,9 +36,56 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage })
 	const exportToSync = useCallback(async () => {
 		try {
 			const [shards, removeKeys] = await storage.getSyncItems();
-			logger.debug('exporting', { shards, removeKeys });
-			await Promise.all([wxtStorage.setItems(shards), wxtStorage.removeItems(removeKeys)]);
-			toast.success(<Localized id="sync-backup-exported" />);
+			logger.debug('got sync items', { shards, removeKeys });
+
+			const newShardsKeys = new Set(shards.map(shard => shard.key));
+
+			const extraSyncKeysToRemove =
+				storage instanceof ShardedStorage
+					? mapFilter(
+							(await storage.getShardsFromSync(true))[0],
+							shard => `sync:${shard.key}` as const,
+							key => !newShardsKeys.has(key),
+						)
+					: [];
+
+			const allKeysToRemove = [...new Set([...removeKeys, ...extraSyncKeysToRemove])];
+
+			const shardsWithPendingRemoval: StorageShard<'sync'>[] = [
+				...shards,
+				...allKeysToRemove.map(
+					(key): StorageShard<'sync'> => ({
+						key,
+						value: undefined,
+					}),
+				),
+			];
+
+			logger.debug('exporting sync', {
+				shardsWithPendingRemoval,
+				allKeysToRemove,
+			});
+
+			// updates the storage in two steps:
+			// 1. first, it writes new data and changes the values to be deleted to `null`
+			// 2. then it deletes the extra `null` keys
+			//
+			// this way:
+			// - if the first step fails, in theory, no data will change,
+			//   and the old export will remain intact
+			// - if the second step fails, extra keys with `null` will remain in the storage,
+			//   but they will not affect anything, as they will be ignored during import
+			await wxtStorage.setItems(shardsWithPendingRemoval).then(() => {
+				toast.success(<Localized id="sync-backup-exported" />);
+
+				if (allKeysToRemove.length > 0) {
+					logger.debug('sync exported successfully, removing extra keys', allKeysToRemove);
+
+					wxtStorage.removeItems(allKeysToRemove).catch(err => {
+						logger.error('failed to remove extra keys:', err);
+					});
+				}
+			});
 		} catch (err) {
 			const translatedError = err instanceof TranslatableError ? err.translate(l10n) : String(err);
 

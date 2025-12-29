@@ -39,6 +39,11 @@ export const recoverBlockedChannelsFromShards = async (
 		const key = _key as keyof RawBlockedChannels;
 		const index = indexStr ? Number.parseInt(indexStr, 10) : 0;
 
+		if (typeof rawValue === 'undefined' || rawValue === null) {
+			logger.info('skipping empty shard (probably failed to remove?)', { key, index, rawValue });
+			continue;
+		}
+
 		let value: RawBlockedChannels[keyof RawBlockedChannels];
 
 		switch (key) {

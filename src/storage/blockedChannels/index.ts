@@ -176,18 +176,26 @@ export class BlockedChannelsStorage extends ShardedStorage<
 		return shardBlockedChannels(this.logger, keyPrefix, raw);
 	}
 
-	async recoverRawValueFromShards(): Promise<[RawBlockedChannels, BlockedChannelsMeta]> {
+	async getShardsFromSync(
+		keepStoragePrefix = false,
+	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]> {
 		const state = await browser.storage.sync.get();
-		const keyPrefix = `${key}:`;
+		const keyPrefix = `${this.key}:`;
 
 		const shards = filterMap(
 			Object.entries(state),
 			([key]) => key.startsWith(keyPrefix),
 			([key, value]): StorageShard<never> => ({
-				key: key.slice(keyPrefix.length),
+				key: keepStoragePrefix ? key : key.slice(keyPrefix.length),
 				value,
 			}),
 		);
+
+		return [shards, state];
+	}
+
+	async recoverRawValueFromShards(): Promise<[RawBlockedChannels, BlockedChannelsMeta]> {
+		const [shards, state] = await this.getShardsFromSync();
 
 		return [
 			await recoverBlockedChannelsFromShards(this.logger, shards as RawBlockedChannelsShards),

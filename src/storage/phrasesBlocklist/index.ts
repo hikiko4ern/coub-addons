@@ -85,7 +85,9 @@ export abstract class PhrasesBlocklistStorage<
 		return shardArray(keyPrefix, undefined, raw.split('\n'), 'string', byteSize);
 	}
 
-	async recoverRawValueFromShards(): Promise<[RawPhrasesBlocklist, PhrasesBlocklistMeta]> {
+	async getShardsFromSync(
+		keepStoragePrefix = false,
+	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]> {
 		const state = await browser.storage.sync.get();
 		const keyPrefix = `${this.key}#`;
 
@@ -93,10 +95,20 @@ export abstract class PhrasesBlocklistStorage<
 			Object.entries(state),
 			([key]) => key === this.key || key.startsWith(keyPrefix),
 			([key, value]): StorageShard<never> => ({
-				key: key === this.key ? undefined : key.slice(keyPrefix.length - 1),
+				key: keepStoragePrefix
+					? key
+					: key === this.key
+						? undefined
+						: key.slice(keyPrefix.length - 1),
 				value,
 			}),
 		);
+
+		return [shards, state];
+	}
+
+	async recoverRawValueFromShards(): Promise<[RawPhrasesBlocklist, PhrasesBlocklistMeta]> {
+		const [shards, state] = await this.getShardsFromSync();
 
 		return [
 			await recoverPhrasesBlocklistFromShards(this.logger, shards as RawPhrasesBlocklistShards),
