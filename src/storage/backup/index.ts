@@ -173,7 +173,7 @@ const mergeWithBackup = (storages: Storages, currentState: Backup, backup: Backu
 		let backupData = backup[storage.KEY];
 
 		if (currentVersion !== backupVersion) {
-			const migrations: Partial<Record<number, (data: unknown) => unknown>> | undefined =
+			const migrations: Partial<Record<number, (data: any) => any>> | undefined =
 				storage.MIGRATIONS;
 
 			if (!migrations) {

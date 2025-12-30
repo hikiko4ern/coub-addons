@@ -22,8 +22,9 @@ export interface StatsMeta extends StorageMeta {}
 export type ReadonlyStats = ToReadonly<Stats>;
 
 const key = 'stats' as const,
-	metaKey = `${key}$` as const,
-	version = 9;
+	metaKey = `${key}$` as const;
+
+export const statsVersion = 9;
 
 const fallbackValue: Stats = {
 	filteredChannels: Object.fromEntries(
@@ -41,7 +42,7 @@ const fallbackValue: Stats = {
 };
 
 const statsItem = storage.defineItem<Stats, StatsMeta>(`local:${key}`, {
-	version,
+	version: statsVersion,
 	fallback: fallbackValue,
 	migrations: statsMigrations,
 });
@@ -52,7 +53,7 @@ export class StatsStorage extends StorageBase<typeof key, typeof metaKey, Stats,
 	static readonly STORAGE = statsItem;
 	static readonly MIGRATIONS = statsMigrations;
 	protected readonly logger: Logger;
-	protected readonly version = version;
+	protected readonly version = statsVersion;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('StatsStorage');

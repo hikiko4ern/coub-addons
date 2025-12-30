@@ -1,3 +1,5 @@
+import type { DefineMigrations } from '../migrations';
+import type { blocklistVersion } from './index';
 import {
 	type BlocklistV1,
 	type BlocklistV2,
@@ -7,22 +9,28 @@ import {
 	CommentFromBlockedChannelActionV5,
 } from './types';
 
-type Migrations = Record<2 | 3 | 4 | 5, (blocklist: any) => unknown>;
+type Migrations = DefineMigrations<
+	typeof blocklistVersion,
+	[BlocklistV1, BlocklistV2, BlocklistV3, BlocklistV4, BlocklistV5]
+>;
 
 export const blocklistMigrations: Migrations = {
-	2: (blocklist: BlocklistV1): BlocklistV2 => ({
+	2: (blocklist): BlocklistV2 => ({
 		...blocklist,
 		isHideCommentsFromBlockedChannels: true,
 	}),
-	3: (blocklist: BlocklistV2): BlocklistV3 => ({
+
+	3: (blocklist): BlocklistV3 => ({
 		...blocklist,
 		isBlockRepostsOfStories: false,
 	}),
-	4: (blocklist: BlocklistV3): BlocklistV4 => ({
+
+	4: (blocklist): BlocklistV4 => ({
 		...blocklist,
 		isBlockRepostsOfCoubs: false,
 	}),
-	5: (blocklist: BlocklistV4): BlocklistV5 => ({
+
+	5: (blocklist): BlocklistV5 => ({
 		...blocklist,
 		commentsFromBlockedChannels: blocklist.isHideCommentsFromBlockedChannels
 			? CommentFromBlockedChannelActionV5.RemoveWithReplies

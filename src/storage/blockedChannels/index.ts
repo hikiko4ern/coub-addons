@@ -15,6 +15,7 @@ import { iterRawBlockedChannels } from './helpers/iterRawBlockedChannels';
 import { mergeBlockedChannels } from './helpers/mergeBlockedChannels';
 import { recoverBlockedChannelsFromShards } from './helpers/recoverBlockedChannelsFromShards';
 import { shardBlockedChannels } from './helpers/shardBlockedChannels';
+import { blockedChannelsMigrations } from './migrations';
 import type { BlockedChannelData, RawBlockedChannels, RawBlockedChannelsShards } from './types';
 
 export type { BlockedChannelData, RawBlockedChannels } from './types';
@@ -22,8 +23,9 @@ export type { BlockedChannelData, RawBlockedChannels } from './types';
 export interface BlockedChannelsMeta extends StorageMeta, StorageSyncMeta {}
 
 const key = 'blockedChannels' as const,
-	metaKey = `${key}$` as const,
-	version = 1;
+	metaKey = `${key}$` as const;
+
+export const blockedChannelsVersion = 1;
 
 const fallbackValue: RawBlockedChannels = {
 	id: [],
@@ -34,8 +36,9 @@ const fallbackValue: RawBlockedChannels = {
 const blockedChannelsItem = storage.defineItem<RawBlockedChannels, BlockedChannelsMeta>(
 	`local:${key}`,
 	{
-		version,
+		version: blockedChannelsVersion,
 		fallback: fallbackValue,
+		migrations: blockedChannelsMigrations,
 	},
 );
 
@@ -68,7 +71,7 @@ export class BlockedChannelsStorage extends ShardedStorage<
 	static readonly MIGRATIONS = undefined;
 	static readonly merge = mergeBlockedChannels;
 	protected readonly logger: Logger;
-	protected readonly version = version;
+	protected readonly version = blockedChannelsVersion;
 
 	readonly #isBlockedListeners: Record</** channelId */ number, Set<IsBlockedListener>> = {};
 

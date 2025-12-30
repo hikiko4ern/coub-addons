@@ -19,8 +19,9 @@ export interface BlocklistMeta extends StorageMeta, StorageSyncMeta {}
 export type ReadonlyBlocklist = ToReadonly<Blocklist>;
 
 const key = 'blocklist' as const,
-	metaKey = `${key}$` as const,
-	version = 5;
+	metaKey = `${key}$` as const;
+
+export const blocklistVersion = 5;
 
 const fallbackValue: Blocklist = {
 	isBlockRecoubs: false,
@@ -30,7 +31,7 @@ const fallbackValue: Blocklist = {
 };
 
 const blocklistItem = storage.defineItem<Blocklist, BlocklistMeta>(`local:${key}`, {
-	version,
+	version: blocklistVersion,
 	fallback: fallbackValue,
 	migrations: blocklistMigrations,
 });
@@ -46,7 +47,7 @@ export class BlocklistStorage extends SyncableStorage<
 	static readonly STORAGE = blocklistItem;
 	static readonly MIGRATIONS = blocklistMigrations;
 	protected readonly logger: Logger;
-	protected readonly version = version;
+	protected readonly version = blocklistVersion;
 
 	constructor(tabId: number | undefined, source: string, logger: Logger) {
 		const childLogger = logger.getChildLogger('BlocklistStorage');
