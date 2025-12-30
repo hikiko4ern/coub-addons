@@ -73,7 +73,9 @@ export const useStorageState = <
 	useEffect(() => {
 		if (
 			state.status === StorageHookState.Loaded &&
-			(!prevState || prevState.status !== StorageHookState.Loaded)
+			(!prevState ||
+				(prevState.status !== StorageHookState.Loading &&
+					prevState.status !== StorageHookState.Loaded))
 		) {
 			onInitRef?.current(state.data);
 		}

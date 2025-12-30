@@ -15,6 +15,7 @@ import type { Selection } from '@react-types/shared';
 import type { FunctionComponent, Ref } from 'preact';
 import { useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'preact/hooks';
 
+import { getChannelPermalink } from '@/helpers/channel/getChannelPermalink';
 import type {
 	BlockedChannelData,
 	BlockedChannelsStorage,
@@ -136,11 +137,7 @@ export const BlockedChannelsTable: FunctionComponent<Props> = ({
 				return (
 					<TableCell>
 						{channel.permalink ? (
-							<Link
-								href={`${import.meta.env.VITE_COUB_ORIGIN}/${channel.permalink}`}
-								size="sm"
-								isExternal
-							>
+							<Link href={getChannelPermalink(channel.permalink).href} size="sm" isExternal>
 								{channel.title}
 							</Link>
 						) : (
