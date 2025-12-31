@@ -17,7 +17,7 @@ import {
 } from './types';
 
 export type AnyStorageBase = StorageBase<any, any, any, any, any, any>;
-export type AnySyncableStorage = SyncableStorage<any, any, any, any, any, any>;
+export type AnySyncableStorage = SyncableStorage<any, any, any, any, any, any, any>;
 
 export type StorageWatchCallback<State, ListenerArgs extends unknown[] = []> = (
 	state: ToReadonly<State>,
@@ -238,12 +238,14 @@ export abstract class SyncableStorage<
 	State,
 	TMetadata extends StorageMeta & StorageSyncMeta = StorageMeta & StorageSyncMeta,
 	RawState = State,
+	SyncRawState = RawState,
 	ListenerArgs extends unknown[] = [],
 > extends StorageBase<Key, MetaKey, State, TMetadata, RawState, ListenerArgs> {
 	async getSyncItems(
 		syncMeta: StorageSyncMeta,
 	): Promise<[shards: StorageShard<'sync'>[], removeKeys: `sync:${string}`[]]> {
 		const [state, meta] = await this.getItems();
+		const stateValue = this.getSyncValueFromRaw(state.value);
 
 		const syncShards: StorageShard<'sync'>[] = [
 			{
@@ -257,7 +259,7 @@ export abstract class SyncableStorage<
 		const removeKeys: `sync:${string}`[] = [];
 
 		if (this instanceof ShardedStorage) {
-			const rawShards = await this.shardRawValue(this.key, state.value);
+			const rawShards = await this.shardRawValue(this.key, stateValue);
 			this.logger.debug('generated shards', rawShards);
 
 			for (const shard of rawShards) {
@@ -275,11 +277,15 @@ export abstract class SyncableStorage<
 		} else {
 			syncShards.push({
 				key: `sync:${this.key}`,
-				value: state.value,
+				value: stateValue,
 			});
 		}
 
 		return [syncShards, removeKeys];
+	}
+
+	getSyncValueFromRaw(state: RawState): SyncRawState {
+		return state as unknown as SyncRawState;
 	}
 
 	async getShardsFromSync(
@@ -311,6 +317,10 @@ export abstract class SyncableStorage<
 		};
 	}
 
+	getRawValueFromSync(state: SyncRawState): MaybePromise<RawState> {
+		return state as unknown as RawState;
+	}
+
 	private async defaultGetRawValueFromSync(): Promise<[RawState, TMetadata]> {
 		const [state, meta] = await storage.getItems([`sync:${this.key}`, `sync:${this.metaKey}`]);
 
@@ -326,7 +336,9 @@ export abstract class SyncableStorage<
 			throw new NoShardsError(missingKeys);
 		}
 
-		return [state.value as RawState, meta.value as TMetadata];
+		const stateValue = await this.getRawValueFromSync(state.value);
+
+		return [stateValue, meta.value as TMetadata];
 	}
 }
 
@@ -336,8 +348,9 @@ export abstract class ShardedStorage<
 	State,
 	TMetadata extends StorageMeta & StorageSyncMeta = StorageMeta & StorageSyncMeta,
 	RawState = State,
+	SyncRawState = RawState,
 	ListenerArgs extends unknown[] = [],
-> extends SyncableStorage<Key, MetaKey, State, TMetadata, RawState, ListenerArgs> {
+> extends SyncableStorage<Key, MetaKey, State, TMetadata, RawState, SyncRawState, ListenerArgs> {
 	/**
 	 * shards value into the smaller pieces
 	 *
@@ -347,7 +360,7 @@ export abstract class ShardedStorage<
 	 * on 192 channels with the one-key-per-object approach, and
 	 * on 365 channels with the one-key-per-field approach
 	 */
-	abstract shardRawValue(keyPrefix: string, raw: RawState): MaybePromise<StorageShard<never>[]>;
+	abstract shardRawValue(keyPrefix: string, raw: SyncRawState): MaybePromise<StorageShard<never>[]>;
 	abstract getShardsFromSync(
 		keepStoragePrefix?: boolean,
 	): Promise<[shards: StorageShard<never>[], state: Record<string, unknown>]>;

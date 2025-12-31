@@ -14,6 +14,8 @@ export interface SettingsMeta extends StorageMeta, StorageSyncMeta {}
 
 export type ReadonlySettings = ToReadonly<Settings>;
 
+type SyncSettings = Omit<Settings, 'deviceName' | 'isDevMode'>;
+
 const key = 'settings' as const,
 	metaKey = `${key}$` as const;
 
@@ -36,7 +38,9 @@ export class SettingsStorage extends SyncableStorage<
 	typeof key,
 	typeof metaKey,
 	Settings,
-	SettingsMeta
+	SettingsMeta,
+	Settings,
+	SyncSettings
 > {
 	static readonly KEY = key;
 	static readonly META_KEY = metaKey;
@@ -59,4 +63,14 @@ export class SettingsStorage extends SyncableStorage<
 
 	static readonly merge = (current: Settings, backup: Partial<Settings>): Settings =>
 		Object.assign(current, backup);
+
+	getSyncValueFromRaw(state: Settings): SyncSettings {
+		const { deviceName, isDevMode, ...settings } = state;
+		return settings;
+	}
+
+	async getRawValueFromSync(state: SyncSettings): Promise<Settings> {
+		const { deviceName, isDevMode } = await this.getValue();
+		return { ...state, deviceName, isDevMode };
+	}
 }

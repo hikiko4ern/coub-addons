@@ -63,6 +63,7 @@ export class BlockedChannelsStorage extends ShardedStorage<
 	BlockedChannels,
 	BlockedChannelsMeta,
 	RawBlockedChannels,
+	RawBlockedChannels,
 	ListenerArgs
 > {
 	static readonly KEY = key;
