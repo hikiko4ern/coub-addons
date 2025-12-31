@@ -73,7 +73,7 @@
 		"@types/i18n-js": "^3.8.9",
 		"@types/jquery": "^1.10.45",
 		"@types/moment": "2.11.29",
-		"@types/node": "^22.18.9",
+		"@types/node": "^24.10.4",
 		"@uiw/codemirror-theme-aura": "^4.25.4",
 		"base64-arraybuffer": "^1.0.2",
 		"clsx": "^2.1.1",
@@ -150,7 +150,7 @@
 	"pnpm": {
 		"overrides": {
 			"@nextui-org/shared-utils": "packages/@nextui-org/shared-utils",
-			"@types/node": "^22.18.9",
+			"@types/node": "^24.10.4",
 			"esbuild": "^0.27.2",
 			"vite": "^6.3.6",
 			"vite>jiti": ">=2"
