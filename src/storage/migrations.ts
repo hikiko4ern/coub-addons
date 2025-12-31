@@ -27,5 +27,9 @@ export type DefineMigrations<
 			: never
 		: never]: (
 		prev: Versions[index],
-	) => index extends `${infer index extends number}` ? Versions[Increment<index>] : never;
+	) => index extends `${infer index extends number}`
+		? Increment<index> extends infer nextIndex extends keyof Versions
+			? Versions[nextIndex]
+			: never
+		: never;
 };

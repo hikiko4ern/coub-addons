@@ -124,9 +124,8 @@ export class EventListener implements Disposable {
 const isEvent = (value: unknown): value is Event =>
 	isObject(value) && 'type' in value && EVENT_IDS.has(value.type as never);
 
-type OnMessageHandler = Browser['runtime']['onMessage'] extends Events.Event<infer Handler>
-	? Handler
-	: never;
+type OnMessageHandler =
+	Browser['runtime']['onMessage'] extends Events.Event<infer Handler> ? Handler : never;
 
 type OnMessageHandlerWithMessageType<Message> = OnMessageHandler extends (
 	message: unknown,

@@ -5,8 +5,8 @@
 	"type": "module",
 	"main": "src/index.ts",
 	"dependencies": {
-		"jsonwebtoken": "^9.0.2",
-		"listr2": "^9.0.4",
+		"jsonwebtoken": "^9.0.3",
+		"listr2": "^9.0.5",
 		"picocolors": "^1.1.1",
 		"superstruct": "^2.0.2"
 	},

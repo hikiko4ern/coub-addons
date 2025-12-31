@@ -1,12 +1,12 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
 	"files": {
 		"includes": [
 			"**",
 			"!**/*.json",
 			"!**/*.css",
 			"!**/*.scss",
-			"!**/*.scss.d.ts",
+			"!**/*.d.scss.ts",
 			"!**/src/gql/**",
 			"!**/docs/release-notes/**",
 			"!**/packages/@nextui-org/**"

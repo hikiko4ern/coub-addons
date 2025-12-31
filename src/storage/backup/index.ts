@@ -22,16 +22,10 @@ import {
 	StorageMigrationsFailed,
 } from './errors';
 
-type ToBackup<Storage extends AnyStorageBase> = Storage extends StorageBase<
-	infer Key,
-	infer MetaKey,
-	any,
-	infer Meta,
-	infer RawState,
-	any
->
-	? { [key in Key]?: RawState } & { [metaKey in MetaKey]?: OmitIndexSignature<Meta> }
-	: never;
+type ToBackup<Storage extends AnyStorageBase> =
+	Storage extends StorageBase<infer Key, infer MetaKey, any, infer Meta, infer RawState, any>
+		? { [key in Key]?: RawState } & { [metaKey in MetaKey]?: OmitIndexSignature<Meta> }
+		: never;
 
 export type Backup = UnionToIntersection<ToBackup<InstanceType<StorageToBackup>>>;
 

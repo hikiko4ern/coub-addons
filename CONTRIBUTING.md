@@ -99,9 +99,9 @@ To generate `N` fake channels for the `blockedChannels` storage:
    		// ... other updates ...
    		{
    			"version": "x.x.x",
-   			"update_link": "https://localhost:8080/coub-addons-x.x.x-firefox.xpi"
-   		}
-   	]
+   			"update_link": "https://localhost:8080/coub-addons-x.x.x-firefox.xpi",
+   		},
+   	],
    }
    ```
 
