@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.1] - 2025-12-31
+
+### Bug Fixes
+
+- patch NextUI once again to remove the React copy from the build
+- **(channel-dropdown)** revert non-reverted `setDropdownContent` patch
+- **(settings)** do not save if editor is not dirty
+- **(sync-backup)** exclude `deviceName` and `isDevMode` from `settings` sync
+
+### Features
+
+- **(media-session)** handle `nexttrack` and `previoustrack` ([#15](https://github.com/hikiko4ern/coub-addons/issues/15))
+- **(sync-backup)** add backup to the `sync` storage
+- **(settings/blocklist)** add search by channel id
+
 ## [0.2.0] - 2025-10-12
 
 ### BREAKING CHANGES
