@@ -36,3 +36,9 @@ export interface PlayerSettingsV3 extends PlayerSettingsV2 {
 // v4
 
 export type PlayerSettingsV4 = Omit<PlayerSettingsV3, 'copyCoubPermalinkHotkey'>;
+
+// v5
+
+export interface PlayerSettingsV5 extends PlayerSettingsV4 {
+	isPreventBuiltInHotkeysIfModPressed: boolean;
+}

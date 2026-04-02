@@ -34,7 +34,21 @@ export const addKeyUpHandlerToHtml5Player = (
 			return this.toggleFullScreen();
 		}
 
-		if (playerSettings.isPreventPlaybackRateChange && (e.which === 87 || e.which === 83)) {
+		if (
+			playerSettings.isPreventPlaybackRateChange &&
+			(e.which === /* W */ 87 || e.which === /* S */ 83)
+		) {
+			return e.stopImmediatePropagation();
+		}
+
+		if (
+			playerSettings.isPreventBuiltInHotkeysIfModPressed &&
+			(e.which === /* W */ 87 ||
+				e.which === /* S */ 83 ||
+				e.which === /* R */ 82 ||
+				e.which === /* P */ 80) &&
+			(e.ctrlKey || e.metaKey || e.altKey || e.shiftKey)
+		) {
 			return e.stopImmediatePropagation();
 		}
 	}

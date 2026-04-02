@@ -22,6 +22,11 @@ export const PlayerSettings: FunctionComponent<Props> = ({ storage, state }) => 
 		'isPreventPlaybackRateChange',
 	);
 
+	const handleIsPreventBuiltInHotkeysIfModPressed = useStorageMergeCallback(
+		storage,
+		'isPreventBuiltInHotkeysIfModPressed',
+	);
+
 	return (
 		<CardSection bodyClassName="flex gap-4" title={<Localized id="keyboard-shortcuts" />}>
 			<div>
@@ -34,6 +39,26 @@ export const PlayerSettings: FunctionComponent<Props> = ({ storage, state }) => 
 
 				<HintTooltip iconClassName="ml-2">
 					<Localized id="prevent-playback-rate-change-tooltip" elems={{ kbd: <Kbd /> }}>
+						<span />
+					</Localized>
+				</HintTooltip>
+			</div>
+
+			<div>
+				<Checkbox
+					isSelected={state.isPreventBuiltInHotkeysIfModPressed}
+					onValueChange={handleIsPreventBuiltInHotkeysIfModPressed}
+				>
+					<Localized id="prevent-player-built-in-hotkeys-if-mod-pressed" elems={{ kbd: <Kbd /> }}>
+						<span />
+					</Localized>
+				</Checkbox>
+
+				<HintTooltip iconClassName="ml-2">
+					<Localized
+						id="prevent-player-built-in-hotkeys-if-mod-pressed-tooltip"
+						elems={{ kbd: <Kbd /> }}
+					>
 						<span />
 					</Localized>
 				</HintTooltip>

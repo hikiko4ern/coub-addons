@@ -6,7 +6,7 @@ import type { Logger } from '@/utils/logger';
 import { SyncableStorage } from '../base';
 import type { StorageMeta, StorageSyncMeta } from '../types';
 import { playerSettingsMigrations } from './migrations';
-import type { PlayerSettingsV4 as PlayerSettings } from './types';
+import type { PlayerSettingsV5 as PlayerSettings } from './types';
 
 export type { PlayerSettings };
 
@@ -17,10 +17,11 @@ export type ReadonlyPlayerSettings = ToReadonly<PlayerSettings>;
 const key = 'playerSettings' as const,
 	metaKey = `${key}$` as const;
 
-export const playerSettingsVersion = 4;
+export const playerSettingsVersion = 5;
 
 const fallbackValue: PlayerSettings = {
 	isPreventPlaybackRateChange: false,
+	isPreventBuiltInHotkeysIfModPressed: true,
 	toggleDislikeHotkey: {
 		mods: 0,
 		key: 'd',

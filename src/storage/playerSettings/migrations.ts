@@ -9,11 +9,12 @@ import type {
 	PlayerSettingsV2,
 	PlayerSettingsV3,
 	PlayerSettingsV4,
+	PlayerSettingsV5,
 } from './types';
 
 type Migrations = DefineMigrations<
 	typeof playerSettingsVersion,
-	[PlayerSettingsV1, PlayerSettingsV2, PlayerSettingsV3, PlayerSettingsV4]
+	[PlayerSettingsV1, PlayerSettingsV2, PlayerSettingsV3, PlayerSettingsV4, PlayerSettingsV5]
 >;
 
 export const playerSettingsMigrations: Migrations = {
@@ -30,6 +31,11 @@ export const playerSettingsMigrations: Migrations = {
 	}),
 
 	4: ({ copyCoubPermalinkHotkey, ...playerSettings }): PlayerSettingsV4 => playerSettings,
+
+	5: (playerSettings): PlayerSettingsV5 => ({
+		...playerSettings,
+		isPreventBuiltInHotkeysIfModPressed: true,
+	}),
 };
 
 const hotkeyV1ToV2 = (hotkey: HotkeyV1 | undefined): Hotkey | undefined =>

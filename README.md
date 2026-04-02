@@ -36,6 +36,7 @@ Minimum supported browser versions:
   - providing information about the currently playing coub
   - pause and resume playback
 - preventing playback speed change when <kbd>W</kbd>/<kbd>S</kbd> is pressed
+- preventing player from handling <kbd>W</kbd>/<kbd>S</kbd>/<kbd>R</kbd>/<kbd>P</kbd> keystrokes if one of the modifier keys is pressed (<kbd>Ctrl</kbd>/<kbd>Alt</kbd>/<kbd>Shift</kbd>/<kbd>Meta</kbd>)
 - additional hotkeys:
   <!-- spell-checker: ignore islike ookmark ullscreen -->
   <!-- shortcuts-table -->

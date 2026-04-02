@@ -63,8 +63,8 @@ export const HotkeyInput: FunctionComponent<Props> = ({ value, errorMessage, onC
 		<Input
 			{...handlers}
 			ref={inputRef}
-			className={cx('w-72', {
-				'!w-80': locale === 'ru-RU',
+			className={cx('min-w-72', {
+				'!min-w-80': locale === 'ru-RU',
 			})}
 			placeholder={isRecording ? l10n.getString('press-any-key-combination') : undefined}
 			value={formatHotkey(hotkey)}
