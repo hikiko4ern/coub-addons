@@ -23,6 +23,6 @@
 		"directory": "packages/wxt-svg-icon"
 	},
 	"author": "hikiko4ern",
-	"license": "Unlicense",
+	"license": "(MIT OR 0BSD)",
 	"private": true
 }

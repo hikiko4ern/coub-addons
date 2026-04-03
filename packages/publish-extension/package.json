@@ -19,6 +19,6 @@
 		"directory": "packages/publish-extension"
 	},
 	"author": "hikiko4ern",
-	"license": "Unlicense",
+	"license": "(MIT OR 0BSD)",
 	"private": true
 }
