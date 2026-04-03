@@ -18,6 +18,10 @@ export const geckoManifest = {
 	id: process.env.VITE_GECKO_ID,
 	update_url: process.env.VITE_GECKO_UPDATE_URL,
 	strict_min_version: '125.0',
+	// @ts-expect-error - the used `wxt` is old and it's types doesn't have this field
+	data_collection_permissions: {
+		required: ['none'],
+	},
 } satisfies NonNullable<UserManifest['browser_specific_settings']>['gecko'];
 
 // See https://wxt.dev/api/config.html
