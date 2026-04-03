@@ -190,14 +190,21 @@ unknown-array-prefix = Unknown array prefix: {$prefix}
 unknown-array-value = Unknown for array value of type {$type}: {$value}
 
 ## options / sync backup
+-sync-state-equals-local = Currently exported data is equal to the local state
 last-sync =
   .title = Device, date, and time of last synchronization
 sync-backup-export =
   .title = Export to the sync storage
+sync-backup-export_equal =
+  .title = {sync-backup-export.title}. {-sync-state-equals-local}
 sync-backup-import =
   .title = Import from the sync storage
+sync-backup-import_equal =
+  .title = {sync-backup-import.title}. {-sync-state-equals-local}
 sync-backup-import-merge =
   .title = Import from sync storage and merge with current state
+sync-backup-import-merge_equal =
+  .title = {sync-backup-import-merge.title}. {-sync-state-equals-local}
 download-sync-backup =
   .title = Download sync storage data (JSON)
 sync-backup-download-error = An error occurred while saving data from the sync storage:<br/>{$error}

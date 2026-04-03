@@ -23,6 +23,7 @@ import type { AnySyncableStorage, StorageShard } from '@/storage/base';
 import { TranslatableError } from '@/storage/errors';
 
 import { SyncStorageDetails } from './components/SyncStorageDetails';
+import { useAreShardsEqual } from './hooks/useAreShardsEqual';
 import { useLastSynced } from './hooks/useLastSynced';
 
 interface Props {
@@ -36,6 +37,8 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage })
 	const isDevMode = useIsDevMode();
 	const deviceName = useSyncDeviceName();
 	const lastSynced = useLastSynced(storage.metaKey);
+	const areShardsEqual = useAreShardsEqual(storage);
+
 	const {
 		isOpen: areDetailsOpen,
 		onOpenChange: onDetailsOpenChange,
@@ -194,8 +197,12 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage })
 	return (
 		<div className={cx('flex shrink-0 items-center gap-4', className)}>
 			<ButtonGroup className="relative shrink-0">
-				<Localized id="sync-backup-export" attrs={{ title: true }}>
+				<Localized
+					id={areShardsEqual.value ? 'sync-backup-export_equal' : 'sync-backup-export'}
+					attrs={{ title: true }}
+				>
 					<Button
+						variant={areShardsEqual.value ? 'flat' : undefined}
 						isLoading={deviceName.status === StorageHookState.Loading}
 						isDisabled={!isDeviceNameLoaded}
 						onPress={exportToSync}
@@ -204,14 +211,28 @@ export const PerStorageSync: FunctionComponent<Props> = ({ className, storage })
 					</Button>
 				</Localized>
 
-				<Localized id="sync-backup-import" attrs={{ title: true }}>
-					<Button isDisabled={!lastSyncedData} onPress={importWithOverwrite}>
+				<Localized
+					id={areShardsEqual.value ? 'sync-backup-import_equal' : 'sync-backup-import'}
+					attrs={{ title: true }}
+				>
+					<Button
+						variant={areShardsEqual.value ? 'flat' : undefined}
+						isDisabled={!lastSyncedData}
+						onPress={importWithOverwrite}
+					>
 						<CloudArrowDownIcon className="w-6" />
 					</Button>
 				</Localized>
 
-				<Localized id="sync-backup-import-merge" attrs={{ title: true }}>
-					<Button isDisabled={!lastSyncedData} onPress={importWithMerge}>
+				<Localized
+					id={areShardsEqual.value ? 'sync-backup-import-merge_equal' : 'sync-backup-import-merge'}
+					attrs={{ title: true }}
+				>
+					<Button
+						variant={areShardsEqual.value ? 'flat' : undefined}
+						isDisabled={!lastSyncedData}
+						onPress={importWithMerge}
+					>
 						{/* `Cloud` with plus sign from `PlusCircle` */}
 						<svg
 							className="w-6"

@@ -64,7 +64,7 @@ export const SettingsProvider: FunctionComponent<Props> = ({ children }) => {
 
 	return (
 		<SettingsContext.Provider value={ctx}>
-			{settings.status !== StorageHookState.Loading && isTabIdLoaded ? children : null}
+			{settings.status !== StorageHookState.Loading && isTabIdLoaded.value ? children : null}
 		</SettingsContext.Provider>
 	);
 };

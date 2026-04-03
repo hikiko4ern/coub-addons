@@ -191,14 +191,21 @@ unknown-array-prefix = Неизвестный префикс массива: {$p
 unknown-array-value = Неизвестное для массива значение типа {$type}: {$value}
 
 ## options / sync backup
+-sync-state-equals-local = Данные в синхронизируемом хранилище совпадают с локальным состоянием
 last-sync =
   .title = Устройство, дата и время последней синхронизации
 sync-backup-export =
   .title = Экспортировать в синхронизируемое хранилище
+sync-backup-export_equal =
+  .title = {sync-backup-export.title}. {-sync-state-equals-local}
 sync-backup-import =
   .title = Импортировать из синхронизируемого хранилища
+sync-backup-import_equal =
+  .title = {sync-backup-import.title}. {-sync-state-equals-local}
 sync-backup-import-merge =
   .title = Импортировать из синхронизируемого хранилища и объединить с текущим состоянием
+sync-backup-import-merge_equal =
+  .title = {sync-backup-import-merge.title}. {-sync-state-equals-local}
 download-sync-backup =
   .title = Скачать данные синхронизируемого хранилища (JSON)
 sync-backup-download-error = Произошла ошибка при сохранении данных синхронизируемого хранилища:<br/>{$error}
