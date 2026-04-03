@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.2] - 2026-04-03
+
+### Features
+
+- **(hotkey)** prevent player from handling hotkeys if mod is pressed
+- **(sync-backup)** show whether the data in the sync storage matches the local one
+
+### Miscellaneous Tasks
+
+- relicense as `MIT`/`0BSD`
+
 ## [0.2.1] - 2025-12-31
 
 ### Bug Fixes
