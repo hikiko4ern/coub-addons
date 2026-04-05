@@ -15,7 +15,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/hikiko4ern/coub-addons.git",
+		"url": "git+https://codeberg.org/hikiko4ern/coub-addons.git",
 		"directory": "packages/publish-extension"
 	},
 	"author": "hikiko4ern",

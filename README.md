@@ -80,11 +80,12 @@ After installing the extension (and sometimes updating it) you need to refresh [
   <summary>Repository mirrors</summary>
 
 1. on [Codeberg](https://codeberg.org) - [hikiko4ern/coub-addons](https://codeberg.org/hikiko4ern/coub-addons) (with releases)
-2. on [SourceHut](https://sourcehut.org) - [~hikiko4ern/coub-addons](https://git.sr.ht/~hikiko4ern/coub-addons) (code only)
-3. on [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/rosa.radicle.xyz/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (code only)
+2. on [GitHub](https://github.com) - [hikiko4ern/coub-addons](https://github.com/hikiko4ern/coub-addons) (is now used only for GitHub Pages [deploys](https://github.com/hikiko4ern/coub-addons/actions))
+3. on [SourceHut](https://sourcehut.org) - [~hikiko4ern/coub-addons](https://git.sr.ht/~hikiko4ern/coub-addons) (code only)
+4. on [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/rosa.radicle.xyz/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (code only)
 
 </details>
 
 <!-- links -->
 
-[latest-release]: https://github.com/hikiko4ern/coub-addons/releases/latest
+[latest-release]: https://codeberg.org/hikiko4ern/coub-addons/releases/latest

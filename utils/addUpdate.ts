@@ -92,7 +92,7 @@ interface Update {
 
 const newUpdate: Update = {
 	version,
-	update_link: `https://github.com/hikiko4ern/coub-addons/releases/download/v${version}/coub-addons-${version}-firefox.xpi`,
+	update_link: `https://codeberg.org/hikiko4ern/coub-addons/releases/download/v${version}/coub-addons-${version}-firefox.xpi`,
 	update_info_url: `https://coub-addons.doggo.moe/release-notes/${version}.html`,
 	update_hash: `sha256:${newUpdateHash}`,
 	applications: {

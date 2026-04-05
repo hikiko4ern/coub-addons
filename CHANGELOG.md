@@ -22,7 +22,7 @@
 
 ### Features
 
-- **(media-session)** handle `nexttrack` and `previoustrack` ([#15](https://github.com/hikiko4ern/coub-addons/issues/15))
+- **(media-session)** handle `nexttrack` and `previoustrack` ([#15](https://codeberg.org/hikiko4ern/coub-addons/issues/15))
 - **(sync-backup)** add backup to the `sync` storage
 - **(settings/blocklist)** add search by channel id
 
@@ -38,8 +38,8 @@
 
 ### Removed Features
 
-- **\[breaking\]** **(hotkey)** remove the `copy link to coub` hotkey ([#22](https://github.com/hikiko4ern/coub-addons/issues/22))
-- **\[breaking\]** **(blocklist)** remove the segmenter polyfill ([#21](https://github.com/hikiko4ern/coub-addons/issues/21))
+- **\[breaking\]** **(hotkey)** remove the `copy link to coub` hotkey ([#22](https://codeberg.org/hikiko4ern/coub-addons/issues/22))
+- **\[breaking\]** **(blocklist)** remove the segmenter polyfill ([#21](https://codeberg.org/hikiko4ern/coub-addons/issues/21))
 
 ### Bug Fixes
 
@@ -48,9 +48,9 @@
 
 ### Features
 
-- **(blocklist)** add blocking of reposts of coubs ([#19](https://github.com/hikiko4ern/coub-addons/issues/19))
+- **(blocklist)** add blocking of reposts of coubs ([#19](https://codeberg.org/hikiko4ern/coub-addons/issues/19))
 - **(blocklist)** check the original coub if repost
-- **(blocklist)** hide featured/recommended blocked channels ([#17](https://github.com/hikiko4ern/coub-addons/issues/17))
+- **(blocklist)** hide featured/recommended blocked channels ([#17](https://codeberg.org/hikiko4ern/coub-addons/issues/17))
 - **(blocklist)** add an option to hide message of blocked comments
 
 ### Miscellaneous Tasks
@@ -81,7 +81,7 @@
 ### Miscellaneous Tasks
 
 - **(updates)** specify `update_hash` in `updates.json`
-- change `update_url` to `coub-addons.doggo.moe` ([#16](https://github.com/hikiko4ern/coub-addons/issues/16))
+- change `update_url` to `coub-addons.doggo.moe` ([#16](https://codeberg.org/hikiko4ern/coub-addons/issues/16))
 
 ## [0.1.26] - 2024-10-06
 
@@ -93,7 +93,7 @@
 
 ### Bug Fixes
 
-- **(channel-dropdown)** add a block button via the `ChannelDropdown` patch instead of `MutationObserver` ([#11](https://github.com/hikiko4ern/coub-addons/issues/11))
+- **(channel-dropdown)** add a block button via the `ChannelDropdown` patch instead of `MutationObserver` ([#11](https://codeberg.org/hikiko4ern/coub-addons/issues/11))
 - fix random invalidation of content scripts immediately after loading
 
 ## [0.1.24] - 2024-07-28
@@ -116,7 +116,7 @@
 
 ### Features
 
-- **(jst)** return the publication date to popular and community timelines ([#14](https://github.com/hikiko4ern/coub-addons/issues/14))
+- **(jst)** return the publication date to popular and community timelines ([#14](https://codeberg.org/hikiko4ern/coub-addons/issues/14))
 
 ### Miscellaneous Tasks
 
@@ -127,7 +127,7 @@
 
 ### Features
 
-- **(media-session)** implement basic integration with Media Session API ([#9](https://github.com/hikiko4ern/coub-addons/issues/9))
+- **(media-session)** implement basic integration with Media Session API ([#9](https://codeberg.org/hikiko4ern/coub-addons/issues/9))
 
 ### Revert
 
@@ -154,7 +154,7 @@
 
 ### Features
 
-- **(blocklist)** cancel timeline requests for blocked channels ([#13](https://github.com/hikiko4ern/coub-addons/issues/13))
+- **(blocklist)** cancel timeline requests for blocked channels ([#13](https://codeberg.org/hikiko4ern/coub-addons/issues/13))
 
 ### Miscellaneous Tasks
 
@@ -177,7 +177,7 @@
 
 ### Features
 
-- **(blocklist)** update data of blocked channels from timeline and comments responses ([#12](https://github.com/hikiko4ern/coub-addons/issues/12))
+- **(blocklist)** update data of blocked channels from timeline and comments responses ([#12](https://codeberg.org/hikiko4ern/coub-addons/issues/12))
 - **(blocklist)** add an action to manually update channel data
 
 ## [0.1.16] - 2024-07-10
@@ -215,7 +215,7 @@
 
 ### Features
 
-- **(hotkey)** add keyboard shortcuts for `dislike`, `bookmark` and `fullscreen` ([#8](https://github.com/hikiko4ern/coub-addons/issues/8))
+- **(hotkey)** add keyboard shortcuts for `dislike`, `bookmark` and `fullscreen` ([#8](https://codeberg.org/hikiko4ern/coub-addons/issues/8))
 
 ## [0.1.12] - 2024-04-18
 
@@ -235,7 +235,7 @@
 
 ### Features
 
-- **(blocklist/title)** implement filtering of coubs by title ([#3](https://github.com/hikiko4ern/coub-addons/issues/3))
+- **(blocklist/title)** implement filtering of coubs by title ([#3](https://codeberg.org/hikiko4ern/coub-addons/issues/3))
 
 ### Miscellaneous Tasks
 
@@ -295,7 +295,7 @@
 
 ### Features
 
-- **(blocklist/tags)** add filtering of coubs by tags ([#2](https://github.com/hikiko4ern/coub-addons/issues/2))
+- **(blocklist/tags)** add filtering of coubs by tags ([#2](https://codeberg.org/hikiko4ern/coub-addons/issues/2))
 
 ## [0.1.2] - 2024-02-05
 
@@ -308,12 +308,12 @@
 ### Bug Fixes
 
 - do not broadcast messages to discarded and prohibited tabs
-- **(blocklist)** synchronize storages between tabs correctly ([#10](https://github.com/hikiko4ern/coub-addons/issues/10))
+- **(blocklist)** synchronize storages between tabs correctly ([#10](https://codeberg.org/hikiko4ern/coub-addons/issues/10))
 
 ### Features
 
 - adds `Block` button to channel page and dropdown
-- **(settings)** add backup import/export functionality ([#7](https://github.com/hikiko4ern/coub-addons/issues/7))
+- **(settings)** add backup import/export functionality ([#7](https://codeberg.org/hikiko4ern/coub-addons/issues/7))
 
 ### Performance
 

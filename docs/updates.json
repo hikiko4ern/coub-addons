@@ -4,7 +4,7 @@
 			"updates": [
 				{
 					"version": "0.1.24",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.24/coub-addons-0.1.24-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.1.24/coub-addons-0.1.24-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.24.html",
 					"update_hash": "sha256:883011d890a35fa638a1abeafd9af550b3bd20b5a51e40d7cdf196ef3c54d58d",
 					"applications": {
@@ -15,7 +15,7 @@
 				},
 				{
 					"version": "0.1.25",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.25/coub-addons-0.1.25-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.1.25/coub-addons-0.1.25-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.25.html",
 					"update_hash": "sha256:8ae4c981a99f5e14aa14de07bf91c4db7959d76e35902309c6a1234699813e87",
 					"applications": {
@@ -26,7 +26,7 @@
 				},
 				{
 					"version": "0.1.26",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.26/coub-addons-0.1.26-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.1.26/coub-addons-0.1.26-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.26.html",
 					"update_hash": "sha256:31573f6ecb0f1304dc073fbd4484137248f82b6e61d83ac371e735cf4b0cb364",
 					"applications": {
@@ -37,7 +37,7 @@
 				},
 				{
 					"version": "0.1.27",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.27/coub-addons-0.1.27-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.1.27/coub-addons-0.1.27-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.27.html",
 					"update_hash": "sha256:650b7ffc84d4b527e1a7377fa856b9ab2b2787e0df981732c31b336739b1aa61",
 					"applications": {
@@ -48,7 +48,7 @@
 				},
 				{
 					"version": "0.1.28",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.28/coub-addons-0.1.28-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.1.28/coub-addons-0.1.28-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.28.html",
 					"update_hash": "sha256:93e9431c978731c3af47936ea02fe7619dd8251904bb8539b52e79316b9b37ce",
 					"applications": {
@@ -59,7 +59,7 @@
 				},
 				{
 					"version": "0.1.29",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.1.29/coub-addons-0.1.29-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.1.29/coub-addons-0.1.29-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.1.29.html",
 					"update_hash": "sha256:8c214d1209e3be8109ae273b8896b7965d1d6bb8217145631151fb58a48b1c39",
 					"applications": {
@@ -70,7 +70,7 @@
 				},
 				{
 					"version": "0.2.0",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.2.0/coub-addons-0.2.0-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.2.0/coub-addons-0.2.0-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.2.0.html",
 					"update_hash": "sha256:5912d535e0ef5766c63d254eab0b40069fc30b79730775fa66ae058ea82f6a74",
 					"applications": {
@@ -81,7 +81,7 @@
 				},
 				{
 					"version": "0.2.1",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.2.1/coub-addons-0.2.1-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.2.1/coub-addons-0.2.1-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.2.1.html",
 					"update_hash": "sha256:53407b09f8e220ee545c0a58b68f00977a5e3e224362e3e1d29679ee24ea0718",
 					"applications": {
@@ -92,7 +92,7 @@
 				},
 				{
 					"version": "0.2.2",
-					"update_link": "https://github.com/hikiko4ern/coub-addons/releases/download/v0.2.2/coub-addons-0.2.2-firefox.xpi",
+					"update_link": "https://codeberg.org/hikiko4ern/coub-addons/releases/download/v0.2.2/coub-addons-0.2.2-firefox.xpi",
 					"update_info_url": "https://coub-addons.doggo.moe/release-notes/0.2.2.html",
 					"update_hash": "sha256:bea5eb6272918669897d43bb68b9b2c539f3152de730b0440142d2d77faf7b05",
 					"applications": {

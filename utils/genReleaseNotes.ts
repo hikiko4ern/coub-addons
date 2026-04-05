@@ -19,17 +19,14 @@ import { gfmToMarkdown } from 'mdast-util-gfm';
 import { toMarkdown } from 'mdast-util-to-markdown';
 import { SKIP, visit } from 'unist-util-visit';
 
-import { generateReleaseNotes } from './helpers/generateReleaseNotes';
+import { generateReleaseNotes, releaseNotesArgs } from './helpers/generateReleaseNotes';
 import { printCode } from './helpers/printCode';
 
 const {
-	values: { hosting, files: withFilesFooter },
+	values: { files: withFilesFooter },
 } = parseArgs({
 	options: {
-		hosting: {
-			type: 'string',
-			short: 'h',
-		},
+		...releaseNotesArgs,
 		files: {
 			type: 'boolean',
 			short: 'F',
@@ -39,27 +36,9 @@ const {
 	allowNegative: true,
 });
 
-if (hosting !== 'github' && hosting !== 'codeberg') {
-	throw new RangeError(
-		`\`--hosting\` \`${JSON.stringify(hosting)}\` is not one of the supported ones (\`github\`, \`codeberg\`)`,
-	);
-}
-
 const { mdTree, range } = await generateReleaseNotes();
 
-let compareLink: string;
-
-switch (hosting) {
-	case 'github':
-		compareLink = `https://github.com/hikiko4ern/coub-addons/compare/${range.replace('..', '...')}`;
-		break;
-
-	case 'codeberg':
-		compareLink = `https://codeberg.org/hikiko4ern/coub-addons/compare/${range.replace('..', '...')}`;
-		break;
-}
-
-// replace issue/PR links `[#1](https://github.com/hikiko4ern/coub-addons/issues/1)`
+// replace issue/PR links `[#1](https://codeberg.org/hikiko4ern/coub-addons/issues/1)`
 // with a plain text `#1`
 {
 	const ISSUE_PR_NUMBER_RE = /^\/hikiko4ern\/coub-addons\/(?:issues|pull)\/(\d+)$/;
@@ -76,6 +55,8 @@ switch (hosting) {
 		}
 	});
 }
+
+const compareLink = `https://codeberg.org/hikiko4ern/coub-addons/compare/${range.replace('..', '...')}`;
 
 mdTree.children.push({
 	type: 'paragraph',

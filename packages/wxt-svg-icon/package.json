@@ -19,7 +19,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/hikiko4ern/coub-addons.git",
+		"url": "git+https://codeberg.org/hikiko4ern/coub-addons.git",
 		"directory": "packages/wxt-svg-icon"
 	},
 	"author": "hikiko4ern",

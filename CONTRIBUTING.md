@@ -5,12 +5,14 @@
 - [Development](#development)
   - [Development of an extension](#development-of-an-extension)
   - [Available commands](#available-commands)
+    - [GraphQL](#graphql)
+    - [Utilities](#utilities)
   - [How to test auto-updating](#how-to-test-auto-updating)
 - [Releasing updates](#releasing-updates)
 
 ## Conventional Commits
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/en) to automate versioning. If you're a new contributor, don't worry about this. When you open a PR, a maintainer will change the PR's title so it's in the style of conventional commits, but that's all.
+This project uses [Conventional Commits](https://www.conventionalcommits.org/en/) to automate versioning.
 
 ## Setup
 
@@ -51,7 +53,7 @@ Here are some helpful commands:
 - `pnpm test:watch` - runs tests in watch mode
 - `pnpm test-build-reproducibility` - checks if build is reproducible (this is required to pass an <abbr title="addons.mozilla.org">AMO</abbr> review)
 
-#### GraphQL <!-- omit in toc -->
+#### GraphQL
 
 A copy of the `https://coub.com/graphql` GraphQL schema is stored in the repository for type checking. Usually there is no need to touch it, but if the schema becomes outdated, to update it, execute:
 
@@ -60,7 +62,7 @@ pnpm gql:fetch-schema # executes an Introspection query and saves its response
 pnpm gql:gen          # generates types based on the scheme
 ```
 
-#### Utilities <!-- omit in toc -->
+#### Utilities
 
 To generate `N` fake channels for the `blockedChannels` storage:
 
@@ -81,8 +83,9 @@ To generate `N` fake channels for the `blockedChannels` storage:
    ```sh
    VITE_GECKO_UPDATE_URL=https://localhost:8080/updates.json
    ```
+   and comment out `VITE_GECKO_UPDATE_URL` in the [`.env.production`](./.env.production)
 
-3. disable certificate validation in `about:config` by creating a settings:
+3. allow usage of self-issued certificates by creating a settings (in `about:config`):
    ```sh
    extensions.install.requireBuiltInCerts = false
    extensions.update.requireBuiltInCerts = false
@@ -128,14 +131,9 @@ To publish a release:
 2. run `pnpm tsx ./utils/upload/index.ts` to publish a new version to <abbr title="addons.mozilla.org">AMO</abbr>
 3. wait for the new version to be approved by the AMO
 4. download the signed `.xpi` from AMO
-5. create new releases in [GitHub](https://github.com/hikiko4ern/coub-addons) and [Codeberg](https://codeberg.org/hikiko4ern/coub-addons)
+5. create new release at [Codeberg](https://codeberg.org/hikiko4ern/coub-addons)
 
-   to generate a release description, run:
-
-   | hosting  | command                             |
-   | :------- | :---------------------------------- |
-   | GitHub   | `pnpm -s release-notes -h github`   |
-   | Codeberg | `pnpm -s release-notes -h codeberg` |
+   to generate a release description, run `pnpm -s release-notes`
 
    attach 2 files to the release:
    - `coub-addons-x.x.x-firefox.xpi` - signed extension downloaded from AMO
