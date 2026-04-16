@@ -83,15 +83,14 @@ To generate `N` fake channels for the `blockedChannels` storage:
    ```sh
    VITE_GECKO_UPDATE_URL=https://localhost:8080/updates.json
    ```
-   and comment out `VITE_GECKO_UPDATE_URL` in the [`.env.production`](./.env.production)
 
-3. allow usage of self-issued certificates by creating a settings (in `about:config`):
+3. allow usage of non-builtin certificates by creating a settings (in `about:config`) if you are using self-signed certificates:
    ```sh
    extensions.install.requireBuiltInCerts = false
    extensions.update.requireBuiltInCerts = false
    ```
 
-4. build a ZIP with the new version of the extension, change its extension from `.zip` to `.xpi` and copy it to `docs` so that the new version is in `docs/coub-addons-x.x.x-firefox.xpi`
+4. build a ZIP with the new version of the extension (`pnpm zip:ff`), change its extension from `.zip` to `.xpi` and copy it to `docs` so that the new version is in `docs/coub-addons-x.x.x-firefox.xpi`
 
    Here and below `x.x.x` is used instead of the extension version, don't forget to replace it with the real one.
 
@@ -128,7 +127,7 @@ To publish a release:
    - `coub-addons-x.x.x-sources.zip` - source code of the extension for [review in <abbr title="addons.mozilla.org">AMO</abbr>](https://extensionworkshop.com/documentation/publish/source-code-submission/)
 
    where `x.x.x` is the new version of the extension after `bump` (e.g. `0.1.20`).
-2. run `pnpm tsx ./utils/upload/index.ts` to publish a new version to <abbr title="addons.mozilla.org">AMO</abbr>
+2. run `pnpm upload` to publish a new version to <abbr title="addons.mozilla.org">AMO</abbr>
 3. wait for the new version to be approved by the AMO
 4. download the signed `.xpi` from AMO
 5. create new release at [Codeberg](https://codeberg.org/hikiko4ern/coub-addons)

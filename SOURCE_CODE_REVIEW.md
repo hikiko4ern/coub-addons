@@ -9,7 +9,7 @@ To build the extension or zip it:
    ```
 
 2. ```sh
-   pnpm zip:ff
+   pnpm run release-build:zip-ff
    ```
 
    this will create two files in the `.output` directory:

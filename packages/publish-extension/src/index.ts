@@ -1,3 +1,3 @@
 export { submitFirefox } from './firefox';
-export { FirefoxAddonChannel } from './firefox/options';
+export { FIREFOX_ADDON_CHANNELS, FirefoxAddonChannel } from './firefox/options';
 export { SupportedLocale } from './types';

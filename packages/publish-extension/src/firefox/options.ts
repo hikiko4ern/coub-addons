@@ -26,7 +26,8 @@ const AmoOrigin = define<string>('AMO origin', value => {
 
 const AmoEnvOrOrigin = union([AmoOrigin, AmoEnv]);
 
-export const FirefoxAddonChannel = enums(['listed', 'unlisted']);
+export const FIREFOX_ADDON_CHANNELS = ['listed', 'unlisted'] as const;
+export const FirefoxAddonChannel = enums(FIREFOX_ADDON_CHANNELS);
 export type FirefoxAddonChannel = Infer<typeof FirefoxAddonChannel>;
 
 const ORIGINS: Record<Infer<typeof AmoEnv>, URL> = {

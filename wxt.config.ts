@@ -1,5 +1,3 @@
-import 'dotenv-flow/config';
-
 import type {} from '@coub-addons/wxt-svg-icon';
 import { ValidateEnv } from '@julr/vite-plugin-validate-env';
 import { lezer } from '@lezer/generator/rollup';
@@ -64,7 +62,7 @@ export default defineConfig({
 		},
 	}),
 	zip: {
-		includeSources: ['.env', '.env.production', '.npmrc', '.nvmrc', '.postcssrc.json'],
+		includeSources: ['.env', '.npmrc', '.nvmrc', '.postcssrc.json', 'utils/loadEnv*.js'],
 		excludeSources: [
 			'src/gql/comments/requests/**',
 			'src/gql/comments/schema.json',

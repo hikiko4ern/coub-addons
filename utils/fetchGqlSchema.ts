@@ -13,32 +13,28 @@ import type { GraphQLProjectConfig } from 'graphql-config';
 
 import { commentsProject } from './gqlCodegen';
 
-(async () => {
-	if (!process.env.VITE_COUB_COMMENTS_ORIGIN) {
-		throw new Error('`process.env.VITE_COUB_COMMENTS_ORIGIN` is missing');
-	}
-	const schemaPath = getSchemaPath(commentsProject.schema);
+if (!process.env.VITE_COUB_COMMENTS_ORIGIN) {
+	throw new Error('`process.env.VITE_COUB_COMMENTS_ORIGIN` is missing');
+}
 
-	const response = await fetch(`${process.env.VITE_COUB_COMMENTS_ORIGIN}/graphql`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			query: getIntrospectionQuery(),
-		}),
-	});
+const schemaPath = getSchemaPath(commentsProject.schema);
 
-	const data = validateResponse((await response.json()) as ExecutionResult<IntrospectionQuery>);
-
-	assertValidSchema(buildClientSchema(data.data));
-
-	await fs.mkdir(path.dirname(schemaPath), { recursive: true });
-	await fs.writeFile(schemaPath, JSON.stringify(data, null, 2), { encoding: 'utf8' });
-
-	console.log('wrote', path.resolve(schemaPath));
-})().catch(err => {
-	console.error(err);
-	process.exit(1);
+const response = await fetch(`${process.env.VITE_COUB_COMMENTS_ORIGIN}/graphql`, {
+	method: 'POST',
+	headers: { 'Content-Type': 'application/json' },
+	body: JSON.stringify({
+		query: getIntrospectionQuery(),
+	}),
 });
+
+const data = validateResponse((await response.json()) as ExecutionResult<IntrospectionQuery>);
+
+assertValidSchema(buildClientSchema(data.data));
+
+await fs.mkdir(path.dirname(schemaPath), { recursive: true });
+await fs.writeFile(schemaPath, JSON.stringify(data, null, 2), { encoding: 'utf8' });
+
+console.log('wrote', path.resolve(schemaPath));
 
 // helpers
 

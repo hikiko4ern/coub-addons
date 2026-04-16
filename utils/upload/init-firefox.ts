@@ -1,41 +1,48 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { FirefoxAddonChannel } from '@coub-addons/publish-extension';
-import { config } from 'dotenv-flow';
-import { assert, optional, string, type } from 'superstruct';
+import { FIREFOX_ADDON_CHANNELS } from '@coub-addons/publish-extension';
+import {
+	type ImportMetaEnvAugmented,
+	Schema,
+	defineConfig as defineEnvConfig,
+	loadAndValidateEnv,
+} from '@julr/vite-plugin-validate-env';
 
+import commonEnv from '../../env';
 import { name, version } from '../../package.json' with { type: 'json' };
 import { OUTPUT_DIR } from './init-common';
 
 const extZipPath = path.join(OUTPUT_DIR, `${name}-${version}-firefox.zip`),
 	sourcesZipPath = path.join(OUTPUT_DIR, `${name}-${version}-sources.zip`);
 
-await Promise.all([fs.lstat(extZipPath), fs.lstat(sourcesZipPath)]);
+await Promise.all([
+	fs.access(extZipPath, fs.constants.R_OK),
+	fs.access(sourcesZipPath, fs.constants.R_OK),
+]);
 
-const Env = type({
-	FIREFOX_EXTENSION_ID: string(),
-	FIREFOX_TEST_EXTENSION_ID: optional(string()),
-	FIREFOX_CHANNEL: FirefoxAddonChannel,
-	FIREFOX_JWT_ISSUER: string(),
-	FIREFOX_JWT_SECRET: string(),
+const env = defineEnvConfig({
+	...commonEnv,
+	FIREFOX_TEST_EXTENSION_ID: Schema.string.optional(),
+	FIREFOX_CHANNEL: Schema.enum(FIREFOX_ADDON_CHANNELS),
+	FIREFOX_JWT_ISSUER: Schema.string(),
+	FIREFOX_JWT_SECRET: Schema.string(),
 });
 
-const envResult = config({ node_env: 'submit' });
-
-if (envResult.error) {
-	throw envResult.error;
-}
-
-const env = envResult.parsed;
-
-assert(env, Env);
+await loadAndValidateEnv(
+	{
+		envDir: false,
+		mode: 'production',
+		envPrefix: ['VITE_', 'FIREFOX_'],
+	},
+	env,
+);
 
 const {
-	FIREFOX_EXTENSION_ID: extensionId,
+	VITE_GECKO_ID: extensionId,
 	FIREFOX_TEST_EXTENSION_ID: testExtensionId,
 	FIREFOX_CHANNEL: channel,
 	FIREFOX_JWT_ISSUER: jwtIssuer,
 	FIREFOX_JWT_SECRET: jwtSecret,
-} = env;
+} = process.env as ImportMetaEnvAugmented<typeof env>;
 
-export { channel, extensionId, testExtensionId, jwtIssuer, jwtSecret, extZipPath, sourcesZipPath };
+export { channel, extZipPath, extensionId, jwtIssuer, jwtSecret, sourcesZipPath, testExtensionId };
