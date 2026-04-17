@@ -1,12 +1,12 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { SupportedLocale } from '@coub-addons/publish-extension';
-import { codeToANSI } from '@shikijs/cli';
 import type { Entries } from 'type-fest';
 
 import { ROOT_PATH } from '../_common.js';
 import { generateExtensionDescription } from '../helpers/generateExtensionDescription';
 import { generateReleaseNotes } from '../helpers/generateReleaseNotes';
+import { printCode } from '../helpers/printCode';
 import { toAmoMarkdown } from '../helpers/toAmoMarkdown';
 
 type ReadmeFileNames = {
@@ -23,7 +23,8 @@ const README_FILE_NAMES: ReadmeFileNames = {
 const releaseNotes = toAmoMarkdown((await generateReleaseNotes()).mdTree);
 
 console.log('----- release notes -----\n');
-console.log(await codeToANSI(releaseNotes, 'markdown', 'ayu-dark'));
+await printCode(process.stdout, releaseNotes, 'markdown');
+console.log();
 
 const description: Record<SupportedLocale, string> = {} as never;
 
@@ -35,7 +36,8 @@ for (const [locale, fileName] of Object.entries(README_FILE_NAMES) as Entries<
 	);
 
 	console.log(`----- [${locale}] description -----\n`);
-	console.log(await codeToANSI(md, 'markdown', 'ayu-dark'));
+	await printCode(process.stdout, md, 'markdown');
+	console.log();
 
 	description[locale] = md;
 }

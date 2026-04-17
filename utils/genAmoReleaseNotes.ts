@@ -4,7 +4,7 @@
  * Usage:
  *
  * 1. generate for the latest version:
- * 		  pnpm -s tsx ./utils/genAmoReleaseNotes.ts
+ *      pnpm -s tsx ./utils/genAmoReleaseNotes.ts
  *
  * 2. generate for a specific version:
  *      pnpm -s tsx ./utils/genAmoReleaseNotes.ts -v 0.1.26
@@ -19,4 +19,4 @@ import { toAmoMarkdown } from './helpers/toAmoMarkdown';
 
 const releaseNotes = toAmoMarkdown((await generateReleaseNotes()).mdTree);
 
-await printCode(releaseNotes, 'markdown');
+await printCode(process.stdout, releaseNotes, 'markdown');

@@ -113,7 +113,7 @@ const releaseNotes = toMarkdown(mdTree, {
 	extensions: [gfmToMarkdown({ tablePipeAlign: false })],
 }).trim();
 
-await printCode(releaseNotes, 'markdown');
+await printCode(process.stdout, releaseNotes, 'markdown');
 
 interface ReleaseFilesOptions {
 	title: string;

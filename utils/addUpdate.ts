@@ -21,12 +21,12 @@ import path from 'node:path';
 import { buffer } from 'node:stream/consumers';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { codeToANSI } from '@shikijs/cli';
 import { execa } from 'execa';
 
 import updates from '../docs/updates.json' with { type: 'json' };
 import pkg from '../package.json' with { type: 'json' };
 import { geckoManifest } from '../wxt.config';
+import { printCode } from './helpers/printCode';
 
 const ROOT_PATH = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const UPDATES_FILE = path.join(ROOT_PATH, 'docs', 'updates.json');
@@ -125,18 +125,17 @@ console.log();
 
 if (sameVersionOldUpdate !== -1) {
 	console.warn('Replacing old update');
-	console.warn(
-		await codeToANSI(
-			JSON.stringify(oldExtUpdates.updates[sameVersionOldUpdate], null, 2),
-			'json',
-			'ayu-dark',
-		),
+	await printCode(
+		process.stderr,
+		JSON.stringify(oldExtUpdates.updates[sameVersionOldUpdate], null, 2),
+		'json',
 	);
 	console.log();
 }
 
 console.log('New update:');
-console.log(await codeToANSI(JSON.stringify(newUpdate, null, 2), 'json', 'ayu-dark'));
+await printCode(process.stdout, JSON.stringify(newUpdate, null, 2), 'json');
+console.log();
 
 await fs.writeFile(UPDATES_FILE, JSON.stringify(newUpdates, null, 2), { encoding: 'utf8' });
 

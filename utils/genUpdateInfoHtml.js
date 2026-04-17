@@ -16,7 +16,6 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
-import { codeToANSI } from '@shikijs/cli';
 import { runGitCliff } from 'git-cliff';
 import { toHtml } from 'hast-util-to-html';
 import { h } from 'hastscript';
@@ -26,6 +25,7 @@ import rehypeMinifyWhitespace from 'rehype-minify-whitespace';
 import { remove } from 'unist-util-remove';
 
 import pkg from '../package.json' with { type: 'json' };
+import { printCode } from './helpers/printCode.js';
 
 const ROOT_PATH = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const RELEASE_NOTES_DIR = path.join(ROOT_PATH, 'docs', 'release-notes');
@@ -78,7 +78,7 @@ const htmlPath = path.join(RELEASE_NOTES_DIR, `${version}.html`);
 
 console.log('Writing to', path.relative(ROOT_PATH, htmlPath));
 console.log();
-console.log(await codeToANSI(html, 'html', 'ayu-dark'));
+await printCode(process.stdout, html, 'html');
 
 await fs.mkdir(RELEASE_NOTES_DIR, { recursive: true });
 await fs.writeFile(htmlPath, `${html}\n`, { encoding: 'utf8' });

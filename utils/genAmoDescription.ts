@@ -24,4 +24,4 @@ const description = generateExtensionDescription(
 	await fs.readFile(positionals[0], { encoding: 'utf8' }),
 );
 
-await printCode(description, 'markdown');
+await printCode(process.stdout, description, 'markdown');
