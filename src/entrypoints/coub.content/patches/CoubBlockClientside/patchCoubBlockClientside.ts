@@ -5,9 +5,9 @@ import type { RevertPatch } from '@/helpers/patch/applyPatches';
 import { patchMethod } from '@/helpers/patch/patchMethod';
 import { prependJqListener } from '@/helpers/prependJqListener';
 import { isHotkeyPressed } from '@/hotkey/isHotkeyPressed';
-import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
 
+import { ARE_PLAYER_SETTINGS_FETCHED, type LateInitPlayerSettings } from '../../constants';
 import {
 	CBC_GET_VIEWER_BLOCK_KEY,
 	CBC_GET_VIEWER_BLOCK_SYM,
@@ -42,7 +42,7 @@ const DISLIKE_BUTTON_SELECTOR = '.coub__dislike-button' as const;
 export function patchCoubBlockClientside(
 	parentLogger: Logger,
 	_waivedWindow: typeof window,
-	playerSettings: ReadonlyPlayerSettings,
+	playerSettings: LateInitPlayerSettings,
 ): RevertPatch | unknown[] {
 	const logger = parentLogger.getChildLogger('CoubBlockClientside');
 	const validatedGlobals = getCoubBlockClientsideGlobals();
@@ -137,13 +137,17 @@ export function patchCoubBlockClientside(
 const addKeyUpHandlerToNode = (
 	logger: Logger,
 	{ $ }: CoubBlockClientsideGlobals,
-	playerSettings: ReadonlyPlayerSettings,
+	playerSettings: LateInitPlayerSettings,
 	node: JQuery,
 	exportTo: unknown,
 ) => {
 	let toggleDislikeAction: ReturnType<typeof getToggleDislikeAction>;
 
 	const handler = (e: JQueryKeyEventObject & { wrappedJSObject?: JQueryKeyEventObject }) => {
+		if (!playerSettings[ARE_PLAYER_SETTINGS_FETCHED]) {
+			return;
+		}
+
 		e = e.wrappedJSObject || e;
 
 		if (

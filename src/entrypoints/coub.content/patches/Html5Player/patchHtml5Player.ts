@@ -2,9 +2,9 @@ import type { ArrayValues } from 'type-fest';
 
 import type { RevertPatch } from '@/helpers/patch/applyPatches';
 import { patchMethod } from '@/helpers/patch/patchMethod';
-import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
 
+import type { LateInitPlayerSettings } from '../../constants';
 import { actualizeMediaSessionFromHtml5Player } from './actualizeMediaSessionFromHtml5Player';
 import { addKeyUpHandlerToHtml5Player } from './addKeyUpHandlerToHtml5Player';
 import {
@@ -45,7 +45,7 @@ declare global {
 export function patchHtml5Player(
 	parentLogger: Logger,
 	_waivedWindow: typeof window,
-	playerSettings: ReadonlyPlayerSettings,
+	playerSettings: LateInitPlayerSettings,
 ): RevertPatch | unknown[] {
 	const logger = parentLogger.getChildLogger('Html5Player');
 	const validatedGlobals = getHtml5PlayerGlobals(logger);

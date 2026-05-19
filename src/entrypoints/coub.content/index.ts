@@ -4,13 +4,16 @@ import type {} from 'typed-query-selector';
 
 import '@/register';
 
+import type { Unwatch } from 'wxt/storage';
+
 import { EventDispatcher } from '@/events';
 import { applyPatches } from '@/helpers/patch/applyPatches';
-import { PlayerSettingsStorage, type ReadonlyPlayerSettings } from '@/storage/playerSettings';
+import { PlayerSettingsStorage } from '@/storage/playerSettings';
 import { Logger } from '@/utils/logger';
 import { onContentScriptUnload } from '@/utils/unloadHandler/onContentScriptUnload';
 import { removeOldUnloadHandlers } from '@/utils/unloadHandler/removeOldUnloadHandlers';
 
+import { ARE_PLAYER_SETTINGS_FETCHED, type LateInitPlayerSettings } from './constants';
 import {
 	CBC_GET_VIEWER_BLOCK_KEY,
 	CBC_VIEWER_BLOCK_KEY_UP_EVENT,
@@ -59,15 +62,24 @@ export default defineContentScript({
 		}
 
 		try {
-			const tabId = await EventDispatcher.getTabId();
-			const playerSettingsStorage = new PlayerSettingsStorage(tabId, 'coub', logger);
-			const mutablePlayerSettings: Writable<ReadonlyPlayerSettings> = {
-				...(await playerSettingsStorage.getValue()),
+			const mutablePlayerSettings: Writable<LateInitPlayerSettings> = {
+				[ARE_PLAYER_SETTINGS_FETCHED]: false,
 			};
+			let unwatchPlayerSettings: Unwatch;
 
-			const unwatchPlayerSettings = playerSettingsStorage.watch(newSettings =>
-				Object.assign(mutablePlayerSettings, newSettings),
-			);
+			(async () => {
+				const tabId = await EventDispatcher.getTabId();
+				const playerSettingsStorage = new PlayerSettingsStorage(tabId, 'coub', logger);
+
+				Object.assign(mutablePlayerSettings, {
+					...(await playerSettingsStorage.getValue()),
+					[ARE_PLAYER_SETTINGS_FETCHED]: true,
+				});
+
+				unwatchPlayerSettings = playerSettingsStorage.watch(newSettings =>
+					Object.assign(mutablePlayerSettings, newSettings),
+				);
+			})();
 
 			const waivedWindow = window.wrappedJSObject || window;
 
@@ -140,7 +152,7 @@ export default defineContentScript({
 			);
 
 			ctx.onInvalidated(() => {
-				unwatchPlayerSettings();
+				unwatchPlayerSettings?.();
 				removeUnloadHandler?.();
 
 				for (const revert of patches) {

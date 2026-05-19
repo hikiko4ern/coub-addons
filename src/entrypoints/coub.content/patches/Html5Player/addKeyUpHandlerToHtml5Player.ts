@@ -1,19 +1,23 @@
 import { prependJqListener } from '@/helpers/prependJqListener';
 import { isHotkeyPressed } from '@/hotkey/isHotkeyPressed';
-import type { ReadonlyPlayerSettings } from '@/storage/playerSettings';
 import type { Logger } from '@/utils/logger';
 
+import { ARE_PLAYER_SETTINGS_FETCHED, type LateInitPlayerSettings } from '../../constants';
 import { H5P_KEY_UP_EVENT, H5P_KEY_UP_EVENT_KEY } from './constants';
 
 export const addKeyUpHandlerToHtml5Player = (
 	logger: Logger,
 	player: coub.Html5Player,
-	playerSettings: ReadonlyPlayerSettings,
+	playerSettings: LateInitPlayerSettings,
 ) => {
 	function handler(
 		this: coub.Html5Player,
 		e: JQueryKeyEventObject & { wrappedJSObject?: JQueryKeyEventObject },
 	) {
+		if (!playerSettings[ARE_PLAYER_SETTINGS_FETCHED]) {
+			return;
+		}
+
 		e = e.wrappedJSObject || e;
 
 		if (
