@@ -63,12 +63,9 @@ commit_parsers = [
 	{ message = "^remove", group = "<!-- 1 -->Removed Features" },
 	{ message = "^fix", group = "<!-- 2 -->Bug Fixes" },
 	{ message = "^feat", group = "<!-- 3 -->Features" },
-	{ message = "^docs", group = "Documentation", skip = true },
 	{ message = "^perf", group = "Performance" },
-	{ message = "^refactor", group = "Refactor", skip = true },
-	{ message = "^style", group = "Styling" },
-	{ message = "^test", group = "Testing" },
 	{ message = "^chore", group = "Miscellaneous Tasks" },
+	{ message = "^(ci|docs|refactor|style|test)", skip = true },
 	{ body = ".*security", group = "<!-- 0 -->Security" },
 ]
 protect_breaking_commits = true
