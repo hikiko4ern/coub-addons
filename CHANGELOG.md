@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.3] - 2026-05-29
+
+### Bug Fixes
+
+- **(cs/coub)** apply patches without waiting for player settings
+
+### Miscellaneous Tasks
+
+- add `gecko.data_collection_permissions` to the manifest
+- migrate to Codeberg
+
 ## [0.2.2] - 2026-04-03
 
 ### Features
