@@ -1,0 +1,30 @@
+name: Publish docs
+enable-email-notifications: true
+
+permissions: {}
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publish:
+    runs-on: codeberg-tiny
+    name: Publish docs
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - uses: actions/git-pages@5978530ffb9bbe196ad9fdc0c48fdaf1483de4cf # v2.1.0
+        with:
+          site: https://coub-addons.doggo.moe/
+          server: codeberg.page
+          token: ${{ forge.token }}
+          source: docs/
