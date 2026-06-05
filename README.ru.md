@@ -2,6 +2,14 @@
 
 [English](./README.md) · [Русский](./README.ru.md)
 
+> [!CAUTION]
+>
+> # Проект переехал на Codeberg:
+>
+> https://codeberg.org/hikiko4ern/coub-addons
+
+---
+
 <!-- short-description start -->
 
 Web Extension, добавляющий дополнительный функционал на [Coub.com](https://coub.com)
