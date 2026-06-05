@@ -80,9 +80,8 @@ Web Extension, добавляющий дополнительный функци�
   <summary>Зеркала репозитория</summary>
 
 1. на [Codeberg](https://codeberg.org) - [hikiko4ern/coub-addons](https://codeberg.org/hikiko4ern/coub-addons) (с релизами)
-2. on [GitHub](https://github.com) - [hikiko4ern/coub-addons](https://github.com/hikiko4ern/coub-addons) (теперь используется только для [публикации](https://github.com/hikiko4ern/coub-addons/actions) GitHub Pages)
-3. на [SourceHut](https://sourcehut.org) - [~hikiko4ern/coub-addons](https://git.sr.ht/~hikiko4ern/coub-addons) (только код)
-4. на [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/rosa.radicle.xyz/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (только код)
+2. на [SourceHut](https://sourcehut.org) - [~hikiko4ern/coub-addons](https://git.sr.ht/~hikiko4ern/coub-addons) (только код)
+3. на [Radicle](https://radicle.xyz) - [rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1](https://app.radicle.xyz/nodes/rosa.radicle.xyz/rad:z3GLxyHiTrMSagbqyqPDi5fsKXrT1) (только код)
 
 </details>
 
